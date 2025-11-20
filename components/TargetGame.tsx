@@ -1,65 +1,103 @@
 
 import React, { useState, useEffect } from 'react';
+//Import React and two tools used for storing data and running effects//
 import { TRAITS_POOL } from '../constants';
+ // Import the list of all traits we can use in the game//
 import { Crosshair, Check, ArrowRight } from 'lucide-react';
+// Import icons used in the UI//
 
-interface TargetGameProps {
+interface TargetGameProps { 
+    // This defines what input values this component can receive//
   onComplete: (selectedTraits: string[]) => void;
+    // A function we call when the player finishes this level and submits their chosen traits //
   initialTraits?: string[];
 }
+  // Optional list of traits that were already selected before this level //
 
 export const TargetGame: React.FC<TargetGameProps> = ({ onComplete, initialTraits = [] }) => {
+      // Create the TargetGame component.
+  // It receives two things: onComplete function and initialTraits list.
+  // If no initialTraits are given, it uses an empty list by default //
+
   const [rows, setRows] = useState<string[][]>([]);
+   // rows = the trait lists shown scrolling on screen.
+  // setRows = a function to update those rows //
+
   const [selectedTraits, setSelectedTraits] = useState<string[]>([]);
+    // Stores the traits the user has clicked (chosen) //
+
   const [lastShot, setLastShot] = useState<{x: number, y: number} | null>(null);
+  // Stores the location of the last mouse click to show a visual "shot" animation //
 
   const TARGETS_NEEDED = 3;
-  
-  // Prepare rows of scrolling traits
+    // The player must pick 3 traits before they can continue //
+
   useEffect(() => {
-    // Filter out already collected traits
+  // This runs when the component first loads or whenever initialTraits change //
     const availableTraits = TRAITS_POOL.filter(t => !initialTraits.includes(t)).sort(() => 0.5 - Math.random());
-    
-    // We need enough items to scroll smoothly. Let's split into 3 rows.
-    // We duplicate the arrays to create the infinite scroll visual effect.
+       // Start with the full list of traits available //
+      // Filter = Remove any traits that the user already selected earlier //
+    // Shuffle the traits randomly so the scrolling looks different each time //
+
     const chunkSize = Math.ceil(availableTraits.length / 3);
+        // Divide traits into 3 roughly equal groups, one for each scrolling row //
     const row1 = availableTraits.slice(0, chunkSize);
+        // Take the first third of the traits //
     const row2 = availableTraits.slice(chunkSize, chunkSize * 2);
+        // Take the second third //
     const row3 = availableTraits.slice(chunkSize * 2);
+    // Take the remaining traits //
 
     setRows([
         [...row1, ...row1, ...row1], 
+              // Repeat row 1 three times so it can scroll smoothly and look infinite //
         [...row2, ...row2, ...row2],
+              // Repeat row 2 //
         [...row3, ...row3, ...row3],
+              // Repeat row 3 //
     ]);
   }, [initialTraits]);
+    // Re-run this effect if the initialTraits change //
+
 
   const handleShot = (trait: string, e: React.MouseEvent) => {
+    // Function that runs when the player clicks on a trait target. trait = which trait was clicked, e = click event
     e.stopPropagation();
+      // Stop this click from affecting other elements around it
     
-    // Visual bang effect coordinates
     setLastShot({ x: e.clientX, y: e.clientY });
+      // Record the mouse click position to show a visual "bang" effect
     setTimeout(() => setLastShot(null), 300);
+      // Remove the visual bang effect after 0.3 seconds
 
     if (selectedTraits.includes(trait)) {
+          // If this trait was already selected
+
         // Deselect if clicked again
         setSelectedTraits(prev => prev.filter(t => t !== trait));
+    // Remove it from the selected traits (deselect it)
     } else {
-        // Select (limit to needed)
+  // If this trait is not already selected
         if (selectedTraits.length < TARGETS_NEEDED) {
+            // Only allow selecting if we haven’t reached the max number of targets
             setSelectedTraits(prev => [...prev, trait]);
+            // Add the clicked trait to the list of selected traits
         }
     }
   };
 
   const handleSubmit = () => {
+    // Function that runs when player clicks "Next Level" button
     if (selectedTraits.length < TARGETS_NEEDED) return;
+      // Do nothing if player hasn’t selected enough traits yet
     onComplete([...initialTraits, ...selectedTraits]);
+      // Send all traits (previous + current selected) back to parent component
   };
 
   return (
+    // Start of what will be shown on screen
     <div className="w-full max-w-6xl mx-auto animate-slide-up overflow-hidden pb-12">
-       
+         // Main container of the game, centered, slides up, hides overflow, padding bottom 12
        <style>{`
         @keyframes slideLeft {
             0% { transform: translateX(0); }
@@ -79,9 +117,11 @@ export const TargetGame: React.FC<TargetGameProps> = ({ onComplete, initialTrait
             animation-play-state: paused;
         }
       `}</style>
+    // Inline CSS for scrolling animation of targets (left/right) and pause on hover
 
       {/* Header Question */}
       <div className="text-center mb-8 relative z-10">
+            // Container for the header, center text, margin bottom 8, ensure it’s on top
         <div className="inline-block bg-fun-blue text-fun-dark font-display text-xl px-4 py-1 rounded-full border-2 border-fun-dark mb-2 rotate-[2deg]">
            LEVEL 2
         </div>
@@ -162,14 +202,19 @@ export const TargetGame: React.FC<TargetGameProps> = ({ onComplete, initialTrait
         </div>
         
         {/* Visual Bang Effect overlay */}
+        // Developer comment: This is the yellow "bang" animation when player clicks a target
         {lastShot && (
+            // Only show this effect if there is a last shot recorded
             <div 
                 className="fixed w-24 h-24 pointer-events-none z-50 -translate-x-1/2 -translate-y-1/2 animate-pop"
                 style={{ left: lastShot.x, top: lastShot.y }}
+                // The yellow circle and crosshair appear exactly at the click position, do not block clicks, animate pop//
             >
+            
                  <div className="absolute inset-0 bg-fun-yellow rounded-full animate-ping opacity-75"></div>
                  <Crosshair className="w-full h-full text-fun-dark animate-spin" />
             </div>
+                     // Crosshair icon that spins at the click location
         )}
 
       </div>
@@ -178,7 +223,9 @@ export const TargetGame: React.FC<TargetGameProps> = ({ onComplete, initialTrait
       <div className="flex justify-center mt-8">
           <button
             onClick={handleSubmit}
+                    // When clicked, submit selected traits
             disabled={selectedTraits.length < TARGETS_NEEDED}
+                    // Disable button if player hasn’t picked enough traits
             className={`
               group relative inline-block
               ${selectedTraits.length < TARGETS_NEEDED ? 'opacity-50 cursor-not-allowed grayscale' : 'cursor-pointer animate-bounce-slow'}

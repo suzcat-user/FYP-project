@@ -3,6 +3,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { TRAITS_POOL } from '../constants';
 import { Hammer } from 'lucide-react';
 
+/*
+This code is a TypeScript Interface definition.
+It describes the "rules" (or the shape) of the data (props) that you must pass into a component
+To use this component, you must provide one property called onComplete. This property must be a function. 
+[IMPORTANT] That function will receive a list of strings as an input, and it doesn't need to return anything.
+ */
 interface WhackAMoleProps {
   onComplete: (selectedTraits: string[]) => void;
 }
@@ -10,10 +16,18 @@ interface WhackAMoleProps {
 const TOTAL_TRAITS_NEEDED = 3;
 const MOLE_POP_INTERVAL = 2500;
 
+/*React.FC = React Function Component
+This is a Function Component, and it expects props that match the WhackAMoleProps interface*/
 export const WhackAMole: React.FC<WhackAMoleProps> = ({ onComplete }) => {
+  /*This is the player's "bag." Every time they successfully whack a mole, 
+  the trait (e.g., "Smart") gets added here. This is the data you will eventually pass to onComplete */
   const [collectedTraits, setCollectedTraits] = useState<string[]>([]);
+  /* This tracks where the mole is. If it is 0, the mole is in the 1st hole. If it is null, all holes are empty.*/
   const [activeMole, setActiveMole] = useState<number | null>(null);
+  /*This tracks what is written on the mole currently popping up (e.g., "Brave", "Kind", "Lazy").*/
   const [activeTrait, setActiveTrait] = useState<string>("");
+  /*This is for animation. When you whack a mole, you might want a little "+1" or "Hit!" 
+  text to float up from that specific hole. This state saves which hole (id) and what text to show.*/
   const [lastEffect, setLastEffect] = useState<{id: number, text: string} | null>(null);
   const timerRef = useRef<number | null>(null);
 
@@ -22,7 +36,12 @@ export const WhackAMole: React.FC<WhackAMoleProps> = ({ onComplete }) => {
     startGameLoop();
     return () => stopGameLoop();
   }, []);
+  /*(For the code above) This is the Cleanup function. If the user gets bored and clicks "Back" or closes the component 
+  while the game is playing, this ensures the timer stops running in the background. Without this, the game would keep 
+  trying to pop moles even after the game board is gone (which causes errors) */
 
+  /* Why the setTimeout? It waits 1000ms (1 second) before calling onComplete. This is a nice user experience (UX) detail—it 
+  lets the player see the final animation of their last hit before the screen abruptly changes to the "Game Over" screen. */
   useEffect(() => {
     if (collectedTraits.length >= TOTAL_TRAITS_NEEDED) {
       stopGameLoop();
@@ -34,14 +53,23 @@ export const WhackAMole: React.FC<WhackAMoleProps> = ({ onComplete }) => {
   }, [collectedTraits, onComplete]);
 
   const startGameLoop = () => {
-    // Initial pop
+    // Initial pop: Don't make the user wait for the first interval
+    /*if (!timerRef.current): This is a safety check. It prevents the game from accidentally
+    starting two timers at once*/
     if (!timerRef.current) popMole();
     
+    // Set the rhythm
+    /*window.setInterval: This creates a heartbeat. Every X milliseconds (defined by MOLE_POP_INTERVAL), 
+    it runs the popMole() function. This means the moles will pop up every 2.5 seconds as the time set was 2500
+    timerRef.current = ...: We save the ID of this interval into our "pocket" (the Ref) so we can find it later
+     to stop it.*/
     timerRef.current = window.setInterval(() => {
        popMole();
     }, MOLE_POP_INTERVAL);
   };
 
+/* clearInterval: This is the standard JavaScript command to stop a setInterval loop.
+timerRef.current = null: We reset the ref to null so the game knows the engine is off.*/ 
   const stopGameLoop = () => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -49,6 +77,10 @@ export const WhackAMole: React.FC<WhackAMoleProps> = ({ onComplete }) => {
     }
   };
 
+  /*The 400ms Delay: If you just switched the hole instantly (Hole 1 -> Hole 5), it looks glitchy.
+   By setting it to null first, waiting, and then showing the new one, you create a natural "down and up" rhythm.
+  Filtering (availableTraits): This makes the game smarter. It ensures the player doesn't keep seeing "Brave" if they have already caught "Brave." 
+  It forces the game to show new content.*/
   const popMole = () => {
     setActiveMole(null);
     
@@ -66,7 +98,10 @@ export const WhackAMole: React.FC<WhackAMoleProps> = ({ onComplete }) => {
         setActiveTrait(randomTrait);
     }, 400); // Short delay to allow "going down" animation
   };
-
+  
+/* Input (index): The grid is numbered 0-8. If the mole is at 3 and the user clicks 3, the logic runs. 
+If they click 4, nothing happens. Pacing Logic (Step 6): Notice stopGameLoop() and setTimeout(startGameLoop, 500). 
+This is excellent game feel. If you don't do this, the next mole might pop up 0.1 seconds after you hit the previous one, which feels chaotic. This forces a slight pause to reward the player. */
   const whackMole = (index: number) => {
     if (index === activeMole && activeTrait) {
         if (collectedTraits.includes(activeTrait)) return;

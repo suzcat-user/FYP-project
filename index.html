@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PersonaBingo Kids</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Carter+One&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Fredoka', 'sans-serif'],
+              display: ['Carter One', 'cursive'],
+            },
+            colors: {
+              fun: {
+                pink: '#FF70A6',
+                yellow: '#FFD670',
+                blue: '#70D6FF',
+                green: '#99F19E',
+                orange: '#FF9770',
+                purple: '#E770FF',
+                dark: '#2D2D2D',
+              }
+            },
+            boxShadow: {
+              'hard': '5px 5px 0px 0px #2D2D2D',
+              'hard-sm': '3px 3px 0px 0px #2D2D2D',
+              'hard-lg': '8px 8px 0px 0px #2D2D2D',
+            },
+            animation: {
+              'bounce-slow': 'bounce 3s infinite',
+              'float': 'float 4s ease-in-out infinite',
+              'wiggle': 'wiggle 1s ease-in-out infinite',
+              'pop': 'pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+              'slide-up': 'slideUp 0.5s ease-out forwards',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-15px)' },
+              },
+              wiggle: {
+                '0%, 100%': { transform: 'rotate(-3deg)' },
+                '50%': { transform: 'rotate(3deg)' },
+              },
+              pop: {
+                '0%': { transform: 'scale(0.5)', opacity: '0' },
+                '100%': { transform: 'scale(1)', opacity: '1' },
+              },
+              slideUp: {
+                '0%': { transform: 'translateY(20px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
+              }
+            },
+          },
+        },
+      }
+    </script>
+    <style>
+      body {
+        background-color: #FFFDF5;
+        overflow-x: hidden;
+      }
+      
+      .pattern-bg {
+        background-color: #FFD670;
+        background-image: radial-gradient(#FF9770 20%, transparent 20%),
+        radial-gradient(#FF9770 20%, transparent 20%);
+        background-size: 30px 30px;
+        background-position: 0 0, 15px 15px;
+        opacity: 0.15;
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 12px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #FFFDF5;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #FF70A6;
+        border-radius: 6px;
+        border: 3px solid #FFFDF5;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #FF9770;
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+          "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+          "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+          "react/": "https://aistudiocdn.com/react@^19.2.0/",
+          "react": "https://aistudiocdn.com/react@^19.2.0"
+        }
+      }
+    </script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

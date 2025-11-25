@@ -3,31 +3,52 @@ import React, { useState, useEffect } from 'react';
 import { TRAITS_POOL } from '../constants';
 import { ArrowRight, Circle } from 'lucide-react';
 
+//To use this component, the parent MUST provide a function to handle the end of the game.
+/* When the user finishes tossing hoops, the component calls this function and passes back 
+the list of traits they won (e.g., ['Creative', 'Focus']).*/
+
 interface HoopTossProps {
   onComplete: (selectedTraits: string[]) => void;
+  /*The parent can provide this if they want, but they don't have to. If provided it must be in array of 
+  strings
+  Maybe the user played the game before and is coming back?*/
+
   initialTraits?: string[];
 }
+/* Without the = [], your code might crash later when you try to filter initialTraits. 
+This ensures that if nothing is passed, it defaults to an empty list (Clean Slate) rather than undefined.*/
 
 export const HoopToss: React.FC<HoopTossProps> = ({ onComplete, initialTraits = [] }) => {
+  //We need to remember which random words we showed the user so they don't change every time the user clicks something.
   const [shelfItems, setShelfItems] = useState<string[]>([]);
+
+  /*It starts empty [] because the user hasn't thrown any hoops yet.
+  initialTraits: Items the user won in previous levels (Read-only for this level).
+  selectedTraits: Items the user is picking right now (Editable). */
   const [selectedTraits, setSelectedTraits] = useState<string[]>([]);
 
   const NEEDED = 3;
 
   useEffect(() => {
-    // Filter items not used in previous levels
+    // 1. Filter: Look at the big list of all traits (TRAITS_POOL).
+    // remove any traits the user ALREADY has (initialTraits).
     const available = TRAITS_POOL.filter(t => !initialTraits.includes(t));
-    // Shuffle and pick a subset for the shelves
+
+    // 2. Shuffle: Mix them up randomly.
     const shuffled = [...available].sort(() => 0.5 - Math.random());
+
+    // 3. Display: Take the top 12 items to show on the screen.
     setShelfItems(shuffled.slice(0, 12)); // 12 items for the shelf
   }, [initialTraits]);
 
+  //this is a function.
   const throwHoop = (trait: string) => {
+    // SCENARIO A: The user is clicking an item they ALREADY picked.
     if (selectedTraits.includes(trait)) {
-      // Remove hoop
+      // Action: Deselect it (Remove it from the array).
       setSelectedTraits(prev => prev.filter(t => t !== trait));
     } else {
-      // Add hoop if space
+      // Action: Add it, BUT only if they haven't reached the limit (3).
       if (selectedTraits.length < NEEDED) {
         setSelectedTraits(prev => [...prev, trait]);
       }
@@ -35,7 +56,15 @@ export const HoopToss: React.FC<HoopTossProps> = ({ onComplete, initialTraits = 
   };
 
   const handleSubmit = () => {
+    // 1. Validation: Don't let them finish if they only picked 1 or 2 items.
+    // "If I have less than 3 items, let me add one."
+    /* "If I already have 3, STOP. Do not add more." This is because selectedTraits is an 
+    array therefore we can give it a length property (Returns the number of elements in the array.)*/
     if (selectedTraits.length < NEEDED) return;
+    
+    // 2. Merge & Save: 
+  // Combine the old traits (initialTraits) + the new ones (selectedTraits)
+  // and send the FULL list back to the parent.
     onComplete([...initialTraits, ...selectedTraits]);
   };
 

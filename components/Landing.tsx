@@ -22,14 +22,14 @@ export const Landing: React.FC<LandingProps> = ({ onStart }) => {
       <div className="bg-white border-4 border-fun-dark shadow-hard rounded-[3rem] p-8 md:p-16 mb-12 transform rotate-1 relative overflow-hidden max-w-4xl">
         <div className="relative z-10">
           <h1 className="text-6xl md:text-8xl font-display text-fun-dark mb-4 leading-none tracking-tight">
-            Persona<span className="text-fun-pink">Bingo</span>
+            Start<span className="text-fun-blue">Hobby</span>
           </h1>
           <div className="inline-block bg-fun-yellow border-2 border-fun-dark px-6 py-2 rounded-full shadow-hard-sm transform -rotate-2 mb-8">
-            <span className="text-xl font-bold text-fun-dark">For Cool Kids!</span>
+            <span className="text-xl font-bold text-fun-dark">Discover Yourself and Everyone!</span>
           </div>
           
-          <p className="text-xl md:text-2xl text-gray-600 font-medium max-w-lg mx-auto mb-10">
-            Go on an adventure to discover your true personality!
+          <p className="text-xl md:text-2xl text-gray-560 font-medium max-w-lg mx-auto mb-10">
+            Go on an adventure to discover yourself and hobbies!
           </p>
 
           <button

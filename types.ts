@@ -1,24 +1,68 @@
+export enum GameState {
+  Landing,
+  WouldYouRather,
+  Shooting,
+  RingToss,
+  Loading,
+  Results,
+  Community,
+  CommunityThread,
+  Profile,
+  Events,
+}
 
-export interface HobbySuggestion {
+export interface User {
+  id: string;
+  username: string;
+  avatar: string;
+  email?: string;
+  description: string;
+  hobbies: string[];
+}
+
+export interface Hobby {
   name: string;
   description: string;
-  whyItFits: string;
+  reason: string;
 }
 
-export interface PersonaResult {
-  archetype: string;
+export interface PersonalityResult {
+  personalityTitle: string;
   tagline: string;
   description: string;
-  bingoTiles: string[]; 
-  hobbies: HobbySuggestion[];
+  hobbies: Hobby[];
 }
 
-export enum GameState {
-  LANDING,
-  LEVEL_1_WHACK,
-  LEVEL_2_TARGET,
-  LEVEL_3_HOOP,
-  LEVEL_4_BINGO,
-  ANALYZING,
-  RESULT
+export interface Reply {
+  id: string;
+  author: string;
+  avatar: string;
+  text: string;
+}
+
+export interface Post {
+  id: string;
+  author: string;
+  avatar: string;
+  text: string;
+  image?: string | null;
+  replies: Reply[];
+}
+
+export interface Event {
+  id: string;
+  name: string;
+  date: string;
+  location: string;
+  cost: string;
+}
+
+export interface Community {
+  color: string;
+  posts: Post[];
+  events?: Event[];
+}
+
+export interface CommunityData {
+  [key: string]: Community;
 }

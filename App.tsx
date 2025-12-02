@@ -1,218 +1,295 @@
+import React, { useState, useCallback } from 'react';
+import { GameState, PersonalityResult, CommunityData, Post, Reply, User } from './types';
+import LandingPage from './components/LandingPage';
+import Header from './components/Header';
+import WouldYouRatherGame from './components/WouldYouRatherGame';
+import ShootingGame from './components/ShootingGame';
+import RingTossGame from './components/RingTossGame';
+import ResultsPage from './components/ResultsPage';
+import CommunityPage from './components/CommunityPage';
+import CommunityThread from './components/CommunityThread';
+import { getPersonalityAndHobbies } from './services/geminiService';
+import { initialCommunityData } from './components/communityData';
+import AuthPage from './components/AuthPage';
+import ProfilePage from './components/ProfilePage';
+import EventsPage from './components/EventsPage';
 
-import React, { useState, useRef } from 'react';
-import { GameState, PersonaResult } from './types';
-import { Landing } from './components/Landing';
-import { TargetGame } from './components/TargetGame';
-import { WhackAMole } from './components/WhackAMole';
-import { HoopToss } from './components/HoopToss';
-import { BingoLevel } from './components/BingoLevel';
-import { generatePersona } from './services/geminiService';
-import { Loader2, RefreshCw, Smile, ArrowLeft, Heart } from 'lucide-react';
 
-function App() {
-  const [gameState, setGameState] = useState<GameState>(GameState.LANDING);
-  const [persona, setPersona] = useState<PersonaResult | null>(null);
-  const [collectedTraits, setCollectedTraits] = useState<string[]>([]);
-  const topRef = useRef<HTMLDivElement>(null);
+const App: React.FC = () => {
+  const [gameState, setGameState] = useState<GameState>(GameState.Landing);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [selections, setSelections] = useState<string[]>([]);
+  const [result, setResult] = useState<PersonalityResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedCommunity, setSelectedCommunity] = useState<string | null>(null);
+  const [communities, setCommunities] = useState<CommunityData>(initialCommunityData);
+  const [participatedEventIds, setParticipatedEventIds] = useState<string[]>([]);
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  const handleLogin = (user: User) => {
+    setCurrentUser(user);
+    setGameState(GameState.Landing);
   };
 
-  const handleStartGame = () => {
-    setCollectedTraits([]);
-    setGameState(GameState.LEVEL_1_WHACK);
-    scrollToTop();
+  const handleLogout = () => {
+    setCurrentUser(null);
+    handleReset();
   };
 
-  const handleWhackComplete = (traits: string[]) => {
-    setCollectedTraits(traits);
-    // Move to Level 2
-    setGameState(GameState.LEVEL_2_TARGET);
-    scrollToTop();
+  const handleStart = () => {
+    setGameState(GameState.WouldYouRather);
+    setSelections([]);
+    setResult(null);
+    setError(null);
+  };
+  
+  const handleReset = () => {
+    setGameState(GameState.Landing);
+    setSelections([]);
+    setResult(null);
+    setError(null);
+    setSelectedCommunity(null);
   };
 
-  const handleTargetComplete = (traits: string[]) => {
-    setCollectedTraits(traits);
-    // Move to Level 3
-    setGameState(GameState.LEVEL_3_HOOP);
-    scrollToTop();
+  const handleNavigateToCommunity = () => {
+    setGameState(GameState.Community);
   };
 
-  const handleHoopComplete = (traits: string[]) => {
-    setCollectedTraits(traits);
-    // Move to Level 4
-    setGameState(GameState.LEVEL_4_BINGO);
-    scrollToTop();
+  const handleNavigateToProfile = () => {
+    setGameState(GameState.Profile);
+  };
+  
+  const handleNavigateToEvents = (communityName: string) => {
+    setSelectedCommunity(communityName);
+    setGameState(GameState.Events);
   };
 
-  const handleBingoComplete = async (finalTraits: string[]) => {
-    setGameState(GameState.ANALYZING);
-    scrollToTop();
+  const handleJoinEvent = (eventId: string) => {
+    setParticipatedEventIds(prev => [...prev, eventId]);
+    alert("Great! The event organizer will contact you with details soon.");
+  };
+
+  const handleBackToCommunityHub = () => {
+    setGameState(GameState.Community);
+    setSelectedCommunity(null);
+  }
+
+  const handleBack = () => {
+    if (gameState === GameState.CommunityThread) {
+        handleBackToCommunityHub();
+    } else if (gameState === GameState.Profile) {
+        handleReset();
+    } else if (gameState === GameState.Events) {
+        setGameState(GameState.CommunityThread);
+    }
+  };
+
+  const handleSelectCommunity = (community: string) => {
+    setSelectedCommunity(community);
+    setGameState(GameState.CommunityThread);
+  };
+
+  const handleWouldYouRatherComplete = (answers: string[]) => {
+    setSelections(prev => [...prev, ...answers]);
+    setGameState(GameState.Shooting);
+  };
+
+  const handleShootingComplete = (answers: string[]) => {
+    setSelections(prev => [...prev, ...answers]);
+    setGameState(GameState.RingToss);
+  };
+  
+  const handleRingTossComplete = useCallback(async (answers: string[]) => {
+    const finalSelections = [...selections, ...answers];
+    setSelections(finalSelections);
+    setGameState(GameState.Loading);
     try {
-      const result = await generatePersona(finalTraits);
-      setPersona(result);
-      setGameState(GameState.RESULT);
-      // Celebrate results loaded
-      if (window.confetti) {
-        window.confetti({
-          particleCount: 150,
-          spread: 120,
-          origin: { y: 0.6 }
+      const personalityResult = await getPersonalityAndHobbies(finalSelections);
+      setResult(personalityResult);
+      setError(null);
+      // Add discovered hobbies to user profile
+      if (currentUser && personalityResult.hobbies) {
+        const hobbyNames = personalityResult.hobbies.map(h => h.name);
+        setCurrentUser(prevUser => {
+          if (!prevUser) return null;
+          const newHobbies = [...new Set([...prevUser.hobbies, ...hobbyNames])];
+          return { ...prevUser, hobbies: newHobbies };
         });
       }
     } catch (e) {
       console.error(e);
-      setGameState(GameState.LANDING);
+      setError('We couldn’t quite find the map to your personality this time, but that just means you’re uncharted territory!');
+      setResult({
+        personalityTitle: "The Mystery Explorer",
+        tagline: "\"Adventure is out there!\"",
+        description: "We couldn’t quite find the map to your personality this time, but that just means you’re uncharted territory!",
+        hobbies: [
+            { name: "Scavenger Hunt", description: "Create your own adventure!", reason: "Why? You are full of surprises." }
+        ]
+      });
+    } finally {
+      setGameState(GameState.Results);
+    }
+  }, [selections, currentUser]);
+
+  const handleUpdateUserDescription = (description: string) => {
+    if (!currentUser) return;
+    setCurrentUser(prevUser => prevUser ? { ...prevUser, description } : null);
+  };
+
+  const handleUpdateUserAvatar = (avatar: string) => {
+    if (!currentUser) return;
+    setCurrentUser(prevUser => prevUser ? { ...prevUser, avatar } : null);
+  };
+
+  const handleAddPost = (communityName: string, post: Omit<Post, 'id' | 'replies' | 'author' | 'avatar'>) => {
+    if (!currentUser) return;
+    const newPost: Post = {
+      ...post,
+      id: Date.now().toString(),
+      author: currentUser.username,
+      avatar: currentUser.avatar,
+      replies: [],
+    };
+    setCommunities(prev => ({
+      ...prev,
+      [communityName]: {
+        ...prev[communityName],
+        posts: [newPost, ...prev[communityName].posts],
+      },
+    }));
+  };
+
+  const handleAddReply = (communityName: string, postId: string, reply: Omit<Reply, 'id' | 'author' | 'avatar'>) => {
+    if (!currentUser) return;
+    const newReply: Reply = {
+      ...reply,
+      id: Date.now().toString(),
+      author: currentUser.username,
+      avatar: currentUser.avatar,
+    };
+    setCommunities(prev => {
+        const updatedPosts = prev[communityName].posts.map(p => {
+            if (p.id === postId) {
+                return { ...p, replies: [...p.replies, newReply] };
+            }
+            return p;
+        });
+        return {
+            ...prev,
+            [communityName]: {
+                ...prev[communityName],
+                posts: updatedPosts,
+            },
+        };
+    });
+  };
+
+  const handleDeletePost = (communityName: string, postId: string) => {
+      if (window.confirm("Are you sure you want to delete this post?")) {
+        setCommunities(prev => ({
+            ...prev,
+            [communityName]: {
+                ...prev[communityName],
+                posts: prev[communityName].posts.filter(p => p.id !== postId),
+            },
+        }));
+      }
+  };
+
+  const handleDeleteReply = (communityName: string, postId: string, replyId: string) => {
+       if (window.confirm("Are you sure you want to delete this reply?")) {
+          setCommunities(prev => {
+              const updatedPosts = prev[communityName].posts.map(p => {
+                  if (p.id === postId) {
+                      return { ...p, replies: p.replies.filter(r => r.id !== replyId) };
+                  }
+                  return p;
+              });
+              return {
+                  ...prev,
+                  [communityName]: {
+                      ...prev[communityName],
+                      posts: updatedPosts,
+                  },
+              };
+          });
+       }
+  };
+
+  const renderContent = () => {
+    switch(gameState) {
+      case GameState.Landing:
+        return <LandingPage onStart={handleStart} />;
+      case GameState.WouldYouRather:
+        return <WouldYouRatherGame onComplete={handleWouldYouRatherComplete} />;
+      case GameState.Shooting:
+        return <ShootingGame onComplete={handleShootingComplete} />;
+      case GameState.RingToss:
+        return <RingTossGame onComplete={handleRingTossComplete} />;
+      case GameState.Loading:
+      case GameState.Results:
+        return <ResultsPage result={result} isLoading={gameState === GameState.Loading} error={error} onPlayAgain={handleReset} onNavigateToCommunity={handleNavigateToCommunity} />;
+      case GameState.Community:
+        return <CommunityPage onSelectCommunity={handleSelectCommunity} />;
+      case GameState.CommunityThread:
+        return selectedCommunity && currentUser ? (
+            <CommunityThread 
+                currentUser={currentUser}
+                communityName={selectedCommunity} 
+                community={communities[selectedCommunity]}
+                onAddPost={handleAddPost}
+                onAddReply={handleAddReply}
+                onDeletePost={handleDeletePost}
+                onDeleteReply={handleDeleteReply}
+                onNavigateToEvents={handleNavigateToEvents}
+            />
+        ) : <CommunityPage onSelectCommunity={handleSelectCommunity} />;
+      case GameState.Profile:
+        return currentUser ? (
+            <ProfilePage user={currentUser} onUpdateDescription={handleUpdateUserDescription} onUpdateAvatar={handleUpdateUserAvatar}/>
+        ) : <LandingPage onStart={handleStart} />;
+      case GameState.Events:
+        return selectedCommunity && communities[selectedCommunity] ? (
+            <EventsPage
+                communityName={selectedCommunity}
+                community={communities[selectedCommunity]}
+                onJoinEvent={handleJoinEvent}
+                participatedEventIds={participatedEventIds}
+            />
+        ) : <CommunityPage onSelectCommunity={handleSelectCommunity} />;
+      default:
+        return <LandingPage onStart={handleStart} />;
     }
   };
 
-  const handleReset = () => {
-    setPersona(null);
-    setCollectedTraits([]);
-    setGameState(GameState.LANDING);
-    scrollToTop();
-  };
+  if (!currentUser) {
+    return (
+       <div className="bg-[#FEF6E4] min-h-screen text-[#333] flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
+          <AuthPage onLoginSuccess={handleLogin} />
+       </div>
+    )
+  }
+
+  const isCommunitySection = gameState === GameState.Community || gameState === GameState.CommunityThread || gameState === GameState.Events;
+  const showBack = gameState === GameState.CommunityThread || gameState === GameState.Profile || gameState === GameState.Events;
 
   return (
-    <div className="min-h-screen relative font-sans text-fun-dark overflow-x-hidden bg-fun-yellow/10">
-      {/* Animated Background */}
-      <div className="fixed inset-0 z-0 pointer-events-none pattern-bg"></div>
-
-      <div ref={topRef}></div>
-      
-      {/* Fun Header */}
-      <header className="fixed top-0 w-full z-50 px-4 py-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="bg-white/80 backdrop-blur-md border-4 border-fun-dark rounded-2xl px-4 py-2 flex justify-between items-center shadow-hard-sm">
-            <div className="flex items-center gap-2 cursor-pointer hover:scale-105 transition-transform" onClick={handleReset}>
-               <div className="bg-fun-pink text-white p-2 rounded-xl border-2 border-fun-dark">
-                  <Smile size={24} strokeWidth={2.5} />
-               </div>
-               <span className="font-display text-xl tracking-tight text-fun-dark hidden md:block">
-                 Persona<span className="text-fun-pink">Bingo</span>
-               </span>
-            </div>
-            {gameState !== GameState.LANDING && (
-              <button 
-                onClick={handleReset} 
-                className="flex items-center gap-2 font-bold text-sm text-fun-dark bg-fun-blue hover:bg-fun-green border-2 border-fun-dark px-4 py-2 rounded-xl transition-colors shadow-[2px_2px_0px_0px_rgba(45,45,45,1)] active:translate-y-[2px] active:shadow-none"
-              >
-                <ArrowLeft size={16} strokeWidth={3} />
-                Start Over
-              </button>
-            )}
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="relative z-10 container mx-auto px-4 pt-32 pb-20 min-h-screen flex flex-col items-center justify-center">
-        
-        {gameState === GameState.LANDING && (
-          <Landing onStart={handleStartGame} />
-        )}
-
-        {gameState === GameState.LEVEL_1_WHACK && (
-          <WhackAMole onComplete={handleWhackComplete} />
-        )}
-
-        {gameState === GameState.LEVEL_2_TARGET && (
-          <TargetGame initialTraits={collectedTraits} onComplete={handleTargetComplete} />
-        )}
-
-        {gameState === GameState.LEVEL_3_HOOP && (
-          <HoopToss initialTraits={collectedTraits} onComplete={handleHoopComplete} />
-        )}
-
-        {gameState === GameState.LEVEL_4_BINGO && (
-          <BingoLevel initialTraits={collectedTraits} onComplete={handleBingoComplete} />
-        )}
-
-        {gameState === GameState.ANALYZING && (
-          <div className="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-8 animate-pop">
-            <div className="relative w-32 h-32">
-              <div className="absolute inset-0 bg-fun-pink rounded-full animate-ping opacity-40"></div>
-              <div className="relative bg-white rounded-full w-full h-full flex items-center justify-center border-4 border-fun-dark shadow-hard">
-                <Loader2 className="w-12 h-12 text-fun-blue animate-spin" strokeWidth={3} />
-              </div>
-            </div>
-            <div className="bg-white p-6 rounded-2xl border-4 border-fun-dark shadow-hard-sm max-w-md transform rotate-1">
-              <h2 className="text-2xl font-display text-fun-dark mb-2">
-                Mixing Potions... ✨
-              </h2>
-              <p className="text-lg font-medium text-gray-500">
-                Creating your ultimate personality profile!
-              </p>
-            </div>
-          </div>
-        )}
-
-        {gameState === GameState.RESULT && persona && (
-          <div className="max-w-5xl w-full animate-slide-up space-y-12">
-            
-            {/* Hero Result Header */}
-            <div className="text-center mb-8 relative">
-              <div className="inline-block bg-fun-yellow border-4 border-fun-dark px-6 py-2 rounded-full shadow-hard-sm mb-6 transform -rotate-2">
-                <span className="font-display text-lg text-fun-dark tracking-wide">YOUR OFFICIAL PERSONALITY</span>
-              </div>
-              
-              <div className="relative z-10 mb-8">
-                <h1 className="text-5xl md:text-8xl font-display text-fun-dark drop-shadow-[4px_4px_0px_#FF70A6] mb-6">
-                  {persona.archetype}
-                </h1>
-                <div className="bg-white inline-block px-8 py-4 rounded-3xl border-4 border-fun-dark shadow-hard transform rotate-1 max-w-2xl">
-                   <p className="text-2xl md:text-4xl font-display text-fun-purple leading-tight">
-                    "{persona.tagline}"
-                   </p>
-                </div>
-              </div>
-
-              <div className="max-w-3xl mx-auto bg-white p-8 rounded-[2rem] border-4 border-fun-dark shadow-hard-lg text-xl md:text-2xl font-medium text-gray-700 leading-relaxed">
-                 {persona.description}
-              </div>
-            </div>
-
-            {/* Hobbies Section */}
-            <div className="max-w-4xl mx-auto">
-                 <div className="flex items-center justify-center gap-3 mb-8">
-                   <div className="p-3 bg-fun-green border-2 border-fun-dark text-fun-dark rounded-xl shadow-hard-sm rotate-[-6deg]">
-                     <Heart size={32} strokeWidth={3} fill="currentColor" className="text-white" />
-                   </div>
-                   <h3 className="text-4xl font-display text-fun-dark">Hobbies For You</h3>
-                 </div>
-
-                 <div className="grid md:grid-cols-3 gap-6">
-                   {persona.hobbies.map((hobby, i) => (
-                     <div key={i} className="bg-white p-6 rounded-3xl border-4 border-fun-dark shadow-hard hover:-translate-y-2 hover:shadow-hard-lg transition-all duration-300">
-                       <div className="bg-fun-blue w-12 h-12 rounded-full flex items-center justify-center border-2 border-fun-dark mb-4 text-xl font-display text-fun-dark">
-                         {i + 1}
-                       </div>
-                       <h4 className="font-display text-2xl text-fun-dark mb-3">{hobby.name}</h4>
-                       <p className="text-gray-600 mb-4 leading-snug min-h-[3rem]">{hobby.description}</p>
-                       <div className="bg-fun-yellow/30 p-3 rounded-xl border-2 border-fun-dark/10 text-sm font-bold text-fun-dark/70">
-                         Why? {hobby.whyItFits}
-                       </div>
-                     </div>
-                   ))}
-                 </div>
-            </div>
-
-            <div className="flex justify-center pt-12 pb-8">
-               <button 
-                  onClick={handleReset}
-                  className="bg-fun-dark text-white font-display text-xl px-8 py-4 rounded-2xl hover:bg-gray-800 transition-colors flex items-center gap-3 border-4 border-transparent hover:border-fun-pink"
-               >
-                  <RefreshCw size={24} />
-                  Play Again
-               </button>
-            </div>
-
-          </div>
-        )}
+    <div className="bg-[#FEF6E4] min-h-screen text-[#333] flex flex-col items-center p-4 sm:p-6 lg:p-8">
+      <Header 
+        currentUser={currentUser}
+        onLogout={handleLogout}
+        onStartOver={handleReset} 
+        onNavigateToCommunity={handleNavigateToCommunity}
+        onNavigateToProfile={handleNavigateToProfile}
+        showStartOver={!isCommunitySection && gameState !== GameState.Landing && gameState !== GameState.Profile} 
+        onBack={handleBack}
+        showBack={showBack}
+      />
+      <main className="w-full max-w-5xl flex-grow flex flex-col items-center justify-center">
+        {renderContent()}
       </main>
     </div>
   );
-}
+};
 
 export default App;

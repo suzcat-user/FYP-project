@@ -5,6 +5,7 @@ import * as HobbyIcons from './icons/HobbyIcons';
 
 interface ShootingGameProps {
   onComplete: (selections: string[]) => void;
+  onBack?: () => void;
 }
 
 const HOBBY_LIST = Object.keys(HobbyIcons);
@@ -41,7 +42,7 @@ const createInitialTargets = (count: number, width: number, height: number): Tar
   return targets;
 };
 
-const ShootingGame: React.FC<ShootingGameProps> = ({ onComplete }) => {
+const ShootingGame: React.FC<ShootingGameProps> = ({ onComplete, onBack }) => {
   const [selectedTargets, setSelectedTargets] = useState<string[]>([]);
   const [targets, setTargets] = useState<Target[]>([]);
   const [cursorPos, setCursorPos] = useState({ x: -100, y: -100 });
@@ -164,6 +165,20 @@ const ShootingGame: React.FC<ShootingGameProps> = ({ onComplete }) => {
           {[...Array(MAX_SELECTIONS)].map((_, i) => (
             <div key={i} className={`w-6 h-6 rounded-full border-2 border-black ${i < selectedTargets.length ? 'bg-yellow-400' : 'bg-white'}`}></div>
           ))}
+        </div>
+        <div className="grid grid-cols-2 gap-4 w-full max-w-sm mb-4">
+          <button
+            onClick={onBack}
+            className="bg-white hover:bg-gray-50 text-black font-bold py-3 px-4 rounded-2xl border-4 border-black transition-all"
+          >
+            ← Back
+          </button>
+          <button
+            onClick={() => onComplete(selectedTargets)}
+            className="bg-white hover:bg-gray-50 text-black font-bold py-3 px-4 rounded-2xl border-4 border-black transition-all"
+          >
+            Skip Question →
+          </button>
         </div>
         <button
           onClick={() => onComplete(selectedTargets)}

@@ -4,6 +4,7 @@ import { RingIcon } from './icons/LevelIcons';
 
 interface RingTossGameProps {
   onComplete: (selections: string[]) => void;
+  onBack?: () => void;
 }
 
 const POSTS = [
@@ -15,7 +16,7 @@ const POSTS = [
 const MAX_SELECTIONS = 3;
 const postHexColors = ["#F8A07E", "#84D2F6", "#FDE24F", "#90F1AC"];
 
-const RingTossGame: React.FC<RingTossGameProps> = ({ onComplete }) => {
+const RingTossGame: React.FC<RingTossGameProps> = ({ onComplete, onBack }) => {
   const [landedHoops, setLandedHoops] = useState<string[]>([]);
   const [tossing, setTossing] = useState<string | null>(null);
 
@@ -124,6 +125,20 @@ const RingTossGame: React.FC<RingTossGameProps> = ({ onComplete }) => {
             <div key={i} className={`w-6 h-6 rounded-full border-2 border-black ${i < landedHoops.length ? 'bg-[#FF8FAB]' : 'bg-white'}`}>
             </div>
           ))}
+        </div>
+        <div className="grid grid-cols-2 gap-4 w-full max-w-sm mb-4">
+          <button
+            onClick={onBack}
+            className="bg-white hover:bg-gray-50 text-black font-bold py-3 px-4 rounded-2xl border-4 border-black transition-all"
+          >
+            ← Back
+          </button>
+          <button
+            onClick={() => onComplete(landedHoops)}
+            className="bg-white hover:bg-gray-50 text-black font-bold py-3 px-4 rounded-2xl border-4 border-black transition-all"
+          >
+            Skip Question →
+          </button>
         </div>
         <button
           onClick={() => onComplete(landedHoops)}

@@ -97,6 +97,14 @@ const App: React.FC = () => {
     setSelections(prev => [...prev, ...answers]);
     setGameState(GameState.RingToss);
   };
+
+  const handleShootingBack = () => {
+    setGameState(GameState.WouldYouRather);
+  };
+
+  const handleRingTossBack = () => {
+    setGameState(GameState.Shooting);
+  };
   
   const handleRingTossComplete = useCallback(async (answers: string[]) => {
     const finalSelections = [...selections, ...answers];
@@ -223,9 +231,9 @@ const App: React.FC = () => {
       case GameState.WouldYouRather:
         return <WouldYouRatherGame onComplete={handleWouldYouRatherComplete} />;
       case GameState.Shooting:
-        return <ShootingGame onComplete={handleShootingComplete} />;
+        return <ShootingGame onComplete={handleShootingComplete} onBack={handleShootingBack} />;
       case GameState.RingToss:
-        return <RingTossGame onComplete={handleRingTossComplete} />;
+        return <RingTossGame onComplete={handleRingTossComplete} onBack={handleRingTossBack} />;
       case GameState.Loading:
       case GameState.Results:
         return <ResultsPage result={result} isLoading={gameState === GameState.Loading} error={error} onPlayAgain={handleReset} onNavigateToCommunity={handleNavigateToCommunity} />;

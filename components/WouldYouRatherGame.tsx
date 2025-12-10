@@ -50,6 +50,18 @@ const WouldYouRatherGame: React.FC<WouldYouRatherGameProps> = ({ onComplete }) =
     handleNext(answers);
   }
 
+  const handleBack = () => {
+    if (isAnimating || currentIndex === 0) return;
+    
+    setIsAnimating(true);
+    setTimeout(() => {
+      setCurrentIndex(currentIndex - 1);
+      const newAnswers = answers.slice(0, -1);
+      setAnswers(newAnswers);
+      setIsAnimating(false);
+    }, 300);
+  }
+
   const currentQuestion = QUESTIONS[currentIndex];
   const progressPercentage = ((currentIndex + 1) / QUESTIONS.length) * 100;
 
@@ -73,12 +85,19 @@ const WouldYouRatherGame: React.FC<WouldYouRatherGameProps> = ({ onComplete }) =
             </button>
           ))}
         </div>
-        <div className="text-center mt-6">
+        <div className="grid grid-cols-2 gap-4 mt-6">
+            <button
+              onClick={handleBack}
+              disabled={currentIndex === 0}
+              className="bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 text-black font-bold py-3 px-6 rounded-2xl border-4 border-black transition-all disabled:cursor-not-allowed"
+            >
+                ← Back
+            </button>
             <button
               onClick={handleSkip}
-              className="text-gray-500 hover:text-black font-bold py-2 px-4 rounded-full transition-colors"
+              className="bg-white hover:bg-gray-50 text-black font-bold py-3 px-6 rounded-2xl border-4 border-black transition-all"
             >
-                Skip Question
+                Skip Question →
             </button>
         </div>
       </div>

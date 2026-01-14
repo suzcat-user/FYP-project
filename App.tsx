@@ -1,151 +1,301 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { GameStep, Trait, Scores, Hobby } from './types';
-import WelcomeScreen from './components/WelcomeScreen';
-import WouldYouRather from './components/WouldYouRather';
-import RingToss from './components/RingToss';
-import ShootingGallery from './components/ShootingGallery';
-import ResultsScreen from './components/ResultsScreen';
-import CommunityScreen from './components/CommunityScreen';
-import HobbyCommunity from './components/HobbyCommunity';
-import AuthScreen from './components/AuthScreen';
-import ProfileScreen from './components/ProfileScreen';
+import React, { useState, useCallback } from 'react';
+import { GameState, PersonalityResult, CommunityData, Post, Reply, User } from './types';
+import LandingPage from './components/LandingPage';
+import Header from './components/Header';
+import WouldYouRatherGame from './components/WouldYouRatherGame';
+import ShootingGame from './components/ShootingGame';
+import RingTossGame from './components/RingTossGame';
+import ResultsPage from './components/ResultsPage';
+import CommunityPage from './components/CommunityPage';
+import CommunityThread from './components/CommunityThread';
+import { getPersonalityAndHobbies } from './services/geminiService';
+import { initialCommunityData } from './components/communityData';
+import AuthPage from './components/AuthPage';
+import ProfilePage from './components/ProfilePage';
+import EventsPage from './components/EventsPage';
+
 
 const App: React.FC = () => {
-  const [gameStep, setGameStep] = useState<GameStep>(GameStep.Auth);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [selectedHobby, setSelectedHobby] = useState<Hobby | null>(null);
-  const [scores, setScores] = useState<Scores>({
-    CREATIVE: 0,
-    ACTIVE: 0,
-    STRATEGIC: 0,
-    CALM: 0,
-    SOCIAL: 0,
-    EXPLORER: 0
-  });
+  const [gameState, setGameState] = useState<GameState>(GameState.Landing);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [selections, setSelections] = useState<string[]>([]);
+  const [result, setResult] = useState<PersonalityResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedCommunity, setSelectedCommunity] = useState<string | null>(null);
+  const [communities, setCommunities] = useState<CommunityData>(initialCommunityData);
+  const [participatedEventIds, setParticipatedEventIds] = useState<string[]>([]);
 
-  const handleNextGame = useCallback(() => {
-    setGameStep(prevStep => {
-      switch (prevStep) {
-        case GameStep.Auth: return GameStep.Welcome;
-        case GameStep.Welcome: return GameStep.WouldYouRather;
-        case GameStep.WouldYouRather: return GameStep.RingToss;
-        case GameStep.RingToss: return GameStep.ShootingGallery;
-        case GameStep.ShootingGallery: return GameStep.Results;
-        case GameStep.Results: return GameStep.Community;
-        case GameStep.Community: return GameStep.Welcome;
-        default: return prevStep;
+  const handleLogin = (user: User) => {
+    setCurrentUser(user);
+    setGameState(GameState.Landing);
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    handleReset();
+  };
+
+  const handleStart = () => {
+    setGameState(GameState.WouldYouRather);
+    setSelections([]);
+    setResult(null);
+    setError(null);
+  };
+  
+  const handleReset = () => {
+    setGameState(GameState.Landing);
+    setSelections([]);
+    setResult(null);
+    setError(null);
+    setSelectedCommunity(null);
+  };
+
+  const handleNavigateToCommunity = () => {
+    setGameState(GameState.Community);
+  };
+
+  const handleNavigateToProfile = () => {
+    setGameState(GameState.Profile);
+  };
+  
+  const handleNavigateToEvents = (communityName: string) => {
+    setSelectedCommunity(communityName);
+    setGameState(GameState.Events);
+  };
+
+  const handleJoinEvent = (eventId: string) => {
+    setParticipatedEventIds(prev => [...prev, eventId]);
+    alert("Great! The event organizer will contact you with details soon.");
+  };
+
+  const handleBackToCommunityHub = () => {
+    setGameState(GameState.Community);
+    setSelectedCommunity(null);
+  }
+
+  const handleBack = () => {
+    if (gameState === GameState.CommunityThread) {
+        handleBackToCommunityHub();
+    } else if (gameState === GameState.Profile) {
+        handleReset();
+    } else if (gameState === GameState.Events) {
+        setGameState(GameState.CommunityThread);
+    }
+  };
+
+  const handleSelectCommunity = (community: string) => {
+    setSelectedCommunity(community);
+    setGameState(GameState.CommunityThread);
+  };
+
+  const handleWouldYouRatherComplete = (answers: string[]) => {
+    setSelections(prev => [...prev, ...answers]);
+    setGameState(GameState.Shooting);
+  };
+
+  const handleShootingComplete = (answers: string[]) => {
+    setSelections(prev => [...prev, ...answers]);
+    setGameState(GameState.RingToss);
+  };
+
+  const handleShootingBack = () => {
+    setGameState(GameState.WouldYouRather);
+  };
+
+  const handleRingTossBack = () => {
+    setGameState(GameState.Shooting);
+  };
+  
+  const handleRingTossComplete = useCallback(async (answers: string[]) => {
+    const finalSelections = [...selections, ...answers];
+    setSelections(finalSelections);
+    setGameState(GameState.Loading);
+    try {
+      const personalityResult = await getPersonalityAndHobbies(finalSelections);
+      setResult(personalityResult);
+      setError(null);
+      // Add discovered hobbies to user profile
+      if (currentUser && personalityResult.hobbies) {
+        const hobbyNames = personalityResult.hobbies.map(h => h.name);
+        setCurrentUser(prevUser => {
+          if (!prevUser) return null;
+          const newHobbies = [...new Set([...prevUser.hobbies, ...hobbyNames])];
+          return { ...prevUser, hobbies: newHobbies };
+        });
       }
-    });
-  }, []);
-
-  const handleAnswer = useCallback((traits: Trait[]) => {
-    setScores(prevScores => {
-      const newScores = { ...prevScores };
-      traits.forEach(trait => {
-        const randomBonus = Math.random() * 0.75;
-        newScores[trait] = (newScores[trait] || 0) + (1 + randomBonus);
+    } catch (e) {
+      console.error(e);
+      setError('We couldn’t quite find the map to your personality this time, but that just means you’re uncharted territory!');
+      setResult({
+        personalityTitle: "The Mystery Explorer",
+        tagline: "\"Adventure is out there!\"",
+        description: "We couldn’t quite find the map to your personality this time, but that just means you’re uncharted territory!",
+        hobbies: [
+            { name: "Scavenger Hunt", description: "Create your own adventure!", reason: "Why? You are full of surprises." }
+        ]
       });
-      return newScores;
+    } finally {
+      setGameState(GameState.Results);
+    }
+  }, [selections, currentUser]);
+
+  const handleUpdateUserDescription = (description: string) => {
+    if (!currentUser) return;
+    setCurrentUser(prevUser => prevUser ? { ...prevUser, description } : null);
+  };
+
+  const handleUpdateUserAvatar = (avatar: string) => {
+    if (!currentUser) return;
+    setCurrentUser(prevUser => prevUser ? { ...prevUser, avatar } : null);
+  };
+
+  const handleAddPost = (communityName: string, post: Omit<Post, 'id' | 'replies' | 'author' | 'avatar'>) => {
+    if (!currentUser) return;
+    const newPost: Post = {
+      ...post,
+      id: Date.now().toString(),
+      author: currentUser.username,
+      avatar: currentUser.avatar,
+      replies: [],
+    };
+    setCommunities(prev => ({
+      ...prev,
+      [communityName]: {
+        ...prev[communityName],
+        posts: [newPost, ...prev[communityName].posts],
+      },
+    }));
+  };
+
+  const handleAddReply = (communityName: string, postId: string, reply: Omit<Reply, 'id' | 'author' | 'avatar'>) => {
+    if (!currentUser) return;
+    const newReply: Reply = {
+      ...reply,
+      id: Date.now().toString(),
+      author: currentUser.username,
+      avatar: currentUser.avatar,
+    };
+    setCommunities(prev => {
+        const updatedPosts = prev[communityName].posts.map(p => {
+            if (p.id === postId) {
+                return { ...p, replies: [...p.replies, newReply] };
+            }
+            return p;
+        });
+        return {
+            ...prev,
+            [communityName]: {
+                ...prev[communityName],
+                posts: updatedPosts,
+            },
+        };
     });
-  }, []);
-
-  const handleGoToHobbyCommunity = (hobby: Hobby) => {
-    setSelectedHobby(hobby);
-    setGameStep(GameStep.HobbyCommunity);
   };
 
-  const totalScore = useMemo(() => {
-    const values = Object.values(scores) as number[];
-    const sum = values.reduce((a, b) => a + b, 0);
-    return Math.floor(sum * 100);
-  }, [scores]);
+  const handleDeletePost = (communityName: string, postId: string) => {
+      if (window.confirm("Are you sure you want to delete this post?")) {
+        setCommunities(prev => ({
+            ...prev,
+            [communityName]: {
+                ...prev[communityName],
+                posts: prev[communityName].posts.filter(p => p.id !== postId),
+            },
+        }));
+      }
+  };
 
-  const gameProgress = useMemo(() => {
-    switch (gameStep) {
-      case GameStep.WouldYouRather: return 1;
-      case GameStep.RingToss: return 2;
-      case GameStep.ShootingGallery: return 3;
-      default: return 0;
-    }
-  }, [gameStep]);
+  const handleDeleteReply = (communityName: string, postId: string, replyId: string) => {
+       if (window.confirm("Are you sure you want to delete this reply?")) {
+          setCommunities(prev => {
+              const updatedPosts = prev[communityName].posts.map(p => {
+                  if (p.id === postId) {
+                      return { ...p, replies: p.replies.filter(r => r.id !== replyId) };
+                  }
+                  return p;
+              });
+              return {
+                  ...prev,
+                  [communityName]: {
+                      ...prev[communityName],
+                      posts: updatedPosts,
+                  },
+              };
+          });
+       }
+  };
 
-  const renderGameStep = () => {
-    switch (gameStep) {
-      case GameStep.Auth:
-        return <AuthScreen onLogin={handleNextGame} isDarkMode={isDarkMode} />;
-      case GameStep.Welcome:
-        return <WelcomeScreen onStart={handleNextGame} isDarkMode={isDarkMode} />;
-      case GameStep.WouldYouRather:
-        return <WouldYouRather onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} />;
-      case GameStep.RingToss:
-        return <RingToss onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} />;
-      case GameStep.ShootingGallery:
-        return <ShootingGallery onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} />;
-      case GameStep.Results:
-        return <ResultsScreen scores={scores} onNext={handleNextGame} onSelectHobby={handleGoToHobbyCommunity} isDarkMode={isDarkMode} />;
-      case GameStep.Community:
-        return <CommunityScreen onRestart={handleNextGame} scores={scores} isDarkMode={isDarkMode} />;
-      case GameStep.HobbyCommunity:
-        return <HobbyCommunity hobby={selectedHobby} onBack={() => setGameStep(GameStep.Results)} isDarkMode={isDarkMode} />;
-      case GameStep.Profile:
-        return <ProfileScreen scores={scores} onBack={() => setGameStep(GameStep.Welcome)} isDarkMode={isDarkMode} />;
+  const renderContent = () => {
+    switch(gameState) {
+      case GameState.Landing:
+        return <LandingPage onStart={handleStart} />;
+      case GameState.WouldYouRather:
+        return <WouldYouRatherGame onComplete={handleWouldYouRatherComplete} />;
+      case GameState.Shooting:
+        return <ShootingGame onComplete={handleShootingComplete} onBack={handleShootingBack} />;
+      case GameState.RingToss:
+        return <RingTossGame onComplete={handleRingTossComplete} onBack={handleRingTossBack} />;
+      case GameState.Loading:
+      case GameState.Results:
+        return <ResultsPage result={result} isLoading={gameState === GameState.Loading} error={error} onPlayAgain={handleReset} onNavigateToCommunity={handleNavigateToCommunity} />;
+      case GameState.Community:
+        return <CommunityPage onSelectCommunity={handleSelectCommunity} />;
+      case GameState.CommunityThread:
+        return selectedCommunity && currentUser ? (
+            <CommunityThread 
+                currentUser={currentUser}
+                communityName={selectedCommunity} 
+                community={communities[selectedCommunity]}
+                onAddPost={handleAddPost}
+                onAddReply={handleAddReply}
+                onDeletePost={handleDeletePost}
+                onDeleteReply={handleDeleteReply}
+                onNavigateToEvents={handleNavigateToEvents}
+            />
+        ) : <CommunityPage onSelectCommunity={handleSelectCommunity} />;
+      case GameState.Profile:
+        return currentUser ? (
+            <ProfilePage user={currentUser} onUpdateDescription={handleUpdateUserDescription} onUpdateAvatar={handleUpdateUserAvatar}/>
+        ) : <LandingPage onStart={handleStart} />;
+      case GameState.Events:
+        return selectedCommunity && communities[selectedCommunity] ? (
+            <EventsPage
+                communityName={selectedCommunity}
+                community={communities[selectedCommunity]}
+                onJoinEvent={handleJoinEvent}
+                participatedEventIds={participatedEventIds}
+            />
+        ) : <CommunityPage onSelectCommunity={handleSelectCommunity} />;
       default:
-        return <WelcomeScreen onStart={handleNextGame} isDarkMode={isDarkMode} />;
+        return <LandingPage onStart={handleStart} />;
     }
   };
+
+  if (!currentUser) {
+    return (
+       <div className="bg-[#FEF6E4] min-h-screen text-[#333] flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
+          <AuthPage onLoginSuccess={handleLogin} />
+       </div>
+    )
+  }
+
+  const isCommunitySection = gameState === GameState.Community || gameState === GameState.CommunityThread || gameState === GameState.Events;
+  const showBack = gameState === GameState.CommunityThread || gameState === GameState.Profile || gameState === GameState.Events;
 
   return (
-    <div className={`h-screen w-screen overflow-hidden flex items-center justify-center transition-colors duration-500 bg-[#000a18]`}>
-      {/* Visual CRT Overlays (Non-flickering) */}
-      <div className="absolute inset-0 pointer-events-none z-[100] bg-[radial-gradient(circle,transparent_50%,rgba(0,0,0,0.3)_100%)]"></div>
-      
-      {/* Main Cabinet Frame */}
-      <div className={`w-[98vw] h-[96vh] relative flex flex-col border-[12px] border-slate-800 rounded-3xl overflow-hidden shadow-[0_0_100px_rgba(14,165,233,0.3)] transition-all duration-500 ${isDarkMode ? 'border-[#1e1b4b] shadow-purple-900/40' : 'border-[#0c4a6e]'}`}>
-        
-        {/* Hardware Bezel */}
-        <div className="absolute inset-0 border-[4px] border-white/5 pointer-events-none z-50 rounded-2xl"></div>
-
-        {/* HUD Top Bar */}
-        <div className={`h-16 md:h-20 text-white flex justify-between items-center font-press-start text-[1.2vmin] md:text-[1.6vmin] z-50 relative px-6 border-b-8 shadow-2xl transition-colors duration-500 ${isDarkMode ? 'bg-[#1e1b4b] border-indigo-500/30' : 'bg-sky-950 border-sky-400/30'}`}>
-             <div className="flex gap-8 items-center">
-                 <button onClick={() => setGameStep(GameStep.Profile)} className="flex flex-col items-center group">
-                    <span className="text-rose-500 animate-pulse drop-shadow-[0_0_5px_rgba(244,63,94,0.5)]">1UP</span>
-                    <span className="text-sky-300">USER_ID</span>
-                 </button>
-                 <div className="flex flex-col">
-                    <span className="text-sky-500/50 text-[1vmin]">SCORE</span>
-                    <span className="text-sky-100 font-press-start">{totalScore.toString().padStart(6, '0')}</span>
-                 </div>
-             </div>
-
-             <div className="flex flex-col items-center">
-                <div className="text-yellow-400 chromatic tracking-widest uppercase mb-1">HOBBY ARCADE</div>
-                <div className="h-1 w-32 bg-sky-500/20 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 h-full w-1/2 bg-sky-400 animate-[marquee_2s_linear_infinite]"></div>
-                </div>
-             </div>
-
-             <div className="flex gap-8 items-center">
-                 <button 
-                    onClick={() => setIsDarkMode(!isDarkMode)}
-                    className={`px-4 py-2 border-2 text-[1.2vmin] transition-all hover:scale-105 active:scale-95 flex items-center gap-2 ${isDarkMode ? 'border-purple-500 bg-purple-500/20 text-purple-400' : 'border-sky-400 bg-sky-400/20 text-sky-300'}`}
-                 >
-                    <div className={`w-2 h-2 rounded-full animate-pulse ${isDarkMode ? 'bg-purple-400' : 'bg-sky-400'}`}></div>
-                    {isDarkMode ? 'POWER: DARK' : 'POWER: LIGHT'}
-                 </button>
-
-                 <div className="flex flex-col items-end">
-                     <span className="text-sky-500/50 text-[1vmin]">CREDITS</span>
-                     <span className="text-white neon-glow-blue">FREE PLAY</span>
-                 </div>
-             </div>
-        </div>
-
-        {/* Screen Content */}
-        <div className={`flex-1 w-full h-full overflow-hidden relative crt-bloom transition-colors duration-500 ${isDarkMode ? 'bg-slate-950' : 'bg-white'}`}>
-           {renderGameStep()}
-        </div>
-      </div>
+    <div className="bg-[#FEF6E4] min-h-screen text-[#333] flex flex-col items-center p-4 sm:p-6 lg:p-8">
+      <Header 
+        currentUser={currentUser}
+        onLogout={handleLogout}
+        onStartOver={handleReset} 
+        onNavigateToCommunity={handleNavigateToCommunity}
+        onNavigateToProfile={handleNavigateToProfile}
+        showStartOver={!isCommunitySection && gameState !== GameState.Landing && gameState !== GameState.Profile} 
+        onBack={handleBack}
+        showBack={showBack}
+      />
+      <main className="w-full max-w-5xl flex-grow flex flex-col items-center justify-center">
+        {renderContent()}
+      </main>
     </div>
   );
 };

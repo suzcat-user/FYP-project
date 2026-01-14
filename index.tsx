@@ -1,16 +1,21 @@
-
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-
-const rootElement = document.getElementById('root');
-if (!rootElement) {
-  throw new Error("Could not find root element to mount to");
+// Critical: Polyfill process for browser environments before importing anything else
+if (typeof window !== 'undefined') {
+  (window as any).process = { env: { API_KEY: (window as any).process?.env?.API_KEY || '' } };
 }
 
-const root = ReactDOM.createRoot(rootElement);
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App';
+
+const container = document.getElementById('root');
+
+if (container) {
+  const root = createRoot(container);
+  root.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+} else {
+  console.error("Critical Failure: Root container not found.");
+}

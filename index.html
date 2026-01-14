@@ -4,34 +4,142 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Start Hobby, Start Happy</title>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <title>Hobby Finder Arcade</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      window.onerror = function(msg, url, line, col, error) {
+        document.body.innerHTML = `
+          <div style="background:#000510;color:#0ea5e9;font-family:monospace;padding:20px;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:20px solid #0369a1;">
+            <h1 style="font-size:3rem;margin-bottom:1rem;text-shadow: 2px 2px #f43f5e;">SYSTEM CRASH</h1>
+            <p style="font-size:1.5rem;">FATAL ERROR: ${msg}</p>
+            <button onclick="location.reload()" style="background:#0ea5e9;color:#fff;padding:15px 30px;border:none;cursor:pointer;font-family:inherit;margin-top:20px;box-shadow: 4px 4px 0px #0369a1;">REBOOT MODULE</button>
+          </div>
+        `;
+        return false;
+      };
+    </script>
     <style>
-      body {
-        font-family: 'Inter', sans-serif;
+      /* NOHEMI Typeface - add NOHEMI-Regular.woff2/.woff into /fonts/ */
+      @font-face {
+        font-family: 'NOHEMI';
+        src: local('NOHEMI'), url('/fonts/NOHEMI-Regular.woff2') format('woff2'),
+             url('/fonts/NOHEMI-Regular.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
       }
-      .font-fredoka {
-        font-family: 'Fredoka One', cursive;
+
+      body {
+        font-family: 'NOHEMI', 'VT323', monospace;
+        background-color: #000b18;
+        overflow: hidden;
+        margin: 0;
+      }
+      
+      .font-press-start { font-family: 'NOHEMI', 'Press Start 2P', cursive; }
+
+      /* Neon Pulse */
+      @keyframes neon-pulse {
+        0%, 100% { filter: drop-shadow(0 0 5px #0ea5e9) drop-shadow(0 0 10px #0ea5e9); }
+        50% { filter: drop-shadow(0 0 10px #38bdf8) drop-shadow(0 0 15px #38bdf8); }
+      }
+      .neon-glow-blue { animation: neon-pulse 2s infinite; }
+
+      /* Scanline Animation */
+      @keyframes scanline {
+        0% { transform: translateY(-100%); }
+        100% { transform: translateY(100%); }
+      }
+      .scanline-overlay {
+        position: fixed;
+        inset: 0;
+        background: linear-gradient(to bottom, transparent, rgba(14, 165, 233, 0.05), transparent);
+        height: 20px;
+        animation: scanline 6s linear infinite;
+        pointer-events: none;
+        z-index: 999;
+      }
+
+      /* Moving Grid Background */
+      @keyframes grid-move {
+        0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+        100% { transform: perspective(500px) rotateX(60deg) translateY(40px); }
+      }
+      .retro-grid {
+        position: absolute;
+        bottom: -100px;
+        left: -50%;
+        width: 200%;
+        height: 400px;
+        background-image: 
+          linear-gradient(rgba(14, 165, 233, 0.3) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(14, 165, 233, 0.3) 1px, transparent 1px);
+        background-size: 40px 40px;
+        animation: grid-move 3s linear infinite;
+        z-index: 0;
+        mask-image: linear-gradient(to top, black, transparent);
+      }
+
+      /* Butterfly Animations */
+      @keyframes butterfly-fly {
+        0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+        25% { transform: translate(15vw, -10vh) rotate(15deg) scale(1.1); }
+        50% { transform: translate(30vw, 5vh) rotate(-10deg) scale(0.9); }
+        75% { transform: translate(10vw, 15vh) rotate(20deg) scale(1.2); }
+        100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+      }
+
+      @keyframes wing-flap {
+        0%, 100% { transform: rotateY(0deg); }
+        50% { transform: rotateY(70deg); }
+      }
+
+      @keyframes float-around {
+        0% { transform: translate(0, 0); }
+        33% { transform: translate(30px, -50px); }
+        66% { transform: translate(-40px, 20px); }
+        100% { transform: translate(0, 0); }
+      }
+
+      /* Chromatic Aberration Text */
+      .chromatic {
+        position: relative;
+        text-shadow: 2px 0 #ff00ff, -2px 0 #00ffff;
+      }
+
+      .crt-bloom {
+        filter: contrast(1.05) brightness(1.05) saturate(1.1);
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #000b18;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #0ea5e9;
+        border-radius: 4px;
       }
     </style>
-  <script type="importmap">
+    <script type="importmap">
 {
   "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
     "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0"
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet" href="/index.css">
 </head>
   <body>
+    <div class="scanline-overlay"></div>
     <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
-  </body>
+    <script type="module" src="./index.tsx"></script>
+  <script type="module" src="/index.tsx"></script>
+</body>
 </html>

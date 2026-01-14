@@ -1,68 +1,61 @@
-export enum GameState {
-  Landing,
-  WouldYouRather,
-  Shooting,
-  RingToss,
-  Loading,
-  Results,
-  Community,
-  CommunityThread,
-  Profile,
-  Events,
+// Enum representing the different steps/screens of the arcade application flow
+export enum GameStep {
+  Auth = 0,
+  Welcome = 1,
+  WouldYouRather = 2,
+  RingToss = 3,
+  ShootingGallery = 4,
+  Results = 5,
+  Community = 6,
+  HobbyCommunity = 7,
+  Profile = 8
 }
 
-export interface User {
-  id: string;
-  username: string;
-  avatar: string;
-  email?: string;
-  description: string;
-  hobbies: string[];
+export enum Trait {
+  CREATIVE = 'CREATIVE',
+  ACTIVE = 'ACTIVE',
+  STRATEGIC = 'STRATEGIC',
+  CALM = 'CALM',
+  SOCIAL = 'SOCIAL',
+  EXPLORER = 'EXPLORER'
+}
+
+export type Scores = Record<Trait, number>;
+
+export interface Answer {
+  text: string;
+  trait: Trait;
+  description?: string;
+}
+
+export interface Question {
+  id: number;
+  question: string;
+  answers: Answer[];
 }
 
 export interface Hobby {
   name: string;
   description: string;
-  reason: string;
+  trait?: Trait;
 }
 
-export interface PersonalityResult {
-  personalityTitle: string;
-  tagline: string;
-  description: string;
-  hobbies: Hobby[];
-}
-
-export interface Reply {
+export interface Comment {
   id: string;
   author: string;
-  avatar: string;
-  text: string;
+  content: string;
+  timestamp: string;
+  upvotes: number;
+  gif?: string;
 }
 
 export interface Post {
   id: string;
   author: string;
-  avatar: string;
-  text: string;
-  image?: string | null;
-  replies: Reply[];
-}
-
-export interface Event {
-  id: string;
-  name: string;
-  date: string;
-  location: string;
-  cost: string;
-}
-
-export interface Community {
-  color: string;
-  posts: Post[];
-  events?: Event[];
-}
-
-export interface CommunityData {
-  [key: string]: Community;
+  title: string;
+  content: string;
+  attachment?: string;
+  upvotes: number;
+  comments: Comment[];
+  timestamp: string;
 }

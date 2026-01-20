@@ -112,15 +112,17 @@ const App: React.FC = () => {
                  {/* Logo */}
                  <img src="components/Logos-02.png" alt="Hobby Arcade Logo" className="w-16 h-16 md:w-20 md:h-20 object-contain drop-shadow-lg hover:scale-110 transition-transform duration-300" />
                  
-                 {/* Home Button */}
-                 <button 
-                    onClick={() => setGameStep(GameStep.Welcome)} 
-                    className="flex flex-col items-center group hover:scale-110 transition-transform duration-300"
-                    title="Return to Home"
-                 >
-                    <span className="text-green-500 animate-pulse drop-shadow-[0_0_5px_rgba(34,197,94,0.5)]">HOME</span>
-                    <span className="text-sky-300">▲</span>
-                 </button>
+                 {/* Home Button - Hidden on Auth screen */}
+                 {gameStep !== GameStep.Auth && (
+                   <button 
+                      onClick={() => setGameStep(GameStep.Welcome)} 
+                      className="flex flex-col items-center group hover:scale-110 transition-transform duration-300"
+                      title="Return to Home"
+                   >
+                      <span className="text-green-500 animate-pulse drop-shadow-[0_0_5px_rgba(34,197,94,0.5)]">HOME</span>
+                      <span className="text-sky-300">▲</span>
+                   </button>
+                 )}
                  
                  {/* User ID */}
                  <button onClick={() => setGameStep(GameStep.Profile)} className="flex flex-col items-center group">

@@ -22,7 +22,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, isDarkMode = false }) 
   return (
     <div className={`min-h-full w-full flex items-center justify-center relative overflow-y-auto overflow-x-hidden transition-colors duration-500 ${isDarkMode ? 'bg-slate-900' : 'bg-sky-50'}`}>
        {/* Background Decor */}
-      <div className={`absolute top-[5%] right-[10%] w-[8vmin] h-[8vmin] rounded-full blur-xl opacity-60 transition-colors ${isDarkMode ? 'bg-pink-600' : 'bg-yellow-300'}`}></div>
+      
       <div className={`absolute bottom-[10%] left-[5%] w-[12vmin] h-[12vmin] border-4 transform rotate-12 opacity-40 transition-colors ${isDarkMode ? 'border-indigo-500' : 'border-sky-300'}`}></div>
 
       <div className={`backdrop-blur-md px-2 sm:px-3 md:px-5 py-3 sm:py-5 md:py-6 rounded-xl border-3 sm:border-4 md:border-5 shadow-[2.5px_2.5px_0px_0px] sm:shadow-[4px_4px_0px_0px] md:shadow-[6px_6px_0px_0px] w-[95%] sm:w-[90%] max-w-[550px] flex flex-col relative z-10 my-4 sm:my-6 md:my-8 transition-all duration-500 ${isDarkMode ? 'bg-slate-950/90 border-indigo-700 shadow-indigo-950' : 'bg-white/90 border-sky-900 shadow-[#0ea5e9]'}`}>

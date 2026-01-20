@@ -109,20 +109,15 @@ const App: React.FC = () => {
         <div className={`h-16 md:h-20 text-white flex justify-between items-center font-press-start text-[1.2vmin] md:text-[1.6vmin] z-50 relative px-6 border-b-8 shadow-2xl transition-colors duration-500 ${isDarkMode ? 'bg-[#1e1b4b] border-indigo-500/30' : 'bg-sky-950 border-sky-400/30'}`}>
              {/* Left Section - Logo, User ID, Score */}
              <div className="flex gap-6 items-center">
-                 {/* Logo */}
-                 <img src="components/Logos-02.png" alt="Hobby Arcade Logo" className="w-16 h-16 md:w-20 md:h-20 object-contain drop-shadow-lg hover:scale-110 transition-transform duration-300" />
-                 
-                 {/* Home Button - Hidden on Auth screen */}
-                 {gameStep !== GameStep.Auth && (
-                   <button 
-                      onClick={() => setGameStep(GameStep.Welcome)} 
-                      className="flex flex-col items-center group hover:scale-110 transition-transform duration-300"
-                      title="Return to Home"
-                   >
-                      <span className="text-green-500 animate-pulse drop-shadow-[0_0_5px_rgba(34,197,94,0.5)]">HOME</span>
-                      <span className="text-sky-300">▲</span>
-                   </button>
-                 )}
+                 {/* Logo - Clickable Home Button (disabled on Auth screen) */}
+                 <button
+                    onClick={() => gameStep !== GameStep.Auth && setGameStep(GameStep.Welcome)}
+                    disabled={gameStep === GameStep.Auth}
+                    className={`${gameStep !== GameStep.Auth ? 'cursor-pointer hover:scale-110' : 'cursor-default'} transition-transform duration-300`}
+                    title={gameStep !== GameStep.Auth ? "Return to Home" : ""}
+                 >
+                    <img src="components/Logos-02.png" alt="Hobby Arcade Logo" className="w-16 h-16 md:w-20 md:h-20 object-contain drop-shadow-lg" />
+                 </button>
                  
                  {/* User ID */}
                  <button onClick={() => setGameStep(GameStep.Profile)} className="flex flex-col items-center group">

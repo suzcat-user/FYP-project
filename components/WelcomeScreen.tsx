@@ -146,11 +146,11 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, isDarkMode = fal
       </section>
 
       {/* FOOTER */}
-      <footer className={`py-24 border-t-8 ${isDarkMode ? 'border-slate-700 bg-slate-900/50' : 'border-sky-100 bg-sky-50/50'} text-center relative overflow-hidden`}>
-          <div className={`font-press-start text-[1vmin] ${isDarkMode ? 'text-slate-500/40' : 'text-sky-900/40'} mb-4 uppercase tracking-[0.5vmin]`}>
+      <footer className={`py-20 border-t-6 ${isDarkMode ? 'border-slate-700 bg-slate-900/50' : 'border-sky-100 bg-sky-50/50'} text-center relative overflow-hidden`}>
+          <div className={`font-press-start text-[0.8vmin] ${isDarkMode ? 'text-slate-500/40' : 'text-sky-900/40'} mb-3 uppercase tracking-[0.4vmin]`}>
               © HOBBY ARCADE • EST. 2025 • A FYP PROJECT
           </div>
-          <div className={`font-vt323 text-2xl ${isDarkMode ? 'text-slate-500/10' : 'text-sky-900/10'} animate-pulse`}>
+          <div className={`font-vt323 text-lg ${isDarkMode ? 'text-slate-500/10' : 'text-sky-900/10'} animate-pulse`}>
               [SYSTEM_READY] [ENCRYPTION_ACTIVE] [PING: 14MS]
           </div>
       </footer>

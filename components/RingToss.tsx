@@ -77,11 +77,16 @@ const Stake: React.FC<{
 
       <div className={`w-[2vmin] h-[20vmin] ${colorClass} rounded-t-full relative z-10 shadow-[-2px_0_2px_rgba(0,0,0,0.3)_inset] border-l border-white/20 transition-transform duration-300 group-hover:-translate-y-2`}>
          <div className="absolute top-2 right-1/4 h-[90%] w-[20%] bg-white/30 rounded-full blur-[1px]"></div>
-         <div className={`absolute bottom-[105%] left-1/2 -translate-x-1/2 p-3 border-4 shadow-[8px_8px_0px_rgba(0,0,0,0.2)] z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-200 min-w-[20vmin] max-w-[30vmin] rounded-none scale-90 group-hover:scale-100 origin-bottom ${isDarkMode ? 'bg-slate-900 border-indigo-500' : 'bg-white border-sky-900'}`}>
-             <div className={`font-vt323 text-[2.5vmin] font-bold leading-none mb-1 text-center uppercase ${isDarkMode ? 'text-pink-400' : 'text-sky-900'}`}>{label}</div>
-             {description && (
-                 <div className={`font-vt323 text-[2vmin] leading-tight text-center border-t-2 pt-1 ${isDarkMode ? 'text-indigo-200 border-indigo-900' : 'text-gray-600 border-sky-100'}`}>{description}</div>
-             )}
+         <div className={`absolute bottom-[105%] left-1/2 -translate-x-1/2 p-3 border-4 shadow-[8px_8px_0px_rgba(0,0,0,0.2)] z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-200 min-w-[40vmin] max-w-[50vmin] rounded-none scale-90 group-hover:scale-100 origin-bottom ${isDarkMode ? 'bg-slate-900 border-indigo-500' : 'bg-white border-sky-900'}`}>
+             <div className="flex items-center gap-3">
+               <div className={`font-vt323 text-[2.5vmin] font-bold leading-none text-center uppercase whitespace-nowrap ${isDarkMode ? 'text-pink-400' : 'text-sky-900'}`}>{label}</div>
+               {description && (
+                   <>
+                     <div className={`w-[2px] h-[4vmin] ${isDarkMode ? 'bg-indigo-900' : 'bg-sky-100'}`}></div>
+                     <div className={`font-vt323 text-[2.5vmin] leading-tight flex-1 ${isDarkMode ? 'text-indigo-200' : 'text-gray-600'}`}>{description}</div>
+                   </>
+               )}
+             </div>
              <div className={`absolute top-full left-1/2 -translate-x-1/2 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[10px] ${isDarkMode ? 'border-t-indigo-500' : 'border-t-sky-900'}`}></div>
          </div>
       </div>
@@ -162,8 +167,8 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
   };
 
   const POSITIONS = [
-      { x: -35, y: -25, z: 0.8 }, { x: 0, y: -30, z: 0.75 }, { x: 35, y: -25, z: 0.8 },
-      { x: -20, y: -15, z: 0.9 }, { x: 20, y: -15, z: 0.9 }, { x: 0, y: -5, z: 0.95 }
+      { x: -35, y: -8, z: 0.8 }, { x: 0, y: -13, z: 0.75 }, { x: 35, y: -8, z: 0.8 },
+      { x: -20, y: 2, z: 0.9 }, { x: 20, y: 2, z: 0.9 }, { x: 0, y: 12, z: 0.95 }
   ];
 
   return (
@@ -205,7 +210,7 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
             />
           ))}
 
-          <div className="absolute inset-0 flex items-end justify-center pb-[5vmin] z-10" style={{ perspective: '100vmin' }}>
+          <div className="absolute inset-0 flex items-end justify-center pb-[12vmin] z-10" style={{ perspective: '100vmin' }}>
             <div className="relative w-full h-[60vmin] flex justify-center items-end" style={{ transformStyle: 'preserve-3d' }}>
                 {currentQuestion.answers.slice(0, 6).map((answer, index) => {
                     const pos = POSITIONS[index % POSITIONS.length];

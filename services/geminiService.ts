@@ -84,7 +84,6 @@ export const getPersonalityDescription = async (scores: Scores): Promise<Persona
     .map(([trait]) => trait)
     .join(', ');
 
-    console.log("Ranked Traits:", rankedTraits);
   if (!rankedTraits) {
       return [{
         name: "Balanced Personality",

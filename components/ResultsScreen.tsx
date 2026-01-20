@@ -87,8 +87,8 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, onNext, onSelectH
 
   const bestMatchHobby = useMemo(() => {
       if (hobbies.length > 0) {
-        const randomIndex = Math.floor(Math.random() * hobbies.length);
-        return hobbies[randomIndex];
+        const randomIndex1 = Math.floor(Math.random() * hobbies.length);
+        return hobbies[randomIndex1];
       }
       return null;
   }, [hobbies]);
@@ -189,13 +189,6 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, onNext, onSelectH
             </div>
         </div>
 
-        {!loading && bestMatchPersonality && (
-          <div className={`p-[4vmin] border-8 shadow-[15px_15px_0px_rgba(0,0,0,0.2)] flex flex-col items-center text-center gap-4 transition-colors duration-500 ${isDarkMode ? 'bg-purple-900/40 border-purple-600' : 'bg-pink-100 border-pink-500'}`}>
-            <div className="font-press-start text-[1.5vmin] text-purple-500 animate-pulse">★★★ YOUR PERSONALITY TYPE ★★★</div>
-            <h2 className={`font-press-start text-[4vmin] leading-tight ${isDarkMode ? 'text-white' : 'text-sky-900'}`}>{bestMatchPersonality.name}</h2>
-            <p className={`font-vt323 text-[3vmin] max-w-[80%] ${isDarkMode ? 'text-purple-100' : 'text-gray-800'}`}>{bestMatchPersonality.description}</p>
-          </div>
-        )}
 
         <div className="w-full flex flex-col gap-[2vmin] shrink-0 mt-[2vmin] pb-[4vmin]">
              <div className={`border-4 p-[3vmin] shadow-[8px_8px_0px_rgba(0,0,0,0.2)] relative transition-colors duration-500 ${isDarkMode ? 'bg-slate-900 border-indigo-700' : 'bg-sky-100 border-sky-500'}`}>

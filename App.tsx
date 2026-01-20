@@ -107,11 +107,18 @@ const App: React.FC = () => {
 
         {/* HUD Top Bar */}
         <div className={`h-16 md:h-20 text-white flex justify-between items-center font-press-start text-[1.2vmin] md:text-[1.6vmin] z-50 relative px-6 border-b-8 shadow-2xl transition-colors duration-500 ${isDarkMode ? 'bg-[#1e1b4b] border-indigo-500/30' : 'bg-sky-950 border-sky-400/30'}`}>
-             <div className="flex gap-8 items-center">
+             {/* Left Section - Logo, User ID, Score */}
+             <div className="flex gap-6 items-center">
+                 {/* Logo */}
+                 <img src="components/Logos-02.png" alt="Hobby Arcade Logo" className="w-16 h-16 md:w-20 md:h-20 object-contain drop-shadow-lg hover:scale-110 transition-transform duration-300" />
+                 
+                 {/* User ID */}
                  <button onClick={() => setGameStep(GameStep.Profile)} className="flex flex-col items-center group">
                     <span className="text-rose-500 animate-pulse drop-shadow-[0_0_5px_rgba(244,63,94,0.5)]">1UP</span>
                     <span className="text-sky-300">USER_ID</span>
                  </button>
+                 
+                 {/* Score */}
                  <div className="flex flex-col">
                     <span className="text-sky-500/50 text-[1vmin]">SCORE</span>
                     <span className="text-sky-100 font-press-start">{totalScore.toString().padStart(6, '0')}</span>

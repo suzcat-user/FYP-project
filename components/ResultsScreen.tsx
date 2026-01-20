@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Scores, Hobby, Trait } from '../types';
-import { getHobbySuggestions } from '../services/geminiService';
+import { Scores, Hobby, Trait, Personalities } from '../types';
+import { getHobbySuggestions, getPersonalityDescription } from '../services/geminiService';
 
 interface ResultsScreenProps {
   scores: Scores;
@@ -42,6 +42,7 @@ const TraitBar: React.FC<{ trait: string; score: number; max: number; color: str
 
 const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, onNext, onSelectHobby, isDarkMode = false }) => {
   const [hobbies, setHobbies] = useState<Hobby[]>([]);
+  const[personality, setPersonality]= useState<Personalities[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -60,7 +61,22 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, onNext, onSelectH
       }
     };
 
+    const fetchPersonalities = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const personalities = await getPersonalityDescription(scores);
+        setPersonality(personalities);
+      } catch (err) {
+        setError('Failed to fetch personality description.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchHobbies();
+    fetchPersonalities();
   }, [scores]);
 
   const topTrait = useMemo(() => {
@@ -70,10 +86,21 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, onNext, onSelectH
   }, [scores]);
 
   const bestMatchHobby = useMemo(() => {
-      if (hobbies.length > 0) return hobbies[0];
+      if (hobbies.length > 0) {
+        const randomIndex = Math.floor(Math.random() * hobbies.length);
+        return hobbies[randomIndex];
+      }
       return null;
   }, [hobbies]);
 
+  const bestMatchPersonality = useMemo(() => {
+      if (personality.length > 0) {
+        const randomIndex = Math.floor(Math.random() * personality.length);
+        return personality[randomIndex];
+      }
+      return null;
+  }, [personality]);
+ console.log("Best Match Personality:", bestMatchPersonality);
   const archetype = ARCHETYPES[topTrait] || ARCHETYPES.EXPLORER;
   const maxScore = Math.max(...(Object.values(scores) as number[]), 1);
 
@@ -103,6 +130,15 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, onNext, onSelectH
                 REVEALING YOUR DESTINY...
             </h1>
         </div>
+ {!loading && bestMatchPersonality && (
+           <div className={`p-[4vmin] border-8 shadow-[15px_15px_0px_rgba(0,0,0,0.2)] flex flex-col items-center text-center gap-4 transition-colors duration-500 ${isDarkMode ? 'bg-indigo-950/30 border-pink-500 shadow-[0_0_20px_rgba(236,72,153,0.3)]' : 'bg-cyan-50 border-cyan-400 shadow-[15px_15px_0px_rgba(0,0,0,0.1)]'}`}>
+              <div className="font-press-start text-[1.5vmin] text-red-500 animate-pulse">★★★ PERSONALITY REVEAL ★★★</div>
+              <h2 className={`font-press-start text-[5vmin] leading-tight ${isDarkMode ? 'text-white' : 'text-sky-900'}`}>{bestMatchPersonality.name}</h2>
+              <p className={`font-vt323 text-[3.5vmin] max-w-[80%] ${isDarkMode ? 'text-pink-100' : 'text-gray-800'}`}>{bestMatchPersonality.description}</p>
+             
+           </div>
+        )}
+
 
         {!loading && bestMatchHobby && (
            <div className={`p-[4vmin] border-8 shadow-[15px_15px_0px_rgba(0,0,0,0.2)] flex flex-col items-center text-center gap-4 transition-colors duration-500 ${isDarkMode ? 'bg-pink-900/40 border-pink-600' : 'bg-yellow-100 border-yellow-500'}`}>
@@ -152,6 +188,14 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, onNext, onSelectH
                 </div>
             </div>
         </div>
+
+        {!loading && bestMatchPersonality && (
+          <div className={`p-[4vmin] border-8 shadow-[15px_15px_0px_rgba(0,0,0,0.2)] flex flex-col items-center text-center gap-4 transition-colors duration-500 ${isDarkMode ? 'bg-purple-900/40 border-purple-600' : 'bg-pink-100 border-pink-500'}`}>
+            <div className="font-press-start text-[1.5vmin] text-purple-500 animate-pulse">★★★ YOUR PERSONALITY TYPE ★★★</div>
+            <h2 className={`font-press-start text-[4vmin] leading-tight ${isDarkMode ? 'text-white' : 'text-sky-900'}`}>{bestMatchPersonality.name}</h2>
+            <p className={`font-vt323 text-[3vmin] max-w-[80%] ${isDarkMode ? 'text-purple-100' : 'text-gray-800'}`}>{bestMatchPersonality.description}</p>
+          </div>
+        )}
 
         <div className="w-full flex flex-col gap-[2vmin] shrink-0 mt-[2vmin] pb-[4vmin]">
              <div className={`border-4 p-[3vmin] shadow-[8px_8px_0px_rgba(0,0,0,0.2)] relative transition-colors duration-500 ${isDarkMode ? 'bg-slate-900 border-indigo-700' : 'bg-sky-100 border-sky-500'}`}>

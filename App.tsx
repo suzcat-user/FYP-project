@@ -118,8 +118,7 @@ const App: React.FC = () => {
                     className="flex flex-col items-center group hover:scale-110 transition-transform duration-300"
                     title="Return to Home"
                  >
-                    <span className="text-green-500 animate-pulse drop-shadow-[0_0_5px_rgba(34,197,94,0.5)]">HOME</span>
-                    <span className="text-sky-300">▲</span>
+                    <span className="text-yellow-400 animate-pulse drop-shadow-[0_0_5px_rgba(34,197,94,0.5)]">HOME</span>
                  </button>
                  
                  {/* User ID */}

@@ -33,6 +33,10 @@ export interface Question {
   question: string;
   answers: Answer[];
 }
+export interface Personalities { 
+  name: string;
+  description: string;
+}
 
 export interface Hobby {
   name: string;

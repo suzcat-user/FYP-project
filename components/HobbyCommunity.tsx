@@ -30,6 +30,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
   const [attachments, setAttachments] = useState<string[]>([]);
   const [newPostContent, setNewPostContent] = useState('');
   const [newPostTitle, setNewPostTitle] = useState('');
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -218,6 +219,44 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
     }));
   };
 
+  const handleDeletePost = (postId: string) => {
+    const post = posts.find(p => p.id === postId);
+    if (post && post.author === 'YOU') {
+      setPosts(prev => prev.filter(p => p.id !== postId));
+      setActivePostId(null);
+    }
+  };
+
+  const handleEditPost = (postId: string) => {
+    const post = posts.find(p => p.id === postId);
+    if (post && post.author === 'YOU') {
+      setNewPostTitle(post.title);
+      setNewPostContent(post.content);
+      setEditingPostId(postId);
+      setShowCreateModal(true);
+      setActivePostId(null);
+    }
+  };
+
+  const handleSaveEditedPost = () => {
+    if (editingPostId && newPostTitle.trim() && newPostContent.trim()) {
+      setPosts(prev => prev.map(p => 
+        p.id === editingPostId 
+          ? { ...p, title: newPostTitle, content: newPostContent }
+          : p
+      ));
+      resetModalState();
+    }
+  };
+
+  const resetModalState = () => {
+    setShowCreateModal(false);
+    setNewPostTitle('');
+    setNewPostContent('');
+    setAttachments([]);
+    setEditingPostId(null);
+  };
+
   if (!hobby) return <div className="p-10 text-center font-press-start">SELECT A HOBBY FIRST</div>;
 
   return (
@@ -250,7 +289,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
                   </div>
 
                   {posts.map(post => (
-                    <div key={post.id} onClick={() => setActivePostId(post.id)} className={`flex border-2 cursor-pointer transition-all ${isDarkMode ? 'bg-[#1a1c27] border-indigo-950 hover:border-indigo-600' : 'bg-white border-gray-300 hover:border-sky-400'}`}>
+                    <div key={post.id} className={`flex border-2 transition-all ${isDarkMode ? 'bg-[#1a1c27] border-indigo-950 hover:border-indigo-600' : 'bg-white border-gray-300 hover:border-sky-400'}`}>
                         <div className={`w-12 flex flex-col items-center py-4 gap-2 ${isDarkMode ? 'bg-black/20' : 'bg-gray-50'}`}>
                             <button className="text-xl">▲</button>
                             <span className="font-press-start text-[1vmin]">{post.upvotes}</span>
@@ -265,8 +304,24 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
                             {post.attachments && post.attachments.slice(0, 1).map(att => (
                                 <img key={att} src={att} alt="Attachment" className="max-h-[300px] w-full object-cover mb-4 border-2 border-current" />
                             ))}
-                            <div className="flex gap-4 font-press-start text-[1vmin] opacity-70">
-                                <span>💬 {post.comments.length} Comments</span>
+                            <div className="flex gap-4 font-press-start text-[1vmin] opacity-70 items-center">
+                                <span className="cursor-pointer hover:opacity-100" onClick={() => setActivePostId(post.id)}>💬 {post.comments.length} Comments</span>
+                                {post.author === 'YOU' && (
+                                  <>
+                                    <button 
+                                      onClick={() => handleEditPost(post.id)}
+                                      className={`px-2 py-1 border-2 ${isDarkMode ? 'bg-blue-600 border-blue-900 text-white' : 'bg-blue-400 border-blue-700'}`}
+                                    >
+                                      EDIT
+                                    </button>
+                                    <button 
+                                      onClick={() => handleDeletePost(post.id)}
+                                      className={`px-2 py-1 border-2 ${isDarkMode ? 'bg-red-600 border-red-900 text-white' : 'bg-red-400 border-red-700'}`}
+                                    >
+                                      DELETE
+                                    </button>
+                                  </>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -290,7 +345,27 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
               <div className={`w-full max-w-4xl max-h-[90vh] overflow-y-auto border-8 p-6 flex flex-col gap-6 ${isDarkMode ? 'bg-[#0f111a] border-indigo-900' : 'bg-white border-sky-800'}`}>
                   <div className="flex justify-between items-center border-b-4 pb-2">
                       <h2 className="font-press-start text-[2vmin]">{activePost.title}</h2>
-                      <button onClick={() => setActivePostId(null)} className="font-press-start text-red-500">X</button>
+                      <div className="flex gap-2">
+                          {activePost.author === 'YOU' && (
+                            <>
+                              <button 
+                                onClick={() => handleEditPost(activePost.id)}
+                                className={`font-press-start text-[1vmin] px-3 py-1 border-2 ${isDarkMode ? 'bg-blue-600 border-blue-900 text-white' : 'bg-blue-400 border-blue-700'}`}
+                                title="Edit Post"
+                              >
+                                EDIT
+                              </button>
+                              <button 
+                                onClick={() => handleDeletePost(activePost.id)}
+                                className={`font-press-start text-[1vmin] px-3 py-1 border-2 ${isDarkMode ? 'bg-red-600 border-red-900 text-white' : 'bg-red-400 border-red-700'}`}
+                                title="Delete Post"
+                              >
+                                DELETE
+                              </button>
+                            </>
+                          )}
+                          <button onClick={() => setActivePostId(null)} className="font-press-start text-red-500">X</button>
+                      </div>
                   </div>
                   <div className="font-vt323 text-2xl leading-relaxed">
                       {activePost.content}
@@ -329,7 +404,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
       {showCreateModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80">
               <div className={`w-full max-w-2xl border-8 p-6 flex flex-col gap-4 ${isDarkMode ? 'bg-[#1a1c27] border-pink-600' : 'bg-white border-sky-800'}`}>
-                  <h2 className="font-press-start text-[2vmin] mb-4">NEW ADVENTURE POST</h2>
+                  <h2 className="font-press-start text-[2vmin] mb-4">{editingPostId ? 'EDIT ADVENTURE POST' : 'NEW ADVENTURE POST'}</h2>
                   <input 
                     type="text" 
                     placeholder="Title" 
@@ -345,34 +420,38 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
                     className={`p-3 font-vt323 text-2xl border-4 ${isDarkMode ? 'bg-slate-900 border-indigo-900' : 'bg-gray-50 border-gray-300'}`}
                   ></textarea>
                   
-                  <div className="flex items-center gap-4">
-                      <button 
-                        onClick={() => fileInputRef.current?.click()}
-                        className={`font-press-start text-[1vmin] p-2 border-2 ${isDarkMode ? 'bg-indigo-900 border-indigo-700' : 'bg-gray-200 border-gray-400'}`}
-                      >
-                        ATTACH FILES ({attachments.length})
-                      </button>
-                      <input type="file" ref={fileInputRef} hidden multiple onChange={handleFileChange} accept="image/*,image/gif" />
-                      {attachments.length > 0 && (
-                        <div className="flex gap-2 flex-wrap">
-                          {attachments.map((att, index) => (
-                            <div key={index} className="relative">
-                              <img src={att} alt={`Attachment ${index + 1}`} className="w-16 h-16 object-cover border-2" />
-                              <button 
-                                onClick={() => removeAttachment(index)}
-                                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs"
-                              >
-                                ×
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                  </div>
+                  {!editingPostId && (
+                    <div className="flex items-center gap-4">
+                        <button 
+                          onClick={() => fileInputRef.current?.click()}
+                          className={`font-press-start text-[1vmin] p-2 border-2 ${isDarkMode ? 'bg-indigo-900 border-indigo-700' : 'bg-gray-200 border-gray-400'}`}
+                        >
+                          ATTACH FILES ({attachments.length})
+                        </button>
+                        <input type="file" ref={fileInputRef} hidden multiple onChange={handleFileChange} accept="image/*,image/gif" />
+                        {attachments.length > 0 && (
+                          <div className="flex gap-2 flex-wrap">
+                            {attachments.map((att, index) => (
+                              <div key={index} className="relative">
+                                <img src={att} alt={`Attachment ${index + 1}`} className="w-16 h-16 object-cover border-2" />
+                                <button 
+                                  onClick={() => removeAttachment(index)}
+                                  className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs"
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                    </div>
+                  )}
 
                   <div className="flex justify-end gap-4 mt-4">
-                      <button onClick={() => setShowCreateModal(false)} className="font-press-start text-red-500">CANCEL</button>
-                      <ArcadeButton onClick={handleCreatePost}>POST QUEST</ArcadeButton>
+                      <button onClick={resetModalState} className="font-press-start text-red-500">CANCEL</button>
+                      <ArcadeButton onClick={editingPostId ? handleSaveEditedPost : handleCreatePost}>
+                        {editingPostId ? 'SAVE CHANGES' : 'POST QUEST'}
+                      </ArcadeButton>
                   </div>
               </div>
           </div>

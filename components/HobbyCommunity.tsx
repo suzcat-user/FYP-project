@@ -9,20 +9,41 @@ interface HobbyCommunityProps {
 }
 
 const PIXEL_GIFS = [
-  "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJndXpueXF6Mmt6N2Z6eXF6N2Z6eXF6N2Z6eXF6N2Z6eXF6JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/3o7TKMGpxS2dfVCCm4/giphy.gif",
-  "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJndXpueXF6Mmt6N2Z6eXF6N2Z6eXF6N2Z6eXF6N2Z6eXF6JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/l41lTfO7hLpUf9q8o/giphy.gif",
-  "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJndXpueXF6Mmt6N2Z6eXF6N2Z6eXF6N2Z6eXF6N2Z6eXF6JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/3o7TKVUn7iM8FMEU24/giphy.gif"
+  "https://media1.tenor.com/m/ULDjjjbmgt4AAAAd/yeyeskies-cynthia-erivo.gif",
+  "https://media1.tenor.com/m/pwgQhX123s4AAAAC/cynthia-erivo-shocked.gif",
+  "https://media1.tenor.com/m/uxC9pNjuaAIAAAAd/ariana-grande-hair-flip.gif",
+  "https://media1.tenor.com/m/Wt1mxxqzC1gAAAAC/phatearl.gif",
+  "https://media1.tenor.com/m/dhwxCmcCKAUAAAAd/stan-twitter-nurse-britney.gif",
+  "https://media1.tenor.com/m/-t4PlsIvMjkAAAAC/kill-me-shoot-me.gif",
+  "https://media1.tenor.com/m/t-Imk589wNcAAAAC/stan-twitter.gif",
+  "https://media1.tenor.com/m/T5xyQ6PNiEcAAAAd/stan-twitter.gif",
+  "https://media1.tenor.com/m/6COMq6z3l5oAAAAC/bosnov-67.gif",
+  "https://media1.tenor.com/m/O-MmXat9u54AAAAC/benson-boone-coachella.gif",
+  "https://media1.tenor.com/m/MuL00oOUHpAAAAAC/wicked-glinda-wicked-for-good.gif",
+  "https://media1.tenor.com/m/rxjtdE-oKtMAAAAC/little-mermaid-laughing.gif"
 ];
 
 const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMode = false }) => {
   const [joined, setJoined] = useState(false);
   const [activePostId, setActivePostId] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [attachment, setAttachment] = useState<string | null>(null);
+  const [attachments, setAttachments] = useState<string[]>([]);
   const [newPostContent, setNewPostContent] = useState('');
   const [newPostTitle, setNewPostTitle] = useState('');
   
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const newAttachments = Array.from(files).map((file: File) => URL.createObjectURL(file));
+      setAttachments(prev => [...prev, ...newAttachments]);
+    }
+  };
+
+  const removeAttachment = (index: number) => {
+    setAttachments(prev => prev.filter((_, i) => i !== index));
+  };
 
   const [posts, setPosts] = useState<Post[]>(() => {
     if (!hobby) return [];
@@ -36,7 +57,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
         timestamp: '2h ago',
         comments: [
           { id: 'c1', author: 'RetroFan', content: 'Welcome to the club! Check the sidebar for the "Beginner Glitch-less" guide.', timestamp: '1h ago', upvotes: 12 },
-          { id: 'c2', author: 'GameBoy', content: 'This is the way!', timestamp: '30m ago', upvotes: 5, gif: PIXEL_GIFS[0] },
+          { id: 'c2', author: 'GameBoy', content: 'This is the way!', timestamp: '30m ago', upvotes: 5, gifs: [PIXEL_GIFS[0]] },
           { id: 'c3', author: 'NeonDreamer', content: 'Don\'t forget to calibrate your tools first! It makes a huge difference in the long run.', timestamp: '15m ago', upvotes: 2 }
         ]
       },
@@ -47,7 +68,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
         content: `If you angle your approach at exactly 45 degrees while using the "Flow State" buff, you can bypass the main difficulty spike in this hobby. It feels like cheating but it's totally vanilla!`,
         upvotes: 438,
         timestamp: '5h ago',
-        attachment: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=400',
+        attachments: ['https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=400', 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&q=80&w=400'],
         comments: [
           { id: 'c4', author: 'SpeedRunner_X', content: 'Actually, the skip is even faster if you frame-perfect jump at the start.', timestamp: '4h ago', upvotes: 89 },
           { id: 'c5', author: 'LogicGate', content: 'Is this possible on the console version or just PC?', timestamp: '2h ago', upvotes: 14 }
@@ -71,10 +92,10 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
         content: `After a long week of debugging real life, nothing beats a few hours of this. Truly helps me find my center and reconnect with my creative core.`,
         upvotes: 210,
         timestamp: '1d ago',
-        attachment: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=400',
+        attachments: ['https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=400', PIXEL_GIFS[1]],
         comments: [
           { id: 'c7', author: 'Zen_Master', content: 'Same here. It\'s like meditation but with better graphics.', timestamp: '20h ago', upvotes: 45 },
-          { id: 'c8', author: 'Cactus_Jim', content: 'Absolutely. It is the only time my brain stops buzzing.', timestamp: '18h ago', upvotes: 12, gif: PIXEL_GIFS[2] }
+          { id: 'c8', author: 'Cactus_Jim', content: 'Absolutely. It is the only time my brain stops buzzing.', timestamp: '18h ago', upvotes: 12, gifs: [PIXEL_GIFS[2]] }
         ]
       },
       {
@@ -101,6 +122,58 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
           { id: 'c11', author: 'History_Buff', content: 'This is a quality post. I love deep dives into hobby origins.', timestamp: '2d ago', upvotes: 110 },
           { id: 'c12', author: 'OldSchool_Gamer', content: 'I remember hearing rumors about that prototype on BBS boards back in the day!', timestamp: '1d ago', upvotes: 54 }
         ]
+      },
+      {
+        id: '7',
+        author: 'Crafty_Creator',
+        title: `My latest ${hobby.name} masterpiece`,
+        content: `Spent the entire weekend on this project. The attention to detail really paid off! What do you all think? Any suggestions for improvement?`,
+        upvotes: 324,
+        timestamp: '4d ago',
+        attachments: ['https://images.unsplash.com/photo-1541963463532-d68292c34d19?auto=format&fit=crop&q=80&w=400', 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&q=80&w=400', PIXEL_GIFS[6]],
+        comments: [
+          { id: 'c13', author: 'Art_Critic', content: 'This is absolutely stunning! The composition is perfect.', timestamp: '3d ago', upvotes: 92 },
+          { id: 'c14', author: 'Pixel_Perfectionist', content: 'Love the color palette. Very retro!', timestamp: '3d ago', upvotes: 45, gifs: [PIXEL_GIFS[7]] }
+        ]
+      },
+      {
+        id: '8',
+        author: 'Tech_Wizard',
+        title: `New ${hobby.name} tools and gadgets review`,
+        content: `Just got my hands on the latest gear. The precision is incredible! Here's my unboxing and first impressions. Worth the investment?`,
+        upvotes: 198,
+        timestamp: '5d ago',
+        attachments: ['https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=400', 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?auto=format&fit=crop&q=80&w=400'],
+        comments: [
+          { id: 'c15', author: 'Gear_Head', content: 'Definitely worth it! The quality improvement is noticeable.', timestamp: '4d ago', upvotes: 67 },
+          { id: 'c16', author: 'Budget_Builder', content: 'A bit pricey, but if you\'re serious, yes.', timestamp: '4d ago', upvotes: 23 }
+        ]
+      },
+      {
+        id: '9',
+        author: 'Community_Manager',
+        title: `Weekly ${hobby.name} Challenge Results`,
+        content: `The voting is in! Here are the top entries from this week's challenge. Congratulations to all participants - amazing work everyone!`,
+        upvotes: 456,
+        timestamp: '6d ago',
+        attachments: ['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&q=80&w=400', 'https://images.unsplash.com/photo-1541963463532-d68292c34d19?auto=format&fit=crop&q=80&w=400', PIXEL_GIFS[0], PIXEL_GIFS[1]],
+        comments: [
+          { id: 'c17', author: 'Winner_Winner', content: 'So proud to be in the top 3! Thanks for organizing.', timestamp: '5d ago', upvotes: 134 },
+          { id: 'c18', author: 'Challenge_Addict', content: 'Can\'t wait for next week\'s theme!', timestamp: '5d ago', upvotes: 89, gifs: [PIXEL_GIFS[2], PIXEL_GIFS[3]] }
+        ]
+      },
+      {
+        id: '10',
+        author: 'Retro_Enthusiast',
+        title: `Vintage ${hobby.name} collection showcase`,
+        content: `Been collecting old-school gear for years. Here's my prized possession - a 1980s original! Still works perfectly. Anyone else into vintage collecting?`,
+        upvotes: 287,
+        timestamp: '1w ago',
+        attachments: ['https://images.unsplash.com/photo-1551103782-8ab07afd45c1?auto=format&fit=crop&q=80&w=400', PIXEL_GIFS[4]],
+        comments: [
+          { id: 'c19', author: 'Vintage_Vibes', content: 'That\'s incredible! I have a similar piece from 1985.', timestamp: '6d ago', upvotes: 56 },
+          { id: 'c20', author: 'Collector_Crazy', content: 'Vintage collecting is the best. So much character!', timestamp: '6d ago', upvotes: 34 }
+        ]
       }
     ];
   });
@@ -116,17 +189,17 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
       content: newPostContent,
       upvotes: 0,
       timestamp: 'Just now',
-      attachment: attachment || undefined,
+      attachments: attachments.length > 0 ? attachments : undefined,
       comments: []
     };
     setPosts([newPost, ...posts]);
     setNewPostTitle('');
     setNewPostContent('');
-    setAttachment(null);
+    setAttachments([]);
     setShowCreateModal(false);
   };
 
-  const handleAddComment = (postId: string, content: string, gif?: string) => {
+  const handleAddComment = (postId: string, content: string, gifs?: string[]) => {
     setPosts(prev => prev.map(p => {
       if (p.id === postId) {
         return {
@@ -137,21 +210,12 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
             content,
             timestamp: 'Just now',
             upvotes: 0,
-            gif
+            gifs
           }]
         };
       }
       return p;
     }));
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setAttachment(reader.result as string);
-      reader.readAsDataURL(file);
-    }
   };
 
   if (!hobby) return <div className="p-10 text-center font-press-start">SELECT A HOBBY FIRST</div>;
@@ -198,6 +262,9 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
                             {post.attachment && (
                                 <img src={post.attachment} alt="Attachment" className="max-h-[300px] w-full object-cover mb-4 border-2 border-current" />
                             )}
+                            {post.attachments && post.attachments.slice(0, 1).map(att => (
+                                <img key={att} src={att} alt="Attachment" className="max-h-[300px] w-full object-cover mb-4 border-2 border-current" />
+                            ))}
                             <div className="flex gap-4 font-press-start text-[1vmin] opacity-70">
                                 <span>💬 {post.comments.length} Comments</span>
                             </div>
@@ -228,9 +295,9 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
                   <div className="font-vt323 text-2xl leading-relaxed">
                       {activePost.content}
                   </div>
-                  {activePost.attachment && (
-                      <img src={activePost.attachment} alt="Attachment" className="w-full max-h-[500px] object-contain border-4 border-current" />
-                  )}
+                  {activePost.attachments && activePost.attachments.map(att => (
+                      <img key={att} src={att} alt="Attachment" className="w-full max-h-[500px] object-contain border-4 border-current mb-2" />
+                  ))}
 
                   {/* Comment Section */}
                   <div className="mt-8 border-t-4 pt-6">
@@ -246,7 +313,9 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
                                           <span>{c.timestamp}</span>
                                       </div>
                                       <p className="font-vt323 text-xl">{c.content}</p>
-                                      {c.gif && <img src={c.gif} alt="GIF" className="mt-2 max-w-[200px] border-2" />}
+                                      {c.gifs && c.gifs.map(gif => (
+                                          <img key={gif} src={gif} alt="GIF" className="mt-2 max-w-[200px] border-2" />
+                                      ))}
                                   </div>
                               </div>
                           ))}
@@ -281,10 +350,24 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
                         onClick={() => fileInputRef.current?.click()}
                         className={`font-press-start text-[1vmin] p-2 border-2 ${isDarkMode ? 'bg-indigo-900 border-indigo-700' : 'bg-gray-200 border-gray-400'}`}
                       >
-                        ATTACH FILE
+                        ATTACH FILES ({attachments.length})
                       </button>
-                      <input type="file" ref={fileInputRef} hidden onChange={handleFileChange} accept="image/*" />
-                      {attachment && <span className="font-vt323 text-green-500">File Ready!</span>}
+                      <input type="file" ref={fileInputRef} hidden multiple onChange={handleFileChange} accept="image/*,image/gif" />
+                      {attachments.length > 0 && (
+                        <div className="flex gap-2 flex-wrap">
+                          {attachments.map((att, index) => (
+                            <div key={index} className="relative">
+                              <img src={att} alt={`Attachment ${index + 1}`} className="w-16 h-16 object-cover border-2" />
+                              <button 
+                                onClick={() => removeAttachment(index)}
+                                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs"
+                              >
+                                ×
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                   </div>
 
                   <div className="flex justify-end gap-4 mt-4">
@@ -298,9 +381,18 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
   );
 };
 
-const CommentInput: React.FC<{ onAdd: (content: string, gif?: string) => void; isDarkMode: boolean }> = ({ onAdd, isDarkMode }) => {
+const CommentInput: React.FC<{ onAdd: (content: string, gifs?: string[]) => void; isDarkMode: boolean }> = ({ onAdd, isDarkMode }) => {
     const [text, setText] = useState('');
     const [showGifs, setShowGifs] = useState(false);
+    const [selectedGifs, setSelectedGifs] = useState<string[]>([]);
+
+    const toggleGif = (gif: string) => {
+        setSelectedGifs(prev => 
+            prev.includes(gif) 
+                ? prev.filter(g => g !== gif) 
+                : [...prev, gif]
+        );
+    };
 
     return (
         <div className="flex flex-col gap-2">
@@ -315,21 +407,21 @@ const CommentInput: React.FC<{ onAdd: (content: string, gif?: string) => void; i
                     onClick={() => setShowGifs(!showGifs)}
                     className={`font-press-start text-[1vmin] px-4 py-2 border-2 ${isDarkMode ? 'bg-indigo-950 border-indigo-800' : 'bg-gray-100 border-gray-300'}`}
                 >
-                    GIF
+                    GIF ({selectedGifs.length})
                 </button>
                 {showGifs && (
-                    <div className={`absolute bottom-full left-0 mb-2 p-2 grid grid-cols-3 gap-2 border-4 z-50 ${isDarkMode ? 'bg-slate-950 border-indigo-900' : 'bg-white border-gray-400'}`}>
+                    <div className={`absolute bottom-full left-0 mb-2 p-2 grid grid-cols-4 gap-2 border-4 z-50 ${isDarkMode ? 'bg-slate-950 border-indigo-900' : 'bg-white border-gray-400'}`}>
                         {PIXEL_GIFS.map(g => (
                             <img 
                                 key={g} 
                                 src={g} 
-                                className="w-16 h-16 cursor-pointer hover:scale-110" 
-                                onClick={() => { onAdd(text, g); setText(''); setShowGifs(false); }}
+                                className={`w-16 h-16 cursor-pointer hover:scale-110 ${selectedGifs.includes(g) ? 'border-4 border-green-500' : 'border-2'}`} 
+                                onClick={() => toggleGif(g)}
                             />
                         ))}
                     </div>
                 )}
-                <ArcadeButton onClick={() => { onAdd(text); setText(''); }}>COMMENT</ArcadeButton>
+                <ArcadeButton onClick={() => { onAdd(text, selectedGifs.length > 0 ? selectedGifs : undefined); setText(''); setSelectedGifs([]); setShowGifs(false); }}>COMMENT</ArcadeButton>
             </div>
         </div>
     );

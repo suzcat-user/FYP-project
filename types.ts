@@ -50,7 +50,7 @@ export interface Comment {
   content: string;
   timestamp: string;
   upvotes: number;
-  gif?: string;
+  gifs?: string[];
 }
 
 export interface Post {
@@ -58,7 +58,7 @@ export interface Post {
   author: string;
   title: string;
   content: string;
-  attachment?: string;
+  attachments?: string[];
   upvotes: number;
   comments: Comment[];
   timestamp: string;

@@ -40,6 +40,8 @@ const ListOfUsernames = [
 const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, isDarkMode = false }) => {
   const [selectedHobby, setSelectedHobby] = useState(ListOfHobbies[Math.floor(Math.random() * ListOfHobbies.length)].toUpperCase());
   const [selectedUsername, setSelectedUsername] = useState(ListOfUsernames[Math.floor(Math.random() * ListOfUsernames.length)]);
+  const [typedText, setTypedText] = useState('');
+  const fullText = '"Find the spark that starts the flame." Discover your ultimate hobby through three precision-tuned arcade tests.';
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -50,8 +52,94 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, isDarkMode = fal
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const startDelay = 2500; // Wait for logo animation
+    const typeSpeed = 25; // ms per character
+
+    setTimeout(() => {
+      let index = 0;
+      const typeInterval = setInterval(() => {
+        if (index < fullText.length) {
+          setTypedText(fullText.slice(0, index + 1));
+          index++;
+        } else {
+          clearInterval(typeInterval);
+        }
+      }, typeSpeed);
+    }, startDelay);
+  }, []);
+
   return (
-    <div className={`h-full w-full overflow-y-auto transition-colors duration-500 ${isDarkMode ? 'bg-slate-900/10' : 'bg-sky-50/10'} scroll-smooth relative`}>
+    <div className={`h-full w-full overflow-y-auto overflow-x-hidden transition-colors duration-500 ${isDarkMode ? 'bg-slate-900/10' : 'bg-sky-50/10'} scroll-smooth relative`}>
+      <style>
+        {`
+          @keyframes topFlicker {
+            0% { opacity: 0.1; }
+            5% { opacity: 1; }
+            10% { opacity: 0.1; }
+            15% { opacity: 1; }
+            20% { opacity: 0.1; }
+            25% { opacity: 1; }
+            30% { opacity: 0.1; }
+            35% { opacity: 1; }
+            40% { opacity: 0.1; }
+            45% { opacity: 1; }
+            50%, 100% { opacity: 1; }
+          }
+          @keyframes bottomFlicker {
+            0%, 60% { opacity: 0.1; }
+            65% { opacity: 1; }
+            70% { opacity: 0.1; }
+            75% { opacity: 1; }
+            80% { opacity: 0.1; }
+            85% { opacity: 1; }
+            90% { opacity: 0.1; }
+            95% { opacity: 1; }
+            100% { opacity: 1; }
+          }
+          .top-flicker {
+            animation: topFlicker 2s infinite;
+          }
+          .bottom-flicker {
+            animation: bottomFlicker 2s infinite;
+          }
+          @keyframes floatDown {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+          }
+          .voxel-particle {
+            animation: floatDown 15s linear infinite;
+          }
+          .perspective-grid {
+            background-image: 
+              linear-gradient(rgba(14,165,233,0.1) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(14,165,233,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform: perspective(1000px) rotateX(60deg);
+            transform-origin: center bottom;
+          }
+        `}
+      </style>
+      {/* Animated Pixel Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Floating Voxel Particles */}
+        {Array.from({ length: 30 }, (_, i) => (
+          <div
+            key={i}
+            className={`absolute w-4 h-4 ${isDarkMode ? 'bg-slate-400/60 shadow-lg shadow-slate-400/50' : 'bg-sky-400/60 shadow-lg shadow-sky-400/50'} voxel-particle rounded-sm`}
+            style={{
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 15}s`,
+              animationDuration: `${8 + Math.random() * 12}s`,
+            }}
+          />
+        ))}
+        {/* 3D Perspective Grid */}
+        <div className={`absolute bottom-0 left-0 right-0 h-80 perspective-grid ${isDarkMode ? 'opacity-40' : 'opacity-50'}`}></div>
+      </div>
+
       {/* Retro Grid Background */}
       <div className="retro-grid"></div>
 
@@ -70,7 +158,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, isDarkMode = fal
             <div className="mb-12 relative group">
                 <div className={`absolute -inset-8 ${isDarkMode ? 'bg-slate-500/10' : 'bg-sky-500/10'} blur-3xl rounded-full opacity-40 group-hover:opacity-60 transition-opacity`}></div>
                  <h1 className={`font-press-start text-[5.5vmin] leading-tight mb-3 tracking-tighter chromatic transition-all duration-300 uppercase text-sky-800 drop-shadow-[6px_6px_0px_#bae6fd]`}>
-                    START HOBBY<br/>START HAPPY
+                    <span className="top-flicker">START HOBBY</span><br/><span className="bottom-flicker">START HAPPY</span>
                 </h1>
 
                 <div className="flex items-center justify-center gap-6">
@@ -82,7 +170,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, isDarkMode = fal
 
             <div className="p-7 border-4 border-sky-400/40 bg-white/80 backdrop-blur-sm shadow-[12px_12px_0px_#bae6fd] mb-10 max-w-2xl transform hover:scale-[1.01] transition-transform">
                 <p className="font-vt323 text-[3vmin] text-sky-900 leading-none">
-                    "Find the spark that starts the flame." Discover your ultimate hobby through three precision-tuned arcade tests. 
+                    {typedText}
                 </p>
                 <div className="mt-3 font-press-start text-[0.65vmin] text-sky-400 text-right uppercase italic">Neural Sync Established...</div>
             </div>

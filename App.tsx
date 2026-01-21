@@ -14,6 +14,8 @@ const App: React.FC = () => {
   const [gameStep, setGameStep] = useState<GameStep>(GameStep.Auth);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [selectedHobby, setSelectedHobby] = useState<Hobby | null>(null);
+  const [userName, setUserName] = useState<string>('Guest_Player');
+  const [userEmail, setUserEmail] = useState<string>('');
   const [scores, setScores] = useState<Scores>({
     CREATIVE: 0,
     ACTIVE: 0,
@@ -22,6 +24,12 @@ const App: React.FC = () => {
     SOCIAL: 0,
     EXPLORER: 0
   });
+
+  const handleLogin = useCallback((username: string, email: string) => {
+    setUserName(username);
+    setUserEmail(email);
+    setGameStep(GameStep.Welcome);
+  }, []);
 
   const handleNextGame = useCallback(() => {
     setGameStep(prevStep => {
@@ -72,7 +80,7 @@ const App: React.FC = () => {
   const renderGameStep = () => {
     switch (gameStep) {
       case GameStep.Auth:
-        return <AuthScreen onLogin={handleNextGame} isDarkMode={isDarkMode} />;
+        return <AuthScreen onLogin={handleLogin} isDarkMode={isDarkMode} />;
       case GameStep.Welcome:
         return <WelcomeScreen onStart={handleNextGame} isDarkMode={isDarkMode} />;
       case GameStep.WouldYouRather:
@@ -88,7 +96,7 @@ const App: React.FC = () => {
       case GameStep.HobbyCommunity:
         return <HobbyCommunity hobby={selectedHobby} onBack={() => setGameStep(GameStep.Results)} isDarkMode={isDarkMode} currentUser="USER_ID" />;
       case GameStep.Profile:
-        return <ProfileScreen scores={scores} onBack={() => setGameStep(GameStep.Welcome)} isDarkMode={isDarkMode} />;
+        return <ProfileScreen scores={scores} userName={userName} userEmail={userEmail} onBack={() => setGameStep(GameStep.Welcome)} isDarkMode={isDarkMode} />;
       default:
         return <WelcomeScreen onStart={handleNextGame} isDarkMode={isDarkMode} />;
     }
@@ -120,10 +128,12 @@ const App: React.FC = () => {
                  </button>
                  
                  {/* User ID */}
-                 <button onClick={() => setGameStep(GameStep.Profile)} className="flex flex-col items-center group">
-                    <span className="text-rose-500 animate-pulse drop-shadow-[0_0_5px_rgba(244,63,94,0.5)]">1UP</span>
-                    <span className="text-sky-300">USER_ID</span>
-                 </button>
+                 {gameStep !== GameStep.Auth && (
+                   <button onClick={() => setGameStep(GameStep.Profile)} className="flex flex-col items-center group hover:scale-105 transition-transform">
+                      <span className="text-rose-500 animate-pulse drop-shadow-[0_0_5px_rgba(244,63,94,0.5)]">1UP</span>
+                      <span className="text-sky-300">{userName}</span>
+                   </button>
+                 )}
                  
                  {/* Score */}
                  <div className="flex flex-col">

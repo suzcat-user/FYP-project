@@ -3,19 +3,20 @@ import React, { useState } from 'react';
 import ArcadeButton from './ui/ArcadeButton';
 
 interface AuthScreenProps {
-  onLogin: () => void;
+  onLogin: (username: string, email: string) => void;
   isDarkMode?: boolean;
 }
 
 const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, isDarkMode = false }) => {
   const [isLogin, setIsLogin] = useState(true);
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setTimeout(() => {
-        onLogin();
+        onLogin(username || 'Guest_Player', email);
     }, 500);
   };
 
@@ -49,6 +50,17 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, isDarkMode = false }) 
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-1.5 sm:gap-2 md:gap-3">
+            <div>
+                <label className={`font-press-start text-[0.8vmin] sm:text-[1vmin] md:text-[1.2vmin] mb-1 block transition-colors ${isDarkMode ? 'text-indigo-400' : 'text-gray-600'}`}>USERNAME</label>
+                <input 
+                    type="text" 
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className={`w-full font-vt323 text-[1.6vmin] sm:text-[2vmin] md:text-[2.4vmin] p-1.5 sm:p-2 md:p-2.5 border-2 sm:border-2 md:border-3 outline-none shadow-inner transition-colors ${isDarkMode ? 'bg-slate-900 border-indigo-900 text-white focus:border-pink-500' : 'bg-gray-50 border-gray-300 text-gray-900 focus:border-sky-500'}`}
+                    placeholder="Enter your username"
+                    required
+                />
+            </div>
             <div>
                 <label className={`font-press-start text-[0.8vmin] sm:text-[1vmin] md:text-[1.2vmin] mb-1 block transition-colors ${isDarkMode ? 'text-indigo-400' : 'text-gray-600'}`}>EMAIL</label>
                 <input 
@@ -85,7 +97,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, isDarkMode = false }) 
         <div className="flex flex-col gap-1 sm:gap-1.5 md:gap-2">
             <button 
                 type="button"
-                onClick={onLogin}
+                onClick={() => onLogin('Google_User', 'google@user.com')}
                 className={`group relative w-full py-1.5 sm:py-2 md:py-2.5 px-2 sm:px-2.5 border-2 sm:border-2 md:border-3 transition-all flex items-center justify-center gap-1.5 sm:gap-2 ${isDarkMode ? 'bg-slate-900 border-indigo-900 text-indigo-100 shadow-[1.5px_1.5px_0px_0px_#db2777] sm:shadow-[2.5px_2.5px_0px_0px_#db2777] md:shadow-[3px_3px_0px_0px_#db2777] hover:shadow-[0.5px_0.5px_0px_0px_#db2777]' : 'bg-white border-gray-800 text-gray-700 shadow-[1.5px_1.5px_0px_0px_#ea4335] sm:shadow-[2.5px_2.5px_0px_0px_#ea4335] md:shadow-[3px_3px_0px_0px_#ea4335] hover:shadow-[0.5px_0.5px_0px_0px_#ea4335]'} hover:translate-x-[1px] hover:translate-y-[1px] sm:hover:translate-x-[1px] sm:hover:translate-y-[1px] active:translate-x-[1.5px] active:translate-y-[1.5px] sm:active:translate-x-[2px] sm:active:translate-y-[2px] active:shadow-none`}
             >
                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

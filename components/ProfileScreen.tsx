@@ -4,13 +4,15 @@ import { Scores, Trait } from '../types';
 
 interface ProfileScreenProps {
   scores: Scores;
+  userName: string;
+  userEmail: string;
   onBack: () => void;
   isDarkMode?: boolean;
 }
 
 const AVATARS = ["🕹️", "👾", "🤖", "🚀", "🐱", "🐲", "💎", "🛹"];
 
-const ProfileScreen: React.FC<ProfileScreenProps> = ({ scores, onBack, isDarkMode = false }) => {
+const ProfileScreen: React.FC<ProfileScreenProps> = ({ scores, userName, userEmail, onBack, isDarkMode = false }) => {
   const [selectedAvatar, setSelectedAvatar] = useState(AVATARS[0]);
   
   const traits = Object.keys(scores) as Trait[];
@@ -77,8 +79,8 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ scores, onBack, isDarkMod
             {/* Right: Stats & Info */}
             <div className="flex-1 flex flex-col gap-4">
                 <div className={`border-b-4 pb-3 transition-colors duration-500 ${isDarkMode ? 'border-indigo-900' : 'border-sky-100'}`}>
-                    <h2 className={`font-press-start text-sm md:text-lg uppercase tracking-tighter transition-colors duration-500 ${isDarkMode ? 'text-pink-400' : 'text-sky-700'}`}>GUEST_PLAYER_001</h2>
-                    <p className={`font-vt323 text-lg md:text-xl mt-1 transition-colors duration-500 ${isDarkMode ? 'text-cyan-400' : 'text-orange-600'}`}>RANK: SILVER NOVICE</p>
+                    <h2 className={`font-press-start text-sm md:text-lg uppercase tracking-tighter transition-colors duration-500 ${isDarkMode ? 'text-pink-400' : 'text-sky-700'}`}>{userName}</h2>
+                    <p className={`font-vt323 text-lg md:text-xl mt-1 transition-colors duration-500 ${isDarkMode ? 'text-cyan-400' : 'text-orange-600'}`}>{userEmail}</p>
                 </div>
 
                 <div className="grid grid-cols-1 gap-3">

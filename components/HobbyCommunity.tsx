@@ -288,11 +288,6 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
 
                   {posts.map(post => (
                     <div key={post.id} className={`flex border-2 transition-all ${isDarkMode ? 'bg-[#1a1c27] border-indigo-950 hover:border-indigo-600' : 'bg-white border-gray-300 hover:border-sky-400'}`}>
-                        <div className={`w-12 flex flex-col items-center py-4 gap-2 ${isDarkMode ? 'bg-black/20' : 'bg-gray-50'}`}>
-                            <button className="text-xl">▲</button>
-                            <span className="font-press-start text-[1vmin]">{post.upvotes}</span>
-                            <button className="text-xl">▼</button>
-                        </div>
                         <div className="flex-1 p-4">
                             <div className="flex items-center gap-2 mb-1">
                               <h3 className={`font-press-start text-[1.2vmin] ${post.author === currentUser ? 'text-yellow-400' : 'text-gray-400'}`}>u/{post.author}</h3>

@@ -5,8 +5,8 @@ export const WOULD_YOU_RATHER_QUESTIONS = [
     id: 1,
     question: "Social vs Solo",
     answers: [
-      { text: "Have a massive party with 100 friends", trait: Trait.SOCIAL },
-      { text: "Spend a quiet week in a mountain cabin", trait: Trait.CALM }
+      { text: "Mental", trait: Trait.STRATEGIC },
+      { text: "Physical", trait: Trait.ACTIVE }
     ]
   },
   {

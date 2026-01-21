@@ -86,7 +86,7 @@ const App: React.FC = () => {
       case GameStep.Community:
         return <CommunityScreen onRestart={handleNextGame} scores={scores} isDarkMode={isDarkMode} />;
       case GameStep.HobbyCommunity:
-        return <HobbyCommunity hobby={selectedHobby} onBack={() => setGameStep(GameStep.Results)} isDarkMode={isDarkMode} />;
+        return <HobbyCommunity hobby={selectedHobby} onBack={() => setGameStep(GameStep.Results)} isDarkMode={isDarkMode} currentUser="USER_ID" />;
       case GameStep.Profile:
         return <ProfileScreen scores={scores} onBack={() => setGameStep(GameStep.Welcome)} isDarkMode={isDarkMode} />;
       default:

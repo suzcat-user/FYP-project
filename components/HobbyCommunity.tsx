@@ -6,6 +6,7 @@ interface HobbyCommunityProps {
   hobby: Hobby | null;
   onBack: () => void;
   isDarkMode?: boolean;
+  currentUser?: string;
 }
 
 const PIXEL_GIFS = [
@@ -23,7 +24,7 @@ const PIXEL_GIFS = [
   "https://media1.tenor.com/m/rxjtdE-oKtMAAAAC/little-mermaid-laughing.gif"
 ];
 
-const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMode = false }) => {
+const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMode = false, currentUser = 'USER_1' }) => {
   const [joined, setJoined] = useState(false);
   const [activePostId, setActivePostId] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -185,7 +186,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
     if (!newPostTitle) return;
     const newPost: Post = {
       id: Date.now().toString(),
-      author: 'YOU',
+      author: currentUser,
       title: newPostTitle,
       content: newPostContent,
       upvotes: 0,
@@ -194,10 +195,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
       comments: []
     };
     setPosts([newPost, ...posts]);
-    setNewPostTitle('');
-    setNewPostContent('');
-    setAttachments([]);
-    setShowCreateModal(false);
+    resetModalState();
   };
 
   const handleAddComment = (postId: string, content: string, gifs?: string[]) => {
@@ -221,7 +219,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
 
   const handleDeletePost = (postId: string) => {
     const post = posts.find(p => p.id === postId);
-    if (post && post.author === 'YOU') {
+    if (post && post.author === currentUser) {
       setPosts(prev => prev.filter(p => p.id !== postId));
       setActivePostId(null);
     }
@@ -229,7 +227,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
 
   const handleEditPost = (postId: string) => {
     const post = posts.find(p => p.id === postId);
-    if (post && post.author === 'YOU') {
+    if (post && post.author === currentUser) {
       setNewPostTitle(post.title);
       setNewPostContent(post.content);
       setEditingPostId(postId);
@@ -296,6 +294,10 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
                             <button className="text-xl">▼</button>
                         </div>
                         <div className="flex-1 p-4">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className={`font-press-start text-[1.2vmin] ${post.author === currentUser ? 'text-yellow-400' : 'text-gray-400'}`}>u/{post.author}</h3>
+                              {post.author === currentUser && <span className={`font-press-start text-[0.8vmin] px-2 py-1 rounded ${isDarkMode ? 'bg-yellow-600 text-white' : 'bg-yellow-300 text-gray-900'}`}>YOUR POST</span>}
+                            </div>
                             <h2 className="font-press-start text-[1.8vmin] mb-2">{post.title}</h2>
                             <p className="font-vt323 text-xl mb-2 line-clamp-3">{post.content}</p>
                             {post.attachment && (
@@ -306,7 +308,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
                             ))}
                             <div className="flex gap-4 font-press-start text-[1vmin] opacity-70 items-center">
                                 <span className="cursor-pointer hover:opacity-100" onClick={() => setActivePostId(post.id)}>💬 {post.comments.length} Comments</span>
-                                {post.author === 'YOU' && (
+                                {post.author === currentUser && (
                                   <>
                                     <button 
                                       onClick={() => handleEditPost(post.id)}
@@ -344,9 +346,16 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
               <div className={`w-full max-w-4xl max-h-[90vh] overflow-y-auto border-8 p-6 flex flex-col gap-6 ${isDarkMode ? 'bg-[#0f111a] border-indigo-900' : 'bg-white border-sky-800'}`}>
                   <div className="flex justify-between items-center border-b-4 pb-2">
-                      <h2 className="font-press-start text-[2vmin]">{activePost.title}</h2>
+                      <div className="flex-1">
+                        <h2 className="font-press-start text-[2vmin] mb-2">{activePost.title}</h2>
+                        <div className="flex items-center gap-2">
+                          <span className={`font-press-start text-[1.2vmin] ${activePost.author === currentUser ? 'text-yellow-400' : 'text-gray-400'}`}>u/{activePost.author}</span>
+                          {activePost.author === currentUser && <span className={`font-press-start text-[0.8vmin] px-2 py-1 rounded ${isDarkMode ? 'bg-yellow-600 text-white' : 'bg-yellow-300 text-gray-900'}`}>YOUR POST</span>}
+                          <span className="text-gray-500">• {activePost.timestamp}</span>
+                        </div>
+                      </div>
                       <div className="flex gap-2">
-                          {activePost.author === 'YOU' && (
+                          {activePost.author === currentUser && (
                             <>
                               <button 
                                 onClick={() => handleEditPost(activePost.id)}

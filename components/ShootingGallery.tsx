@@ -71,6 +71,17 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
   const currentQuestion = SHOOTING_GALLERY_QUESTIONS[currentQuestionIndex];
   const TOTAL_ROUNDS = 5;
 
+  const handleSkip = () => {
+    if (round < TOTAL_ROUNDS - 1) {
+      setRound(prev => prev + 1);
+      setCurrentQuestionIndex(prev => (prev + 1) % SHOOTING_GALLERY_QUESTIONS.length);
+      setIsShot(false);
+      setPoppedId(null);
+    } else {
+      onGameEnd();
+    }
+  };
+
   const bubbleConfigs = useMemo(() => currentQuestion.answers.map(() => {
     return {
       top: 15 + Math.random() * 50,
@@ -113,7 +124,7 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
     <GameContainer 
       title="Reflex Pop" 
       instruction={currentQuestion.question} 
-      onSkip={onSkip} 
+      onSkip={handleSkip} 
       isDarkMode={isDarkMode} 
       progress={progress}
       howToPlay="The Radar identifies personality nodes floating in the digital void. Use your cursor (the Targeting Crosshair) to hover over a node and view its trait data. Left-click to 'Pop' the node and absorb its characteristics into your profile."

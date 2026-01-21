@@ -20,6 +20,15 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
 
   const currentQuestion = WOULD_YOU_RATHER_QUESTIONS[currentQuestionIndex];
 
+  const handleSkip = () => {
+    if (round < TOTAL_ROUNDS - 1) {
+      setRound(prev => prev + 1);
+      setCurrentQuestionIndex(prev => (prev + 1) % WOULD_YOU_RATHER_QUESTIONS.length);
+    } else {
+      onGameEnd();
+    }
+  };
+
   const handleChoice = (index: number) => {
     if (animating) return;
 
@@ -42,7 +51,7 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
     <GameContainer 
       title="Decision Duel" 
       instruction="PICK YOUR DESTINY!" 
-      onSkip={onSkip} 
+      onSkip={handleSkip} 
       isDarkMode={isDarkMode} 
       progress={progress}
       howToPlay="The Duel splits your screen into two distinct futures. Read both scenarios carefully and click the path that resonates with your soul. There are no wrong answers—only branches in your timeline."

@@ -148,6 +148,18 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
 
   const currentQuestion = RING_TOSS_QUESTIONS[currentQuestionIndex];
 
+  const handleSkip = () => {
+    if (isThrown) return;
+    if (round < TOTAL_ROUNDS - 1) {
+      setRound(prev => prev + 1);
+      setCurrentQuestionIndex(prev => (prev + 1) % RING_TOSS_QUESTIONS.length);
+      setSelectedAnswer(null);
+      setIsThrown(false);
+    } else {
+      onGameEnd();
+    }
+  };
+
   const handleThrow = (trait: Trait, index: number) => {
     if (isThrown) return;
     setSelectedAnswer(index);
@@ -175,7 +187,7 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
     <GameContainer 
       title="Precision Toss" 
       instruction={currentQuestion.question} 
-      onSkip={onSkip} 
+      onSkip={handleSkip} 
       isDarkMode={isDarkMode} 
       progress={progress}
       howToPlay="The Meadow is filled with potential destiny stakes. Use your mouse to aim at the stake that best represents your answer. Click to 'Toss' your ring. The ring will automatically seek the targeted stake if your aim is true."

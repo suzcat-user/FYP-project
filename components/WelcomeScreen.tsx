@@ -201,6 +201,83 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, isDarkMode = fal
           </div>
       </section>
 
+      {/* GAMES SUMMARY SECTION */}
+      <section className={`py-24 px-6 ${isDarkMode ? 'bg-slate-900' : 'bg-sky-100'} border-y-[6px] ${isDarkMode ? 'border-slate-600' : 'border-sky-200'} relative overflow-hidden`}>
+          <div className={`absolute inset-0 ${isDarkMode ? 'bg-[radial-gradient(circle_at_50%_50%,rgba(100,116,139,0.1),transparent_70%)]' : 'bg-[radial-gradient(circle_at_50%_50%,rgba(14,165,233,0.1),transparent_70%)]'}`}></div>
+          
+          <div className="max-w-7xl mx-auto relative z-10">
+              <div className="flex flex-col items-center mb-16">
+                  <h2 className={`font-press-start text-[4vmin] ${isDarkMode ? 'text-slate-200' : 'text-sky-900'} mb-3 tracking-tighter uppercase chromatic`}>THREE GAME CHALLENGE</h2>
+                  <div className={`h-2 w-48 ${isDarkMode ? 'bg-slate-400' : 'bg-sky-400'} shadow-[0_0_15px_${isDarkMode ? 'rgba(100,116,139,0.5)' : 'rgba(14,165,233,0.5)'}]`}></div>
+                  <p className={`font-vt323 text-[2.5vmin] ${isDarkMode ? 'text-slate-300' : 'text-sky-800'} mt-6 max-w-3xl text-center`}>
+                      Complete three precision arcade challenges to reveal your true hobby personality. Each game analyzes different aspects of your preferences.
+                  </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {/* Game 1: Would You Rather */}
+                  <div className={`group relative border-4 ${isDarkMode ? 'border-slate-600 bg-slate-800' : 'border-sky-300 bg-white'} p-8 hover:border-sky-500 transition-all duration-300 hover:-translate-y-2 shadow-[8px_8px_0px_${isDarkMode ? '#475569' : '#bae6fd'}] hover:shadow-[12px_12px_0px_#0ea5e9]`}>
+                      <div className={`absolute top-4 right-5 font-press-start text-4xl opacity-10 italic ${isDarkMode ? 'text-slate-200' : 'text-sky-900'}`}>01</div>
+                      <div className="mb-6">
+                          <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">🎮</div>
+                          <h3 className={`font-press-start text-[2.2vmin] ${isDarkMode ? 'text-sky-400' : 'text-sky-600'} uppercase tracking-tight mb-2`}>WOULD YOU RATHER</h3>
+                          <div className={`font-vt323 text-xl ${isDarkMode ? 'text-slate-400' : 'text-sky-400/60'} uppercase tracking-wide`}>CHOICE REACTOR</div>
+                      </div>
+                      <p className={`font-vt323 text-[2.3vmin] ${isDarkMode ? 'text-slate-200' : 'text-sky-900'} mb-4 leading-tight`}>
+                          Five rapid-fire questions test your instant reactions. Choose between contrasting scenarios to reveal your core preferences.
+                      </p>
+                      <div className={`border-t-2 ${isDarkMode ? 'border-slate-600' : 'border-sky-200'} pt-4 mt-6`}>
+                          <div className={`font-press-start text-[0.65vmin] ${isDarkMode ? 'text-slate-400' : 'text-sky-400'} uppercase tracking-widest mb-2`}>STATS</div>
+                          <div className="flex justify-between items-center">
+                              <span className={`font-vt323 text-lg ${isDarkMode ? 'text-slate-300' : 'text-sky-800'}`}>5 Questions</span>
+                              <span className={`font-vt323 text-lg ${isDarkMode ? 'text-slate-300' : 'text-sky-800'}`}>~1-2 min</span>
+                          </div>
+                      </div>
+                  </div>
+
+                  {/* Game 2: Precision Toss (Ring Toss) */}
+                  <div className={`group relative border-4 ${isDarkMode ? 'border-slate-600 bg-slate-800' : 'border-sky-300 bg-white'} p-8 hover:border-sky-500 transition-all duration-300 hover:-translate-y-2 shadow-[8px_8px_0px_${isDarkMode ? '#475569' : '#bae6fd'}] hover:shadow-[12px_12px_0px_#0ea5e9]`}>
+                      <div className={`absolute top-4 right-5 font-press-start text-4xl opacity-10 italic ${isDarkMode ? 'text-slate-200' : 'text-sky-900'}`}>02</div>
+                      <div className="mb-6">
+                          <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">⭕</div>
+                          <h3 className={`font-press-start text-[2.2vmin] ${isDarkMode ? 'text-sky-400' : 'text-sky-600'} uppercase tracking-tight mb-2`}>PRECISION TOSS</h3>
+                          <div className={`font-vt323 text-xl ${isDarkMode ? 'text-slate-400' : 'text-sky-400/60'} uppercase tracking-wide`}>TARGET SELECTOR</div>
+                      </div>
+                      <p className={`font-vt323 text-[2.3vmin] ${isDarkMode ? 'text-slate-200' : 'text-sky-900'} mb-4 leading-tight`}>
+                          Aim and throw rings at targets representing different life satisfactions. Five rounds test your priorities and values.
+                      </p>
+                      <div className={`border-t-2 ${isDarkMode ? 'border-slate-600' : 'border-sky-200'} pt-4 mt-6`}>
+                          <div className={`font-press-start text-[0.65vmin] ${isDarkMode ? 'text-slate-400' : 'text-sky-400'} uppercase tracking-widest mb-2`}>STATS</div>
+                          <div className="flex justify-between items-center">
+                              <span className={`font-vt323 text-lg ${isDarkMode ? 'text-slate-300' : 'text-sky-800'}`}>5 Rounds</span>
+                              <span className={`font-vt323 text-lg ${isDarkMode ? 'text-slate-300' : 'text-sky-800'}`}>~2-3 min</span>
+                          </div>
+                      </div>
+                  </div>
+
+                  {/* Game 3: Shooting Gallery */}
+                  <div className={`group relative border-4 ${isDarkMode ? 'border-slate-600 bg-slate-800' : 'border-sky-300 bg-white'} p-8 hover:border-sky-500 transition-all duration-300 hover:-translate-y-2 shadow-[8px_8px_0px_${isDarkMode ? '#475569' : '#bae6fd'}] hover:shadow-[12px_12px_0px_#0ea5e9]`}>
+                      <div className={`absolute top-4 right-5 font-press-start text-4xl opacity-10 italic ${isDarkMode ? 'text-slate-200' : 'text-sky-900'}`}>03</div>
+                      <div className="mb-6">
+                          <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">🔫</div>
+                          <h3 className={`font-press-start text-[2.2vmin] ${isDarkMode ? 'text-sky-400' : 'text-sky-600'} uppercase tracking-tight mb-2`}>SHOOTING GALLERY</h3>
+                          <div className={`font-vt323 text-xl ${isDarkMode ? 'text-slate-400' : 'text-sky-400/60'} uppercase tracking-wide`}>RAPID FIRE MODE</div>
+                      </div>
+                      <p className={`font-vt323 text-[2.3vmin] ${isDarkMode ? 'text-slate-200' : 'text-sky-900'} mb-4 leading-tight`}>
+                          Shoot moving targets labeled with hobby scenarios. Five fast-paced rounds measure your quick decision-making under pressure.
+                      </p>
+                      <div className={`border-t-2 ${isDarkMode ? 'border-slate-600' : 'border-sky-200'} pt-4 mt-6`}>
+                          <div className={`font-press-start text-[0.65vmin] ${isDarkMode ? 'text-slate-400' : 'text-sky-400'} uppercase tracking-widest mb-2`}>STATS</div>
+                          <div className="flex justify-between items-center">
+                              <span className={`font-vt323 text-lg ${isDarkMode ? 'text-slate-300' : 'text-sky-800'}`}>5 Rounds</span>
+                              <span className={`font-vt323 text-lg ${isDarkMode ? 'text-slate-300' : 'text-sky-800'}`}>~2-3 min</span>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </section>
+
       {/* HERO CLASSES SECTION */}
       <section className={`py-32 px-6 ${isDarkMode ? 'bg-slate-800' : 'bg-white'} border-y-[8px] ${isDarkMode ? 'border-slate-700' : 'border-sky-50'} relative overflow-hidden`}>
           <div className={`absolute inset-0 ${isDarkMode ? 'bg-[radial-gradient(circle_at_50%_50%,rgba(100,116,139,0.05),transparent_70%)]' : 'bg-[radial-gradient(circle_at_50%_50%,rgba(14,165,233,0.05),transparent_70%)]'}`}></div>

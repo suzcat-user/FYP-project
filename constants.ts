@@ -3,7 +3,7 @@ import { Trait } from './types';
 export const WOULD_YOU_RATHER_QUESTIONS = [
   {
     id: 1,
-    question: "Social vs Solo",
+    question: "Would you rather engage in hobbies that are more mental than physical?",
     answers: [
       { text: "Mental", trait: Trait.STRATEGIC },
       { text: "Physical", trait: Trait.ACTIVE }
@@ -11,10 +11,10 @@ export const WOULD_YOU_RATHER_QUESTIONS = [
   },
   {
     id: 2,
-    question: "Innovation vs Mystery",
+    question: "Would you rather feel challenged than relaxed?",
     answers: [
-      { text: "Invent a gadget that changes the world", trait: Trait.CREATIVE },
-      { text: "Solve a centuries-old mystery", trait: Trait.STRATEGIC }
+      { text: "Challenged", trait: Trait.CREATIVE },
+      { text: "Relaxed", trait: Trait.STRATEGIC }
     ]
   },
   {

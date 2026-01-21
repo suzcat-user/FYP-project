@@ -152,10 +152,10 @@ const App: React.FC = () => {
                  {gameStep !== GameStep.Auth && (
                    <button 
                       onClick={() => setGameStep(GameStep.Auth)}
-                      className="px-4 py-2 border-2 border-red-500 bg-red-500/20 text-red-400 text-[1.2vmin] transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
+                      className={`px-4 py-2 border-2 text-[1.2vmin] transition-all hover:scale-105 active:scale-95 flex items-center gap-2 ${isDarkMode ? 'border-red-600 bg-red-600/20 text-red-300' : 'border-red-500 bg-red-500/20 text-red-400'}`}
                       title="Log Out"
                    >
-                      <div className="w-2 h-2 rounded-full bg-red-400"></div>
+                      <div className={`w-2 h-2 rounded-full ${isDarkMode ? 'bg-red-300' : 'bg-red-400'}`}></div>
                       LOG OUT
                    </button>
                  )}

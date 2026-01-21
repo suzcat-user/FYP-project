@@ -148,6 +148,18 @@ const App: React.FC = () => {
                     {isDarkMode ? 'POWER: DARK' : 'POWER: LIGHT'}
                  </button>
 
+                 {/* Log Out Button - Hidden on Auth screen */}
+                 {gameStep !== GameStep.Auth && (
+                   <button 
+                      onClick={() => setGameStep(GameStep.Auth)}
+                      className="px-4 py-2 border-2 border-red-500 bg-red-500/20 text-red-400 text-[1.2vmin] transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
+                      title="Log Out"
+                   >
+                      <div className="w-2 h-2 rounded-full bg-red-400"></div>
+                      LOG OUT
+                   </button>
+                 )}
+
                  <div className="flex flex-col items-end">
                      <span className="text-sky-500/50 text-[1vmin]">CREDITS</span>
                      <span className="text-white neon-glow-blue">FREE PLAY</span>

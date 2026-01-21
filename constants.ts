@@ -19,26 +19,26 @@ export const WOULD_YOU_RATHER_QUESTIONS = [
   },
   {
     id: 3,
-    question: "Physical vs Discovery",
+    question: "Would you rather spend your free time alone than with others?",
     answers: [
-      { text: "Climb the highest mountain peak", trait: Trait.ACTIVE },
-      { text: "Discover a hidden ancient city", trait: Trait.EXPLORER }
+      { text: "Alone", trait: Trait.ACTIVE },
+      { text: "With others", trait: Trait.EXPLORER }
     ]
   },
   {
     id: 4,
-    question: "Art vs Voice",
+    question: "Would you describe yourself as patient rather than impatient?",
     answers: [
-      { text: "Write a best-selling novel", trait: Trait.CREATIVE },
-      { text: "Give a TED talk to thousands", trait: Trait.SOCIAL }
+      { text: "Patient", trait: Trait.CREATIVE },
+      { text: "Impatient", trait: Trait.SOCIAL }
     ]
   },
   {
     id: 5,
-    question: "Calculated vs Thrill",
+    question: "Would you rather feel comfortable than open to anyone?",
     answers: [
-      { text: "Plan a complex heist movie plot", trait: Trait.STRATEGIC },
-      { text: "Go whitewater rafting", trait: Trait.ACTIVE }
+      { text: "I prefer staying in my comfort zone", trait: Trait.STRATEGIC },
+      { text: "I prefer to open up to others ", trait: Trait.ACTIVE }
     ]
   }
 ];

@@ -46,7 +46,7 @@ export const WOULD_YOU_RATHER_QUESTIONS = [
 export const RING_TOSS_QUESTIONS = [
   {
     id: 1,
-    question: "Where would you go for a dream vacation?",
+    question: "What gives you the MOST satisfaction at this stage of life?",
     answers: [
       { text: "Big City Tour", description: "Energy, nightlife, and crowds.", trait: Trait.SOCIAL },
       { text: "Deep Forest Cabin", description: "Quiet, birds, and solitude.", trait: Trait.CALM },

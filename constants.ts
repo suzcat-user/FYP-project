@@ -58,14 +58,14 @@ export const RING_TOSS_QUESTIONS = [
   },
   {
     id: 2,
-    question: "What's your preferred Saturday morning?",
+    question: "What kind of learner are you?",
     answers: [
-      { text: "Farmers Market - Chatting with locals.", trait: Trait.SOCIAL },
-      { text: "Sleeping In - Deep rest and peace.", trait: Trait.CALM },
-      { text: "Random Road Trip - Seeing where the road goes.", trait: Trait.EXPLORER },
-      { text: "Writing Music - Expressing melodies.", trait: Trait.CREATIVE },
-      { text: "Morning Run - Getting the heart pumping.", trait: Trait.ACTIVE },
-      { text: "Coding Projects - Building complex systems.", trait: Trait.STRATEGIC }
+      { text: "Visual", trait: Trait.CREATIVE },
+      { text: "Auditory", trait: Trait.CALM },
+      { text: "Kinaesthetic", trait: Trait.ACTIVE },
+      { text: "Reading / Writing", trait: Trait.STRATEGIC },
+      { text: "Social", trait: Trait.SOCIAL },
+      { text: "Trial & error", trait: Trait.EXPLORER }
     ]
   },
   {

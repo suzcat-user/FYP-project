@@ -16,6 +16,7 @@ const App: React.FC = () => {
   const [selectedHobby, setSelectedHobby] = useState<Hobby | null>(null);
   const [userName, setUserName] = useState<string>('Guest_Player');
   const [userEmail, setUserEmail] = useState<string>('');
+  const [userData, setUserData] = useState<{ user_id?: number; username?: string; score?: number } | null>(null);
   const [scores, setScores] = useState<Scores>({
     CREATIVE: 0,
     ACTIVE: 0,
@@ -25,9 +26,10 @@ const App: React.FC = () => {
     EXPLORER: 0
   });
 
-  const handleLogin = useCallback((username: string, email: string) => {
+  const handleLogin = useCallback((username: string, email: string, user_id: number) => {
     setUserName(username);
     setUserEmail(email);
+    setUserData({ user_id, username, score: 0 });
     setGameStep(GameStep.Welcome);
   }, []);
 

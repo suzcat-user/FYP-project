@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import ArcadeButton from './ui/ArcadeButton';
 
 interface AuthScreenProps {
-  onLogin: (username: string, email: string) => void;
+  onLogin: (username: string, email: string, user_id: number) => void;
   isDarkMode?: boolean;
 }
 
@@ -11,16 +11,51 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, isDarkMode = false }) 
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setTimeout(() => {
-        onLogin(username || 'Guest_Player', email);
-    }, 500);
+    setError('');
+    setLoading(true);
+
+    if (!username.trim()) {
+      setError('Username is required');
+      setLoading(false);
+      return;
+    }
+
+    if (!password.trim()) {
+      setError('Password is required');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:3001/api/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: username.trim(),
+          email: email.trim() || null,
+          password
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.user) {
+        onLogin(data.user.username, data.user.email || email, data.user.user_id);
+      } else {
+        setError(data.error || 'Login failed. Please try again.');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('Network error. Could not connect to server.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -77,17 +112,19 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, isDarkMode = false }) 
                     placeholder="player@example.com"
                 />
             </div>
-            <div>
-              <label className={`font-press-start text-[0.8vmin] sm:text-[1vmin] md:text-[1.2vmin] mb-1 block transition-colors ${isDarkMode ? 'text-indigo-400' : 'text-gray-600'}`}>USERNAME</label>
-              <input 
-                type="text" 
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                className={`w-full font-vt323 text-[1.6vmin] sm:text-[2vmin] md:text-[2.4vmin] p-1.5 sm:p-2 md:p-2.5 border-2 sm:border-2 md:border-3 outline-none shadow-inner transition-colors ${isDarkMode ? 'bg-slate-900 border-indigo-900 text-white focus:border-pink-500' : 'bg-gray-50 border-gray-300 text-gray-900 focus:border-sky-500'}`}
-                placeholder="player123"
-              />
-            </div>
+                        {isLogin && (
+                            <div>
+                                <label className={`font-press-start text-[0.8vmin] sm:text-[1vmin] md:text-[1.2vmin] mb-1 block transition-colors ${isDarkMode ? 'text-indigo-400' : 'text-gray-600'}`}>USERNAME</label>
+                                <input 
+                                    type="text" 
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    required
+                                    className={`w-full font-vt323 text-[1.6vmin] sm:text-[2vmin] md:text-[2.4vmin] p-1.5 sm:p-2 md:p-2.5 border-2 sm:border-2 md:border-3 outline-none shadow-inner transition-colors ${isDarkMode ? 'bg-slate-900 border-indigo-900 text-white focus:border-pink-500' : 'bg-gray-50 border-gray-300 text-gray-900 focus:border-sky-500'}`}
+                                    placeholder="player123"
+                                />
+                            </div>
+                        )}
             <div>
                 <label className={`font-press-start text-[0.8vmin] sm:text-[1vmin] md:text-[1.2vmin] mb-1 block transition-colors ${isDarkMode ? 'text-indigo-400' : 'text-gray-600'}`}>PASSWORD</label>
                 <input 

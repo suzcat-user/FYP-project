@@ -160,11 +160,11 @@ export const SHOOTING_GALLERY_QUESTIONS = [
     question: "How do you prefer to learn new things?",
     answers: [
       { text: "Doing it physically", description: "🤸", trait: Trait.ACTIVE },
-      { text: "Watching and observing", description: "👁️", trait: Trait.CALM },
-      { text: "Listening to instructions or music", description: "🎧", trait: Trait.CREATIVE },
+      { text: "Explore & experiment", description: "🗺️", trait: Trait.CALM },
+      { text: "Visual & creative learning", description: "✏️", trait: Trait.CREATIVE },
       { text: "Discussing and learning with others", description: "💬", trait: Trait.SOCIAL },
       { text: "Reading and following written guides", description: "📖", trait: Trait.STRATEGIC },
-      { text: "Trial and error", description: "🔬", trait: Trait.EXPLORER }
+      { text: "Watch & observe", description: "🔬", trait: Trait.EXPLORER }
     ]
   }
 ];

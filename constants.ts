@@ -121,7 +121,7 @@ export const SHOOTING_GALLERY_QUESTIONS = [
   },
   {
     id: 2,
-    question: "What's your core motivation?",
+    question: "What motivates you to keep going when things get hard?",
     answers: [
       { text: "Self Expression", description: "I want to show the world who I am.", trait: Trait.CREATIVE },
       { text: "Perfect Efficiency", description: "I want systems that never fail.", trait: Trait.STRATEGIC },
@@ -133,7 +133,7 @@ export const SHOOTING_GALLERY_QUESTIONS = [
   },
   {
     id: 3,
-    question: "Choose a weapon for your digital avatar!",
+    question: "Where do you feel most “in the zone”?",
     answers: [
       { text: "Gravity Pen", description: "Draws platforms in mid-air.", trait: Trait.CREATIVE },
       { text: "Tactic-Drone", description: "Surveys and outsmarts.", trait: Trait.STRATEGIC },
@@ -145,7 +145,7 @@ export const SHOOTING_GALLERY_QUESTIONS = [
   },
   {
     id: 4,
-    question: "What's your dream project launch?",
+    question: "What's your main goal for having a hobby?",
     answers: [
       { text: "Gallery Opening", description: "Your art on every wall.", trait: Trait.CREATIVE },
       { text: "Global Launch", description: "Flawless logistics at scale.", trait: Trait.STRATEGIC },
@@ -157,7 +157,7 @@ export const SHOOTING_GALLERY_QUESTIONS = [
   },
   {
     id: 5,
-    question: "What defines a perfect day?",
+    question: "How do you prefer to learn new things?",
     answers: [
       { text: "Flow State", description: "Losing track of time making things.", trait: Trait.CREATIVE },
       { text: "Clean Victory", description: "Winning a tough mental game.", trait: Trait.STRATEGIC },

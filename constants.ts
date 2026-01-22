@@ -46,14 +46,14 @@ export const WOULD_YOU_RATHER_QUESTIONS = [
 export const RING_TOSS_QUESTIONS = [
   {
     id: 1,
-    question: "What gives you the MOST satisfaction at this stage of life?",
+    question: "Why do you want a hobby?",
     answers: [
-      { text: "Big City Tour - Energy, nightlife, and crowds.", trait: Trait.SOCIAL },
-      { text: "Deep Forest Cabin - Quiet, birds, and solitude.", trait: Trait.CALM },
-      { text: "Ancient Ruins - Uncover history and adventure.", trait: Trait.EXPLORER },
-      { text: "Art Museum Row - Masterpieces and inspiration.", trait: Trait.CREATIVE },
-      { text: "Extreme Peak - Climbing and adrenaline.", trait: Trait.ACTIVE },
-      { text: "Strategy Retreat - Workshops and planning.", trait: Trait.STRATEGIC }
+      { text: "I have free time", trait: Trait.CALM },
+      { text: "Improve lifestyle & health", trait: Trait.ACTIVE },
+      { text: "Express myself creatively", trait: Trait.CREATIVE },
+      { text: "Meet new people & socialize", trait: Trait.SOCIAL },
+      { text: "Build better lifestyle habits", trait: Trait.STRATEGIC },
+      { text: "Try something exciting & new", trait: Trait.EXPLORER }
     ]
   },
   {

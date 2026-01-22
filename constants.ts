@@ -135,12 +135,12 @@ export const SHOOTING_GALLERY_QUESTIONS = [
     id: 3,
     question: "Where do you feel most “in the zone”?",
     answers: [
-      { text: "Gravity Pen", description: "Draws platforms in mid-air.", trait: Trait.CREATIVE },
-      { text: "Tactic-Drone", description: "Surveys and outsmarts.", trait: Trait.STRATEGIC },
-      { text: "Warp Compass", description: "Teleports to new biomes.", trait: Trait.EXPLORER },
-      { text: "Voice of Command", description: "Controls the npc crowds.", trait: Trait.SOCIAL },
-      { text: "Turbo Gauntlets", description: "Punches through barriers.", trait: Trait.ACTIVE },
-      { text: "Zen Aegis", description: "A shield of pure tranquility.", trait: Trait.CALM }
+      { text: "A gym or training space", description: "🏋️", trait: Trait.ACTIVE },
+      { text: "A quiet room with minimal distractions", description: "🧘", trait: Trait.CALM },
+      { text: "Outdoors with space to move", description: "🌄", trait: Trait.EXPLORER },
+      { text: "A lively space with people around", description: "🎉", trait: Trait.SOCIAL },
+      { text: "A cozy, familiar environment", description: "🛋️", trait: Trait.STRATEGIC },
+      { text: "A workshop or creative studio", description: "🎨", trait: Trait.CREATIVE }
     ]
   }, 
   {

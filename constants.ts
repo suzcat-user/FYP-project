@@ -70,14 +70,14 @@ export const RING_TOSS_QUESTIONS = [
   },
   {
     id: 3,
-    question: "Pick a legendary power!",
+    question: "Your ideal hobby environment is…",
     answers: [
-      { text: "Aura of Unity - Bring anyone together.", trait: Trait.SOCIAL },
-      { text: "Inner Calm - Immune to stress forever.", trait: Trait.CALM },
-      { text: "Star-gate - Travel across dimensions.", trait: Trait.EXPLORER },
-      { text: "Infinite Canvas - Bring drawings to life.", trait: Trait.CREATIVE },
-      { text: "Super Strength - Conquer any physical feat.", trait: Trait.ACTIVE },
-      { text: "Foresight - Perfectly predict outcomes.", trait: Trait.STRATEGIC }
+      { text: "Fast-paced & energetic", trait: Trait.ACTIVE },
+      { text: "Competitive & intense", trait: Trait.STRATEGIC },
+      { text: "Creative & expressive", trait: Trait.CREATIVE },
+      { text: "Quiet & natural", trait: Trait.CALM },
+      { text: "Lively & social", trait: Trait.SOCIAL },
+      { text: "Comfortable & cosy", trait: Trait.EXPLORER }
     ]
   },
   {

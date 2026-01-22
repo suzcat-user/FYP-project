@@ -1,5 +1,5 @@
 const express = require('express');
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 const cors = require('cors');
 
 const app = express();
@@ -9,42 +9,48 @@ const PORT = 3001;
 app.use(cors());
 app.use(express.json());
 
-// MySQL Connection - Aiven Cloud
-const db = mysql.createConnection({
-  host: 'mysql-f6dd3cc-myrp-fypp.d.aivencloud.com',
-  user: 'avnadmin',
-  password: 'AVNS_xREgo-7cfTkD9oJUroh',
-  port: 23353,
-  database: 'defaultdb',
-  ssl: {
-    rejectUnauthorized: false
-  }
-});
+// Initialize MySQL pool (promise API)
+async function start() {
+  try {
+    const db = await mysql.createPool({
+      host: 'mysql-f6dd3cc-myrp-fypp.d.aivencloud.com',
+      user: 'avnadmin',
+      password: 'AVNS_xREgo-7cfTkD9oJUroh',
+      port: 23353,
+      database: 'defaultdb',
+      ssl: { rejectUnauthorized: false },
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0,
+    });
 
-db.connect((err) => {
-  if (err) {
+    await db.query('SELECT 1');
+    console.log('✅ Connected to MySQL database: fypdatabase');
+
+    // Import routes
+    const userRoutes = require('./routes/users');
+    const answersRoutes = require('./routes/answers');
+    const postsRoutes = require('./routes/posts');
+    const commentsRoutes = require('./routes/comments');
+
+    // Mount routes with promise pool
+    app.use('/api/users', userRoutes(db));
+    app.use('/api/answers', answersRoutes(db));
+    app.use('/api/posts', postsRoutes(db));
+    app.use('/api/comments', commentsRoutes(db));
+
+    // Test route
+    app.get('/api/test', (req, res) => {
+      res.json({ message: 'Server is running!' });
+    });
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+    });
+  } catch (err) {
     console.error('Database connection failed:', err);
-    return;
+    process.exit(1);
   }
-  console.log('✅ Connected to MySQL database: fypdatabase');
-});
+}
 
-// Import routes
-const userRoutes = require('./routes/users');
-const answersRoutes = require('./routes/answers');
-const postsRoutes = require('./routes/posts');
-const commentsRoutes = require('./routes/comments');
-
-app.use('/api/users', userRoutes(db));
-app.use('/api/answers', answersRoutes(db));
-app.use('/api/posts', postsRoutes(db));
-app.use('/api/comments', commentsRoutes(db));
-
-// Test route
-app.get('/api/test', (req, res) => {
-  res.json({ message: 'Server is running!' });
-});
-
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+start();

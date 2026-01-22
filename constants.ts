@@ -82,14 +82,14 @@ export const RING_TOSS_QUESTIONS = [
   },
   {
     id: 4,
-    question: "What's your ultimate comfort food vibe?",
+    question: "What kind of progress do you want from a hobby?",
     answers: [
-      { text: "Grand Buffet - Everything for everyone.", trait: Trait.SOCIAL },
-      { text: "Tea & Silence - Simple, warm, and quiet.", trait: Trait.CALM },
-      { text: "Exotic Street Food - Taste something brand new.", trait: Trait.EXPLORER },
-      { text: "Artisan Pastries - Beautifully crafted treats.", trait: Trait.CREATIVE },
-      { text: "Power Smoothie - Fuel for the next mission.", trait: Trait.ACTIVE },
-      { text: "Perfectly Portion-timed Meal - Precisely calculated macros.", trait: Trait.STRATEGIC }
+      { text: "Improved fitness & strength", trait: Trait.ACTIVE },
+      { text: "Creative skills & mastery", trait: Trait.CREATIVE },
+      { text: "Better mindset & inner calm", trait: Trait.CALM },
+      { text: "Stronger social connections", trait: Trait.SOCIAL },
+      { text: "Better habits & routines", trait: Trait.STRATEGIC },
+      { text: "Overall personal growth", trait: Trait.EXPLORER }
     ]
   },
   {

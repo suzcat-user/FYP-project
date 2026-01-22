@@ -37,9 +37,23 @@ const BubbleTarget: React.FC<{
   isDarkMode: boolean;
   isPopped: boolean;
 }> = ({ text, description, trait, onClick, isDarkMode, isPopped }) => {
+  const [showBelow, setShowBelow] = React.useState(false);
+
+  const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const parentRect = e.currentTarget.parentElement?.getBoundingClientRect();
+    
+    if (parentRect) {
+      // Check if there's enough space above (at least 150px for tooltip)
+      const spaceAbove = rect.top - parentRect.top;
+      setShowBelow(spaceAbove < 150);
+    }
+  };
+
   return (
     <button 
-      onClick={onClick} 
+      onClick={onClick}
+      onMouseEnter={handleMouseEnter}
       className={`absolute w-[16vmin] h-[16vmin] rounded-full flex flex-col items-center justify-center p-2 text-center group z-30 transition-all active:scale-95 focus:outline-none 
         ${isPopped ? 'scale-150 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}`}
     >
@@ -52,11 +66,19 @@ const BubbleTarget: React.FC<{
         {TRAIT_ICONS[trait]}
       </div>
 
-      <div className={`absolute bottom-[115%] left-1/2 -translate-x-1/2 w-[35vmin] p-3 border-4 shadow-[12px_12px_0px_rgba(0,0,0,0.3)] z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100 origin-bottom rounded-none backdrop-blur-xl ${isDarkMode ? 'bg-slate-950 border-white text-white' : 'bg-white border-sky-900 text-sky-900'}`}>
+      {!showBelow ? (
+        <div className={`absolute bottom-[115%] left-1/2 -translate-x-1/2 w-[35vmin] p-3 border-4 shadow-[12px_12px_0px_rgba(0,0,0,0.3)] z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100 origin-bottom rounded-none backdrop-blur-xl ${isDarkMode ? 'bg-slate-950 border-white text-white' : 'bg-white border-sky-900 text-sky-900'}`}>
            <p className="font-press-start text-[1.4vmin] mb-2 border-b-2 border-current pb-1 uppercase tracking-tighter">{text}</p>
            <p className={`font-vt323 text-[2.2vmin] leading-tight ${isDarkMode ? 'text-indigo-100' : 'text-gray-700'}`}>{description}</p>
            <div className={`absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[10px] ${isDarkMode ? 'border-t-white' : 'border-t-sky-900'}`}></div>
-      </div>
+        </div>
+      ) : (
+        <div className={`absolute top-[115%] left-1/2 -translate-x-1/2 w-[35vmin] p-3 border-4 shadow-[12px_12px_0px_rgba(0,0,0,0.3)] z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100 origin-top rounded-none backdrop-blur-xl ${isDarkMode ? 'bg-slate-950 border-white text-white' : 'bg-white border-sky-900 text-sky-900'}`}>
+           <p className="font-press-start text-[1.4vmin] mb-2 border-b-2 border-current pb-1 uppercase tracking-tighter">{text}</p>
+           <p className={`font-vt323 text-[2.2vmin] leading-tight ${isDarkMode ? 'text-indigo-100' : 'text-gray-700'}`}>{description}</p>
+           <div className={`absolute bottom-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[10px] ${isDarkMode ? 'border-b-white' : 'border-b-sky-900'}`}></div>
+        </div>
+      )}
     </button>
   );
 };

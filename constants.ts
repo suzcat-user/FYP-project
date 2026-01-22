@@ -147,12 +147,12 @@ export const SHOOTING_GALLERY_QUESTIONS = [
     id: 4,
     question: "What's your main goal for having a hobby?",
     answers: [
-      { text: "Gallery Opening", description: "Your art on every wall.", trait: Trait.CREATIVE },
-      { text: "Global Launch", description: "Flawless logistics at scale.", trait: Trait.STRATEGIC },
-      { text: "Expedition Start", description: "Setting sail for the unknown.", trait: Trait.EXPLORER },
-      { text: "City Block Party", description: "Everyone celebrating together.", trait: Trait.SOCIAL },
-      { text: "Stadium Final", description: "Peak competition at its best.", trait: Trait.ACTIVE },
-      { text: "Quiet Release", description: "Shared slowly with loved ones.", trait: Trait.CALM }
+      { text: "Get fit and stay active", description: "💪", trait: Trait.ACTIVE },
+      { text: "Express creativity and make things", description: "🎨", trait: Trait.CREATIVE },
+      { text: "Find peace and reconnect with nature", description: "🌿", trait: Trait.CALM },
+      { text: "Meet people and build community", description: "👥", trait: Trait.SOCIAL },
+      { text: "Improve my daily lifestyle", description: "📈", trait: Trait.STRATEGIC },
+      { text: "Challenge myself and grow", description: "🚀", trait: Trait.EXPLORER }
     ]
   },
   {

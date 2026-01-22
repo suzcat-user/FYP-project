@@ -116,65 +116,67 @@ const App: React.FC = () => {
         <div className="absolute inset-0 border-[4px] border-white/5 pointer-events-none z-50 rounded-2xl"></div>
 
         {/* HUD Top Bar */}
-        <div className={`h-16 md:h-20 text-white flex justify-between items-center font-press-start text-[1.2vmin] md:text-[1.6vmin] z-50 relative px-6 border-b-8 shadow-2xl transition-colors duration-500 ${isDarkMode ? 'bg-[#1e1b4b] border-indigo-500/30' : 'bg-sky-950 border-sky-400/30'}`}>
+        <div className={`text-white flex flex-wrap items-center justify-between gap-2 sm:gap-3 lg:gap-6 font-press-start text-[9px] xs:text-[10px] sm:text-[11px] md:text-[1.3vmin] lg:text-[1.6vmin] z-50 relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 min-h-14 md:min-h-16 lg:min-h-20 border-b-8 shadow-2xl transition-colors duration-500 ${isDarkMode ? 'bg-[#1e1b4b] border-indigo-500/30' : 'bg-sky-950 border-sky-400/30'}`}>
              {/* Left Section - Logo, User ID, Score */}
-             <div className="flex gap-6 items-center">
+             <div className="flex gap-2 sm:gap-3 lg:gap-6 items-center flex-shrink-0">
                  {/* Logo - Clickable Home Button (disabled on Auth screen) */}
                  <button
                     onClick={() => gameStep !== GameStep.Auth && setGameStep(GameStep.Welcome)}
                     disabled={gameStep === GameStep.Auth}
-                    className={`${gameStep !== GameStep.Auth ? 'cursor-pointer hover:scale-110' : 'cursor-default'} transition-transform duration-300`}
+                    className={`${gameStep !== GameStep.Auth ? 'cursor-pointer hover:scale-110' : 'cursor-default'} transition-transform duration-300 flex-shrink-0`}
                     title={gameStep !== GameStep.Auth ? "Return to Home" : ""}
                  >
-                    <img src="components/Logos-02.png" alt="Hobby Arcade Logo" className="w-16 h-16 md:w-20 md:h-20 object-contain drop-shadow-lg" />
+                    <img src="components/Logos-02.png" alt="Hobby Arcade Logo" className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 object-contain drop-shadow-lg" />
                  </button>
                  
                  {/* User ID */}
                  {gameStep !== GameStep.Auth && (
-                   <button onClick={() => setGameStep(GameStep.Profile)} className="flex flex-col items-center group hover:scale-105 transition-transform">
+                   <button onClick={() => setGameStep(GameStep.Profile)} className="hidden sm:flex flex-col items-center group hover:scale-105 transition-transform whitespace-nowrap">
                       <span className="text-rose-500 animate-pulse drop-shadow-[0_0_5px_rgba(244,63,94,0.5)]">1UP</span>
-                      <span className="text-sky-300">{userName}</span>
+                      <span className="text-sky-300 truncate max-w-[100px]">{userName}</span>
                    </button>
                  )}
                  
                  {/* Score */}
-                 <div className="flex flex-col">
-                    <span className="text-sky-500/50 text-[1vmin]">SCORE</span>
+                 <div className="hidden sm:flex flex-col">
+                    <span className="text-sky-500/50 text-[8px] sm:text-[9px] md:text-[1vmin]">SCORE</span>
                     <span className="text-sky-100 font-press-start">{totalScore.toString().padStart(6, '0')}</span>
                  </div>
              </div>
 
-             <div className="flex flex-col items-center">
-                <div className="text-yellow-400 chromatic tracking-widest uppercase mb-1">HOBBY ARCADE</div>
-                <div className="h-1 w-32 bg-sky-500/20 relative overflow-hidden">
+             <div className="flex flex-col items-center order-3 lg:order-2 flex-1 w-full lg:w-auto min-w-0">
+                <div className="text-yellow-400 chromatic tracking-wide lg:tracking-widest uppercase mb-1 text-[11px] sm:text-[13px] md:text-[2vmin]">HOBBY ARCADE</div>
+                <div className="h-0.5 sm:h-1 w-24 sm:w-32 bg-sky-500/20 relative overflow-hidden">
                     <div className="absolute top-0 left-0 h-full w-1/2 bg-sky-400 animate-[marquee_2s_linear_infinite]"></div>
                 </div>
              </div>
 
-             <div className="flex gap-8 items-center">
+             <div className="flex gap-2 sm:gap-3 lg:gap-8 items-center order-2 lg:order-3 flex-shrink-0">
                  <button 
                     onClick={() => setIsDarkMode(!isDarkMode)}
-                    className={`px-4 py-2 border-2 text-[1.2vmin] transition-all hover:scale-105 active:scale-95 flex items-center gap-2 ${isDarkMode ? 'border-purple-500 bg-purple-500/20 text-purple-400' : 'border-sky-400 bg-sky-400/20 text-sky-300'}`}
+                    className={`px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 border-2 text-[9px] sm:text-[10px] md:text-[1.2vmin] transition-all hover:scale-105 active:scale-95 flex items-center gap-1 sm:gap-2 ${isDarkMode ? 'border-purple-500 bg-purple-500/20 text-purple-400' : 'border-sky-400 bg-sky-400/20 text-sky-300'}`}
                  >
-                    <div className={`w-2 h-2 rounded-full animate-pulse ${isDarkMode ? 'bg-purple-400' : 'bg-sky-400'}`}></div>
-                    {isDarkMode ? 'POWER: DARK' : 'POWER: LIGHT'}
+                    <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full animate-pulse ${isDarkMode ? 'bg-purple-400' : 'bg-sky-400'}`}></div>
+                    <span className="hidden sm:inline">{isDarkMode ? 'POWER: DARK' : 'POWER: LIGHT'}</span>
+                    <span className="sm:hidden">{isDarkMode ? 'DARK' : 'LIGHT'}</span>
                  </button>
 
                  {/* Log Out Button - Hidden on Auth screen */}
                  {gameStep !== GameStep.Auth && (
                    <button 
                       onClick={() => setGameStep(GameStep.Auth)}
-                      className={`px-4 py-2 border-2 text-[1.2vmin] transition-all hover:scale-105 active:scale-95 flex items-center gap-2 ${isDarkMode ? 'border-red-600 bg-red-600/20 text-red-300' : 'border-red-500 bg-red-500/20 text-red-400'}`}
+                      className={`px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 border-2 text-[9px] sm:text-[10px] md:text-[1.2vmin] transition-all hover:scale-105 active:scale-95 flex items-center gap-1 sm:gap-2 ${isDarkMode ? 'border-red-600 bg-red-600/20 text-red-300' : 'border-red-500 bg-red-500/20 text-red-400'}`}
                       title="Log Out"
                    >
-                      <div className={`w-2 h-2 rounded-full ${isDarkMode ? 'bg-red-300' : 'bg-red-400'}`}></div>
-                      LOG OUT
+                      <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${isDarkMode ? 'bg-red-300' : 'bg-red-400'}`}></div>
+                      <span className="hidden sm:inline">LOG OUT</span>
+                      <span className="sm:hidden">OUT</span>
                    </button>
                  )}
 
-                 <div className="flex flex-col items-end">
-                     <span className="text-sky-500/50 text-[1vmin]">CREDITS</span>
-                     <span className="text-white neon-glow-blue">FREE PLAY</span>
+                 <div className="hidden md:flex flex-col items-end text-right">
+                     <span className="text-sky-500/50 text-[8px] sm:text-[9px] md:text-[1vmin]">CREDITS</span>
+                     <span className="text-white neon-glow-blue text-[10px] sm:text-[11px] md:text-[1.2vmin]">FREE PLAY</span>
                  </div>
              </div>
         </div>

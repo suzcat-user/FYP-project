@@ -210,7 +210,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, isDarkMode = fal
                   <h2 className={`font-press-start text-[4vmin] ${isDarkMode ? 'text-slate-200' : 'text-sky-900'} mb-3 tracking-tighter uppercase chromatic`}>THREE GAME CHALLENGE</h2>
                   <div className={`h-2 w-48 ${isDarkMode ? 'bg-slate-400' : 'bg-sky-400'} shadow-[0_0_15px_${isDarkMode ? 'rgba(100,116,139,0.5)' : 'rgba(14,165,233,0.5)'}]`}></div>
                   <p className={`font-vt323 text-[2.5vmin] ${isDarkMode ? 'text-slate-300' : 'text-sky-800'} mt-6 max-w-3xl text-center`}>
-                      Complete three precision arcade challenges to reveal your true hobby personality. Each game analyzes different aspects of your preferences.
+                      Ready, Player One? Beat the clock in three precision challenges to reveal your hidden hobby stats and personality class.
                   </p>
               </div>
 

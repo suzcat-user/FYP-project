@@ -9,16 +9,37 @@ interface WouldYouRatherProps {
   onSkip?: () => void;
   isDarkMode?: boolean;
   progress?: number;
+  userId?: number;
 }
 
 const TOTAL_ROUNDS = 5;
 
-const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, onSkip, isDarkMode = false, progress }) => {
+const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, onSkip, isDarkMode = false, progress, userId }) => {
   const [round, setRound] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [animating, setAnimating] = useState<'left' | 'right' | null>(null);
 
   const currentQuestion = WOULD_YOU_RATHER_QUESTIONS[currentQuestionIndex];
+
+  const saveAnswer = async (choice: any, index: number) => {
+    if (userId) {
+      try {
+        await fetch('http://localhost:3001/api/answers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: userId,
+            game_type: 'WOULD_YOU_RATHER',
+            question_id: currentQuestionIndex,
+            answer_choice: choice.text,
+            trait_awarded: choice.trait
+          })
+        });
+      } catch (err) {
+        console.error('Error saving answer:', err);
+      }
+    }
+  };
 
   const handleSkip = () => {
     if (round < TOTAL_ROUNDS - 1) {
@@ -33,6 +54,7 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
     if (animating) return;
 
     const choice = currentQuestion.answers[index];
+    saveAnswer(choice, index);
     onAnswer([choice.trait]);
     setAnimating(index === 0 ? 'left' : 'right');
 

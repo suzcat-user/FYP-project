@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Hobby, Post, Comment } from '../types';
 import ArcadeButton from './ui/ArcadeButton';
 
@@ -7,6 +7,7 @@ interface HobbyCommunityProps {
   onBack: () => void;
   isDarkMode?: boolean;
   currentUser?: string;
+  userId?: number;
 }
 
 const PIXEL_GIFS = [
@@ -24,7 +25,7 @@ const PIXEL_GIFS = [
   "https://media1.tenor.com/m/rxjtdE-oKtMAAAAC/little-mermaid-laughing.gif"
 ];
 
-const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMode = false, currentUser = 'USER_1' }) => {
+const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMode = false, currentUser = 'USER_1', userId }) => {
   const [joined, setJoined] = useState(false);
   const [activePostId, setActivePostId] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -47,181 +48,158 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
     setAttachments(prev => prev.filter((_, i) => i !== index));
   };
 
-  const [posts, setPosts] = useState<Post[]>(() => {
-    if (!hobby) return [];
-    return [
-      {
-        id: '1',
-        author: 'PixelMaster99',
-        title: `Just started my first ${hobby.name} project!`,
-        content: `I picked up the basics yesterday and I'm already hooked. The community here is amazing. Anyone have tips for a beginner? I'm using the standard kit for now.`,
-        upvotes: 142,
-        timestamp: '2h ago',
-        comments: [
-          { id: 'c1', author: 'RetroFan', content: 'Welcome to the club! Check the sidebar for the "Beginner Glitch-less" guide.', timestamp: '1h ago', upvotes: 12 },
-          { id: 'c2', author: 'GameBoy', content: 'This is the way!', timestamp: '30m ago', upvotes: 5, gifs: [PIXEL_GIFS[0]] },
-          { id: 'c3', author: 'NeonDreamer', content: 'Don\'t forget to calibrate your tools first! It makes a huge difference in the long run.', timestamp: '15m ago', upvotes: 2 }
-        ]
-      },
-      {
-        id: '2',
-        author: 'Bit_Crusher_88',
-        title: `Found a legendary ${hobby.name} shortcut!`,
-        content: `If you angle your approach at exactly 45 degrees while using the "Flow State" buff, you can bypass the main difficulty spike in this hobby. It feels like cheating but it's totally vanilla!`,
-        upvotes: 438,
-        timestamp: '5h ago',
-        attachments: ['https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=400', 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&q=80&w=400'],
-        comments: [
-          { id: 'c4', author: 'SpeedRunner_X', content: 'Actually, the skip is even faster if you frame-perfect jump at the start.', timestamp: '4h ago', upvotes: 89 },
-          { id: 'c5', author: 'LogicGate', content: 'Is this possible on the console version or just PC?', timestamp: '2h ago', upvotes: 14 }
-        ]
-      },
-      {
-        id: '3',
-        author: 'Vapor_Voyager',
-        title: `Monthly ${hobby.name} Meetup in Sector 7`,
-        content: `Reminder that we're hosting a local lobby for all ${hobby.name} enthusiasts this Saturday. Bring your best gear and let's compare stats. Free pizza for anyone with a "Master" rank!`,
-        upvotes: 89,
-        timestamp: '8h ago',
-        comments: [
-          { id: 'c6', author: 'PizzzA_Lover', content: 'Count me in! I\'ll bring the extra controllers.', timestamp: '7h ago', upvotes: 20 }
-        ]
-      },
-      {
-        id: '4',
-        author: 'NatureLover',
-        title: `${hobby.name} is the best stress reliever`,
-        content: `After a long week of debugging real life, nothing beats a few hours of this. Truly helps me find my center and reconnect with my creative core.`,
-        upvotes: 210,
-        timestamp: '1d ago',
-        attachments: ['https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=400', PIXEL_GIFS[1]],
-        comments: [
-          { id: 'c7', author: 'Zen_Master', content: 'Same here. It\'s like meditation but with better graphics.', timestamp: '20h ago', upvotes: 45 },
-          { id: 'c8', author: 'Cactus_Jim', content: 'Absolutely. It is the only time my brain stops buzzing.', timestamp: '18h ago', upvotes: 12, gifs: [PIXEL_GIFS[2]] }
-        ]
-      },
-      {
-        id: '5',
-        author: 'Save_State_Sam',
-        title: `Which build is better for high-level ${hobby.name}?`,
-        content: `I'm torn between the "Agility" focused setup and the "Tank" build. For those who have reached the end-game, what are you running? I feel like the Agility build lacks late-game sustainability.`,
-        upvotes: 67,
-        timestamp: '1d ago',
-        comments: [
-          { id: 'c9', author: 'Heavy_Hitter', content: 'Tank build all the way. You can\'t do damage if you\'re dead!', timestamp: '22h ago', upvotes: 31 },
-          { id: 'c10', author: 'Glass_Cannon', content: 'Agility is fine if you just don\'t get hit. Git gud!', timestamp: '21h ago', upvotes: -12 }
-        ]
-      },
-      {
-        id: '6',
-        author: 'Lore_Hunter',
-        title: `The hidden history of ${hobby.name}`,
-        content: `Did you know that ${hobby.name} actually originated from a 1984 arcade prototype that never saw the light of day? I found some old design docs in the archives. Truly fascinating stuff!`,
-        upvotes: 752,
-        timestamp: '3d ago',
-        attachment: 'https://images.unsplash.com/photo-1551103782-8ab07afd45c1?auto=format&fit=crop&q=80&w=400',
-        comments: [
-          { id: 'c11', author: 'History_Buff', content: 'This is a quality post. I love deep dives into hobby origins.', timestamp: '2d ago', upvotes: 110 },
-          { id: 'c12', author: 'OldSchool_Gamer', content: 'I remember hearing rumors about that prototype on BBS boards back in the day!', timestamp: '1d ago', upvotes: 54 }
-        ]
-      },
-      {
-        id: '7',
-        author: 'Crafty_Creator',
-        title: `My latest ${hobby.name} masterpiece`,
-        content: `Spent the entire weekend on this project. The attention to detail really paid off! What do you all think? Any suggestions for improvement?`,
-        upvotes: 324,
-        timestamp: '4d ago',
-        attachments: ['https://images.unsplash.com/photo-1541963463532-d68292c34d19?auto=format&fit=crop&q=80&w=400', 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&q=80&w=400', PIXEL_GIFS[6]],
-        comments: [
-          { id: 'c13', author: 'Art_Critic', content: 'This is absolutely stunning! The composition is perfect.', timestamp: '3d ago', upvotes: 92 },
-          { id: 'c14', author: 'Pixel_Perfectionist', content: 'Love the color palette. Very retro!', timestamp: '3d ago', upvotes: 45, gifs: [PIXEL_GIFS[7]] }
-        ]
-      },
-      {
-        id: '8',
-        author: 'Tech_Wizard',
-        title: `New ${hobby.name} tools and gadgets review`,
-        content: `Just got my hands on the latest gear. The precision is incredible! Here's my unboxing and first impressions. Worth the investment?`,
-        upvotes: 198,
-        timestamp: '5d ago',
-        attachments: ['https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=400', 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?auto=format&fit=crop&q=80&w=400'],
-        comments: [
-          { id: 'c15', author: 'Gear_Head', content: 'Definitely worth it! The quality improvement is noticeable.', timestamp: '4d ago', upvotes: 67 },
-          { id: 'c16', author: 'Budget_Builder', content: 'A bit pricey, but if you\'re serious, yes.', timestamp: '4d ago', upvotes: 23 }
-        ]
-      },
-      {
-        id: '9',
-        author: 'Community_Manager',
-        title: `Weekly ${hobby.name} Challenge Results`,
-        content: `The voting is in! Here are the top entries from this week's challenge. Congratulations to all participants - amazing work everyone!`,
-        upvotes: 456,
-        timestamp: '6d ago',
-        attachments: ['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&q=80&w=400', 'https://images.unsplash.com/photo-1541963463532-d68292c34d19?auto=format&fit=crop&q=80&w=400', PIXEL_GIFS[0], PIXEL_GIFS[1]],
-        comments: [
-          { id: 'c17', author: 'Winner_Winner', content: 'So proud to be in the top 3! Thanks for organizing.', timestamp: '5d ago', upvotes: 134 },
-          { id: 'c18', author: 'Challenge_Addict', content: 'Can\'t wait for next week\'s theme!', timestamp: '5d ago', upvotes: 89, gifs: [PIXEL_GIFS[2], PIXEL_GIFS[3]] }
-        ]
-      },
-      {
-        id: '10',
-        author: 'Retro_Enthusiast',
-        title: `Vintage ${hobby.name} collection showcase`,
-        content: `Been collecting old-school gear for years. Here's my prized possession - a 1980s original! Still works perfectly. Anyone else into vintage collecting?`,
-        upvotes: 287,
-        timestamp: '1w ago',
-        attachments: ['https://images.unsplash.com/photo-1551103782-8ab07afd45c1?auto=format&fit=crop&q=80&w=400', PIXEL_GIFS[4]],
-        comments: [
-          { id: 'c19', author: 'Vintage_Vibes', content: 'That\'s incredible! I have a similar piece from 1985.', timestamp: '6d ago', upvotes: 56 },
-          { id: 'c20', author: 'Collector_Crazy', content: 'Vintage collecting is the best. So much character!', timestamp: '6d ago', upvotes: 34 }
-        ]
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [postError, setPostError] = useState<string>('');
+
+  // Load posts from database on mount
+  useEffect(() => {
+    const loadPosts = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/posts');
+        const data = await response.json();
+        
+        if (Array.isArray(data)) {
+          const formattedPosts = data.map((p: any) => ({
+            id: p.post_id.toString(),
+            author: p.username || 'Anonymous',
+            title: p.title,
+            content: p.content,
+            upvotes: 0,
+            timestamp: new Date(p.created_at).toLocaleDateString(),
+            comments: []
+          }));
+          setPosts(formattedPosts);
+        }
+      } catch (err) {
+        console.error('Error loading posts:', err);
       }
-    ];
-  });
+    };
+
+    loadPosts();
+  }, []);
 
   const activePost = useMemo(() => posts.find(p => p.id === activePostId), [posts, activePostId]);
 
-  const handleCreatePost = () => {
-    if (!newPostTitle) return;
-    const newPost: Post = {
-      id: Date.now().toString(),
-      author: currentUser,
-      title: newPostTitle,
-      content: newPostContent,
-      upvotes: 0,
-      timestamp: 'Just now',
-      attachments: attachments.length > 0 ? attachments : undefined,
-      comments: []
-    };
-    setPosts([newPost, ...posts]);
-    resetModalState();
-  };
+  const handleCreatePost = async () => {
+    setPostError('');
+    
+    if (!newPostTitle.trim()) {
+      setPostError('Title is required');
+      return;
+    }
+    
+    if (!userId) {
+      setPostError('User ID not found. Please login again.');
+      return;
+    }
+    
+    try {
+      const response = await fetch('http://localhost:3001/api/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userId,
+          title: newPostTitle,
+          content: newPostContent || 'No description'
+        })
+      });
 
-  const handleAddComment = (postId: string, content: string, gifs?: string[]) => {
-    setPosts(prev => prev.map(p => {
-      if (p.id === postId) {
-        return {
-          ...p,
-          comments: [...p.comments, {
-            id: Date.now().toString(),
-            author: 'YOU',
-            content,
-            timestamp: 'Just now',
-            upvotes: 0,
-            gifs
-          }]
+      const data = await response.json();
+
+      if (data.success) {
+        const newPost: Post = {
+          id: data.post_id.toString(),
+          author: currentUser,
+          title: newPostTitle,
+          content: newPostContent,
+          upvotes: 0,
+          timestamp: 'Just now',
+          attachments: attachments.length > 0 ? attachments : undefined,
+          comments: []
         };
+        setPosts([newPost, ...posts]);
+        resetModalState();
+      } else {
+        setPostError(data.error || 'Failed to create post');
       }
-      return p;
-    }));
+    } catch (err) {
+      console.error('Error creating post:', err);
+      setPostError('Network error. Could not create post.');
+    }
   };
 
-  const handleDeletePost = (postId: string) => {
+  const handleAddComment = async (postId: string, content: string, gifs?: string[]) => {
+    if (!userId) return;
+    
+    try {
+      const response = await fetch('http://localhost:3001/api/comments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userId,
+          post_id: postId,
+          content
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setPosts(prev => prev.map(p => {
+          if (p.id === postId) {
+            return {
+              ...p,
+              comments: [...p.comments, {
+                id: data.comment_id.toString(),
+                author: 'YOU',
+                content,
+                timestamp: 'Just now',
+                upvotes: 0,
+                gifs
+              }]
+            };
+          }
+          return p;
+        }));
+      }
+    } catch (err) {
+      console.error('Error adding comment:', err);
+    }
+  };
+
+  const handleDeletePost = async (postId: string) => {
     const post = posts.find(p => p.id === postId);
-    if (post && post.author === currentUser) {
-      setPosts(prev => prev.filter(p => p.id !== postId));
-      setActivePostId(null);
+    if (!post || post.author !== currentUser) {
+      setPostError('You can only delete your own posts');
+      return;
+    }
+
+    if (!userId) {
+      setPostError('User ID not found. Please login again.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:3001/api/posts/${postId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userId
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setPosts(prev => prev.filter(p => p.id !== postId));
+        setActivePostId(null);
+        setPostError('');
+      } else {
+        setPostError(data.error || 'Failed to delete post');
+      }
+    } catch (err) {
+      console.error('Error deleting post:', err);
+      setPostError('Network error. Could not delete post.');
     }
   };
 
@@ -236,14 +214,44 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
     }
   };
 
-  const handleSaveEditedPost = () => {
-    if (editingPostId && newPostTitle.trim() && newPostContent.trim()) {
-      setPosts(prev => prev.map(p => 
-        p.id === editingPostId 
-          ? { ...p, title: newPostTitle, content: newPostContent }
-          : p
-      ));
-      resetModalState();
+  const handleSaveEditedPost = async () => {
+    if (!editingPostId || !newPostTitle.trim() || !newPostContent.trim()) {
+      setPostError('Title and content are required');
+      return;
+    }
+
+    if (!userId) {
+      setPostError('User ID not found. Please login again.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:3001/api/posts/${editingPostId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userId,
+          title: newPostTitle,
+          content: newPostContent
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setPosts(prev => prev.map(p => 
+          p.id === editingPostId 
+            ? { ...p, title: newPostTitle, content: newPostContent }
+            : p
+        ));
+        resetModalState();
+        setPostError('');
+      } else {
+        setPostError(data.error || 'Failed to update post');
+      }
+    } catch (err) {
+      console.error('Error updating post:', err);
+      setPostError('Network error. Could not update post.');
     }
   };
 
@@ -409,6 +417,11 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80">
               <div className={`w-full max-w-2xl border-8 p-6 flex flex-col gap-4 ${isDarkMode ? 'bg-[#1a1c27] border-pink-600' : 'bg-white border-sky-800'}`}>
                   <h2 className="font-press-start text-[2vmin] mb-4">{editingPostId ? 'EDIT ADVENTURE POST' : 'NEW ADVENTURE POST'}</h2>
+                  {postError && (
+                    <div className="p-3 bg-red-500 text-white font-vt323 text-xl border-4 border-red-700">
+                      {postError}
+                    </div>
+                  )}
                   <input 
                     type="text" 
                     placeholder="Title" 

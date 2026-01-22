@@ -14,6 +14,7 @@ const App: React.FC = () => {
   const [gameStep, setGameStep] = useState<GameStep>(GameStep.Auth);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [selectedHobby, setSelectedHobby] = useState<Hobby | null>(null);
+  const [userData, setUserData] = useState<{ user_id: number; username: string; score: number } | null>(null);
   const [scores, setScores] = useState<Scores>({
     CREATIVE: 0,
     ACTIVE: 0,
@@ -22,6 +23,11 @@ const App: React.FC = () => {
     SOCIAL: 0,
     EXPLORER: 0
   });
+
+  const handleLogin = useCallback((user: { user_id: number; username: string; score: number }) => {
+    setUserData(user);
+    setGameStep(GameStep.Welcome);
+  }, []);
 
   const handleNextGame = useCallback(() => {
     setGameStep(prevStep => {
@@ -72,21 +78,21 @@ const App: React.FC = () => {
   const renderGameStep = () => {
     switch (gameStep) {
       case GameStep.Auth:
-        return <AuthScreen onLogin={handleNextGame} isDarkMode={isDarkMode} />;
+        return <AuthScreen onLogin={handleLogin} isDarkMode={isDarkMode} />;
       case GameStep.Welcome:
         return <WelcomeScreen onStart={handleNextGame} isDarkMode={isDarkMode} />;
       case GameStep.WouldYouRather:
-        return <WouldYouRather onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} />;
+        return <WouldYouRather onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} userId={userData?.user_id} />;
       case GameStep.RingToss:
-        return <RingToss onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} />;
+        return <RingToss onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} userId={userData?.user_id} />;
       case GameStep.ShootingGallery:
-        return <ShootingGallery onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} />;
+        return <ShootingGallery onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} userId={userData?.user_id} />;
       case GameStep.Results:
-        return <ResultsScreen scores={scores} onNext={handleNextGame} onSelectHobby={handleGoToHobbyCommunity} isDarkMode={isDarkMode} />;
+        return <ResultsScreen scores={scores} onNext={handleNextGame} onSelectHobby={handleGoToHobbyCommunity} isDarkMode={isDarkMode} userId={userData?.user_id} />;
       case GameStep.Community:
-        return <CommunityScreen onRestart={handleNextGame} scores={scores} isDarkMode={isDarkMode} />;
+        return <CommunityScreen onRestart={handleNextGame} scores={scores} isDarkMode={isDarkMode} userId={userData?.user_id} username={userData?.username} />;
       case GameStep.HobbyCommunity:
-        return <HobbyCommunity hobby={selectedHobby} onBack={() => setGameStep(GameStep.Results)} isDarkMode={isDarkMode} currentUser="USER_ID" />;
+        return <HobbyCommunity hobby={selectedHobby} onBack={() => setGameStep(GameStep.Results)} isDarkMode={isDarkMode} currentUser={userData?.username || "GUEST"} userId={userData?.user_id} />;
       case GameStep.Profile:
         return <ProfileScreen scores={scores} onBack={() => setGameStep(GameStep.Welcome)} isDarkMode={isDarkMode} />;
       default:

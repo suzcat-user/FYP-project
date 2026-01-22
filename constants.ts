@@ -123,12 +123,12 @@ export const SHOOTING_GALLERY_QUESTIONS = [
     id: 2,
     question: "What motivates you to keep going when things get hard?",
     answers: [
-      { text: "Self Expression", description: "I want to show the world who I am.", trait: Trait.CREATIVE },
-      { text: "Perfect Efficiency", description: "I want systems that never fail.", trait: Trait.STRATEGIC },
-      { text: "Pure Freedom", description: "I want to go where no one has gone.", trait: Trait.EXPLORER },
-      { text: "True Belonging", description: "I want to be part of something big.", trait: Trait.SOCIAL },
-      { text: "Peak Performance", description: "I want to test my limits.", trait: Trait.ACTIVE },
-      { text: "Inner Peace", description: "I want to be calm in the storm.", trait: Trait.CALM }
+      { text: "Seeing physical improvement", description: "📈", trait: Trait.ACTIVE },
+      { text: "Personal meaning and reflection", description: "💭", trait: Trait.CALM },
+      { text: "Positive feedback from others", description: "💬", trait: Trait.SOCIAL },
+      { text: "Creating something unique", description: "✨", trait: Trait.CREATIVE },
+      { text: "Consistency and routine", description: "📋", trait: Trait.STRATEGIC },
+      { text: "Mixing growth with enjoyment", description: "🎯", trait: Trait.EXPLORER }
     ]
   },
   {
@@ -142,7 +142,7 @@ export const SHOOTING_GALLERY_QUESTIONS = [
       { text: "Turbo Gauntlets", description: "Punches through barriers.", trait: Trait.ACTIVE },
       { text: "Zen Aegis", description: "A shield of pure tranquility.", trait: Trait.CALM }
     ]
-  },
+  }, 
   {
     id: 4,
     question: "What's your main goal for having a hobby?",

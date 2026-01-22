@@ -88,13 +88,13 @@ const App: React.FC = () => {
       case GameStep.WouldYouRather:
         return <WouldYouRather onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} userId={userData?.user_id} />;
       case GameStep.RingToss:
-        return <RingToss onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} userId={userData?.user_id} />;
+        return <RingToss onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} />;
       case GameStep.ShootingGallery:
-        return <ShootingGallery onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} userId={userData?.user_id} />;
+        return <ShootingGallery onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} />;
       case GameStep.Results:
-        return <ResultsScreen scores={scores} onNext={handleNextGame} onSelectHobby={handleGoToHobbyCommunity} isDarkMode={isDarkMode} userId={userData?.user_id} />;
+        return <ResultsScreen scores={scores} onNext={handleNextGame} onSelectHobby={handleGoToHobbyCommunity} isDarkMode={isDarkMode} />;
       case GameStep.Community:
-        return <CommunityScreen onRestart={handleNextGame} scores={scores} isDarkMode={isDarkMode} userId={userData?.user_id} username={userData?.username} />;
+        return <CommunityScreen onRestart={handleNextGame} scores={scores} isDarkMode={isDarkMode} />;
       case GameStep.HobbyCommunity:
         return <HobbyCommunity hobby={selectedHobby} onBack={() => setGameStep(GameStep.Results)} isDarkMode={isDarkMode} currentUser={userData?.username || "GUEST"} userId={userData?.user_id} />;
       case GameStep.Profile:

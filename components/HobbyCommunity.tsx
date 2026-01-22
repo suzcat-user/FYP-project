@@ -303,9 +303,6 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
                             </div>
                             <h2 className="font-press-start text-[1.8vmin] mb-2">{post.title}</h2>
                             <p className="font-vt323 text-xl mb-2 line-clamp-3">{post.content}</p>
-                            {post.attachment && (
-                                <img src={post.attachment} alt="Attachment" className="max-h-[300px] w-full object-cover mb-4 border-2 border-current" />
-                            )}
                             {post.attachments && post.attachments.slice(0, 1).map(att => (
                                 <img key={att} src={att} alt="Attachment" className="max-h-[300px] w-full object-cover mb-4 border-2 border-current" />
                             ))}

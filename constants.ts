@@ -48,60 +48,60 @@ export const RING_TOSS_QUESTIONS = [
     id: 1,
     question: "What gives you the MOST satisfaction at this stage of life?",
     answers: [
-      { text: "Big City Tour", description: "Energy, nightlife, and crowds.", trait: Trait.SOCIAL },
-      { text: "Deep Forest Cabin", description: "Quiet, birds, and solitude.", trait: Trait.CALM },
-      { text: "Ancient Ruins", description: "Uncover history and adventure.", trait: Trait.EXPLORER },
-      { text: "Art Museum Row", description: "Masterpieces and inspiration.", trait: Trait.CREATIVE },
-      { text: "Extreme Peak", description: "Climbing and adrenaline.", trait: Trait.ACTIVE },
-      { text: "Strategy Retreat", description: "Workshops and planning.", trait: Trait.STRATEGIC }
+      { text: "Big City Tour - Energy, nightlife, and crowds.", trait: Trait.SOCIAL },
+      { text: "Deep Forest Cabin - Quiet, birds, and solitude.", trait: Trait.CALM },
+      { text: "Ancient Ruins - Uncover history and adventure.", trait: Trait.EXPLORER },
+      { text: "Art Museum Row - Masterpieces and inspiration.", trait: Trait.CREATIVE },
+      { text: "Extreme Peak - Climbing and adrenaline.", trait: Trait.ACTIVE },
+      { text: "Strategy Retreat - Workshops and planning.", trait: Trait.STRATEGIC }
     ]
   },
   {
     id: 2,
     question: "What's your preferred Saturday morning?",
     answers: [
-      { text: "Farmers Market", description: "Chatting with locals.", trait: Trait.SOCIAL },
-      { text: "Sleeping In", description: "Deep rest and peace.", trait: Trait.CALM },
-      { text: "Random Road Trip", description: "Seeing where the road goes.", trait: Trait.EXPLORER },
-      { text: "Writing Music", description: "Expressing melodies.", trait: Trait.CREATIVE },
-      { text: "Morning Run", description: "Getting the heart pumping.", trait: Trait.ACTIVE },
-      { text: "Coding Projects", description: "Building complex systems.", trait: Trait.STRATEGIC }
+      { text: "Farmers Market - Chatting with locals.", trait: Trait.SOCIAL },
+      { text: "Sleeping In - Deep rest and peace.", trait: Trait.CALM },
+      { text: "Random Road Trip - Seeing where the road goes.", trait: Trait.EXPLORER },
+      { text: "Writing Music - Expressing melodies.", trait: Trait.CREATIVE },
+      { text: "Morning Run - Getting the heart pumping.", trait: Trait.ACTIVE },
+      { text: "Coding Projects - Building complex systems.", trait: Trait.STRATEGIC }
     ]
   },
   {
     id: 3,
     question: "Pick a legendary power!",
     answers: [
-      { text: "Aura of Unity", description: "Bring anyone together.", trait: Trait.SOCIAL },
-      { text: "Inner Calm", description: "Immune to stress forever.", trait: Trait.CALM },
-      { text: "Star-gate", description: "Travel across dimensions.", trait: Trait.EXPLORER },
-      { text: "Infinite Canvas", description: "Bring drawings to life.", trait: Trait.CREATIVE },
-      { text: "Super Strength", description: "Conquer any physical feat.", trait: Trait.ACTIVE },
-      { text: "Foresight", description: "Perfectly predict outcomes.", trait: Trait.STRATEGIC }
+      { text: "Aura of Unity - Bring anyone together.", trait: Trait.SOCIAL },
+      { text: "Inner Calm - Immune to stress forever.", trait: Trait.CALM },
+      { text: "Star-gate - Travel across dimensions.", trait: Trait.EXPLORER },
+      { text: "Infinite Canvas - Bring drawings to life.", trait: Trait.CREATIVE },
+      { text: "Super Strength - Conquer any physical feat.", trait: Trait.ACTIVE },
+      { text: "Foresight - Perfectly predict outcomes.", trait: Trait.STRATEGIC }
     ]
   },
   {
     id: 4,
     question: "What's your ultimate comfort food vibe?",
     answers: [
-      { text: "Grand Buffet", description: "Everything for everyone.", trait: Trait.SOCIAL },
-      { text: "Tea & Silence", description: "Simple, warm, and quiet.", trait: Trait.CALM },
-      { text: "Exotic Street Food", description: "Taste something brand new.", trait: Trait.EXPLORER },
-      { text: "Artisan Pastries", description: "Beautifully crafted treats.", trait: Trait.CREATIVE },
-      { text: "Power Smoothie", description: "Fuel for the next mission.", trait: Trait.ACTIVE },
-      { text: "Perfectly Portion-timed Meal", description: "Precisely calculated macros.", trait: Trait.STRATEGIC }
+      { text: "Grand Buffet - Everything for everyone.", trait: Trait.SOCIAL },
+      { text: "Tea & Silence - Simple, warm, and quiet.", trait: Trait.CALM },
+      { text: "Exotic Street Food - Taste something brand new.", trait: Trait.EXPLORER },
+      { text: "Artisan Pastries - Beautifully crafted treats.", trait: Trait.CREATIVE },
+      { text: "Power Smoothie - Fuel for the next mission.", trait: Trait.ACTIVE },
+      { text: "Perfectly Portion-timed Meal - Precisely calculated macros.", trait: Trait.STRATEGIC }
     ]
   },
   {
     id: 5,
     question: "Choose a companion for your journey!",
     answers: [
-      { text: "Talking Crowd", description: "A group of lively travelers.", trait: Trait.SOCIAL },
-      { text: "Stoic Owl", description: "Wise, quiet, and watchful.", trait: Trait.CALM },
-      { text: "Compass Golem", description: "Finds paths through any fog.", trait: Trait.EXPLORER },
-      { text: "Living Sketchbook", description: "Draws reality as you go.", trait: Trait.CREATIVE },
-      { text: "Fire Sprit", description: "Energizes your every step.", trait: Trait.ACTIVE },
-      { text: "Chess Phantom", description: "Analyzes every possible move.", trait: Trait.STRATEGIC }
+      { text: "Talking Crowd - A group of lively travelers.", trait: Trait.SOCIAL },
+      { text: "Stoic Owl - Wise, quiet, and watchful.", trait: Trait.CALM },
+      { text: "Compass Golem - Finds paths through any fog.", trait: Trait.EXPLORER },
+      { text: "Living Sketchbook - Draws reality as you go.", trait: Trait.CREATIVE },
+      { text: "Fire Sprit - Energizes your every step.", trait: Trait.ACTIVE },
+      { text: "Chess Phantom - Analyzes every possible move.", trait: Trait.STRATEGIC }
     ]
   }
 ];

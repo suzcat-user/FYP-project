@@ -56,9 +56,8 @@ const Stake: React.FC<{
   isSelected: boolean;
   colorClass: string;
   label: string;
-  description?: string;
   isDarkMode: boolean;
-}> = ({ onClick, isThrown, isSelected, colorClass, label, description, isDarkMode }) => {
+}> = ({ onClick, isThrown, isSelected, colorClass, label, isDarkMode }) => {
   return (
     <button
       onClick={onClick}
@@ -79,13 +78,7 @@ const Stake: React.FC<{
          <div className="absolute top-2 right-1/4 h-[90%] w-[20%] bg-white/30 rounded-full blur-[1px]"></div>
          <div className={`absolute bottom-[105%] left-1/2 -translate-x-1/2 p-3 border-4 shadow-[8px_8px_0px_rgba(0,0,0,0.2)] z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-200 min-w-[40vmin] max-w-[50vmin] rounded-none scale-90 group-hover:scale-100 origin-bottom ${isDarkMode ? 'bg-slate-900 border-indigo-500' : 'bg-white border-sky-900'}`}>
              <div className="flex items-center gap-3">
-               <div className={`font-vt323 text-[2.5vmin] font-bold leading-none text-center uppercase whitespace-nowrap ${isDarkMode ? 'text-pink-400' : 'text-sky-900'}`}>{label}</div>
-               {description && (
-                   <>
-                     <div className={`w-[2px] h-[4vmin] ${isDarkMode ? 'bg-indigo-900' : 'bg-sky-100'}`}></div>
-                     <div className={`font-vt323 text-[2.5vmin] leading-tight flex-1 ${isDarkMode ? 'text-indigo-200' : 'text-gray-600'}`}>{description}</div>
-                   </>
-               )}
+               <div className={`font-vt323 text-[2.5vmin] font-bold leading-tight text-center ${isDarkMode ? 'text-pink-400' : 'text-sky-900'}`}>{label}</div>
              </div>
              <div className={`absolute top-full left-1/2 -translate-x-1/2 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[10px] ${isDarkMode ? 'border-t-indigo-500' : 'border-t-sky-900'}`}></div>
          </div>
@@ -228,7 +221,7 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
                     const pos = POSITIONS[index % POSITIONS.length];
                     return (
                         <div key={index} className="absolute bottom-0 transition-transform duration-500 left-1/2" style={{ transform: `translateX(-50%) translateX(${pos.x}vmin) translateY(${pos.y}vmin) scale(${pos.z})`, zIndex: Math.floor(pos.z * 100) }}>
-                            <Stake onClick={() => handleThrow(answer.trait, index)} isThrown={isThrown} isSelected={selectedAnswer === index} colorClass={STAKE_COLORS[index % STAKE_COLORS.length]} label={answer.text} description={answer.description} isDarkMode={isDarkMode} />
+                            <Stake onClick={() => handleThrow(answer.trait, index)} isThrown={isThrown} isSelected={selectedAnswer === index} colorClass={STAKE_COLORS[index % STAKE_COLORS.length]} label={answer.text} isDarkMode={isDarkMode} />
                         </div>
                     );
                 })}

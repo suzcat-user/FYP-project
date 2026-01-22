@@ -109,14 +109,14 @@ export const RING_TOSS_QUESTIONS = [
 export const SHOOTING_GALLERY_QUESTIONS = [
   {
     id: 1,
-    question: "Pick your ideal creative workspace!",
+    question: "What gives you the MOST satisfaction at this stage of life?",
     answers: [
-      { text: "Neon Workshop", description: "Lasers, 3D printers, and LEDs.", trait: Trait.CREATIVE },
-      { text: "War Room", description: "Monitors, maps, and chess boards.", trait: Trait.STRATEGIC },
-      { text: "Sky Cabin", description: "Binoculars and charts.", trait: Trait.EXPLORER },
-      { text: "Festival Tent", description: "Loud music and crowds.", trait: Trait.SOCIAL },
-      { text: "Crossfit Box", description: "Heavy weights and sweat.", trait: Trait.ACTIVE },
-      { text: "Cloud Temple", description: "Silence and white space.", trait: Trait.CALM }
+      { text: "Feeling healthier & stronger", description: "💪", trait: Trait.ACTIVE },
+      { text: "Expressing myself creatively", description: "🎨", trait: Trait.CREATIVE },
+      { text: "Peaceful & close to nature", description: "🌿", trait: Trait.CALM },
+      { text: "Connecting with people", description: "👥", trait: Trait.SOCIAL },
+      { text: "Improve lifestyle & comfort", description: "🏠", trait: Trait.STRATEGIC },
+      { text: "Teaching others", description: "📚", trait: Trait.EXPLORER }
     ]
   },
   {

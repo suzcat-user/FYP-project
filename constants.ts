@@ -94,14 +94,14 @@ export const RING_TOSS_QUESTIONS = [
   },
   {
     id: 5,
-    question: "Choose a companion for your journey!",
+    question: "What appeals to you most about starting a new hobby?",
     answers: [
-      { text: "Talking Crowd - A group of lively travelers.", trait: Trait.SOCIAL },
-      { text: "Stoic Owl - Wise, quiet, and watchful.", trait: Trait.CALM },
-      { text: "Compass Golem - Finds paths through any fog.", trait: Trait.EXPLORER },
-      { text: "Living Sketchbook - Draws reality as you go.", trait: Trait.CREATIVE },
-      { text: "Fire Sprit - Energizes your every step.", trait: Trait.ACTIVE },
-      { text: "Chess Phantom - Analyzes every possible move.", trait: Trait.STRATEGIC }
+      { text: "Physical challenges & movement", trait: Trait.ACTIVE },
+      { text: "Making or creating something", trait: Trait.CREATIVE },
+      { text: "Finding peace & tranquillity", trait: Trait.CALM },
+      { text: "Bonding with like-minded people", trait: Trait.SOCIAL },
+      { text: "Improving my lifestyle quality", trait: Trait.STRATEGIC },
+      { text: "Pushing myself to try new things", trait: Trait.EXPLORER }
     ]
   }
 ];

@@ -50,17 +50,19 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, isDarkMode = false }) 
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-1.5 sm:gap-2 md:gap-3">
-            <div>
-                <label className={`font-press-start text-[0.8vmin] sm:text-[1vmin] md:text-[1.2vmin] mb-1 block transition-colors ${isDarkMode ? 'text-indigo-400' : 'text-gray-600'}`}>USERNAME</label>
-                <input 
-                    type="text" 
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className={`w-full font-vt323 text-[1.6vmin] sm:text-[2vmin] md:text-[2.4vmin] p-1.5 sm:p-2 md:p-2.5 border-2 sm:border-2 md:border-3 outline-none shadow-inner transition-colors ${isDarkMode ? 'bg-slate-900 border-indigo-900 text-white focus:border-pink-500' : 'bg-gray-50 border-gray-300 text-gray-900 focus:border-sky-500'}`}
-                    placeholder="Enter your username"
-                    required
-                />
-            </div>
+            {!isLogin && (
+                <div>
+                    <label className={`font-press-start text-[0.8vmin] sm:text-[1vmin] md:text-[1.2vmin] mb-1 block transition-colors ${isDarkMode ? 'text-indigo-400' : 'text-gray-600'}`}>USERNAME</label>
+                    <input 
+                        type="text" 
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        className={`w-full font-vt323 text-[1.6vmin] sm:text-[2vmin] md:text-[2.4vmin] p-1.5 sm:p-2 md:p-2.5 border-2 sm:border-2 md:border-3 outline-none shadow-inner transition-colors ${isDarkMode ? 'bg-slate-900 border-indigo-900 text-white focus:border-pink-500' : 'bg-gray-50 border-gray-300 text-gray-900 focus:border-sky-500'}`}
+                        placeholder="Enter your username"
+                        required
+                    />
+                </div>
+            )}
             <div>
                 <label className={`font-press-start text-[0.8vmin] sm:text-[1vmin] md:text-[1.2vmin] mb-1 block transition-colors ${isDarkMode ? 'text-indigo-400' : 'text-gray-600'}`}>EMAIL</label>
                 <input 

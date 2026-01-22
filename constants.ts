@@ -159,12 +159,12 @@ export const SHOOTING_GALLERY_QUESTIONS = [
     id: 5,
     question: "How do you prefer to learn new things?",
     answers: [
-      { text: "Flow State", description: "Losing track of time making things.", trait: Trait.CREATIVE },
-      { text: "Clean Victory", description: "Winning a tough mental game.", trait: Trait.STRATEGIC },
-      { text: "New Sights", description: "Finding a place I never knew existed.", trait: Trait.EXPLORER },
-      { text: "Good Vibes", description: "Laughing until my stomach hurts.", trait: Trait.SOCIAL },
-      { text: "Endorphin Rush", description: "That post-workout glow.", trait: Trait.ACTIVE },
-      { text: "Complete Stillness", description: "Just me and the sunset.", trait: Trait.CALM }
+      { text: "Doing it physically", description: "🤸", trait: Trait.ACTIVE },
+      { text: "Watching and observing", description: "👁️", trait: Trait.CALM },
+      { text: "Listening to instructions or music", description: "🎧", trait: Trait.CREATIVE },
+      { text: "Discussing and learning with others", description: "💬", trait: Trait.SOCIAL },
+      { text: "Reading and following written guides", description: "📖", trait: Trait.STRATEGIC },
+      { text: "Trial and error", description: "🔬", trait: Trait.EXPLORER }
     ]
   }
 ];

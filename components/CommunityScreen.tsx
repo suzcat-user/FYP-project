@@ -1,5 +1,6 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Scores, Trait } from '../types';
 
 interface CommunityScreenProps {
@@ -22,7 +23,83 @@ const HOBBY_PORTALS = [
     { name: "Climbing", id: "climb", icon: "🧗", color: "text-green-500" }
 ];
 
+// Animated Score Counter Component
+const AnimatedScore: React.FC<{ finalValue: number; duration?: number }> = ({ finalValue, duration = 2000 }) => {
+  const [displayValue, setDisplayValue] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(true);
+
+  useEffect(() => {
+    let startTime: number;
+    let animationFrame: number;
+
+    const animate = (currentTime: number) => {
+      if (!startTime) startTime = currentTime;
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      // Easing function for smooth animation
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      const currentValue = Math.floor(finalValue * easeOut);
+
+      setDisplayValue(currentValue);
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(animate);
+      } else {
+        setIsAnimating(false);
+      }
+    };
+
+    animationFrame = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationFrame) cancelAnimationFrame(animationFrame);
+    };
+  }, [finalValue, duration]);
+
+  return (
+    <span
+      style={{
+        display: 'inline-block',
+        fontWeight: 'bold',
+        transition: 'all 0.1s ease-out',
+        textShadow: isAnimating 
+          ? '0 0 10px rgba(34, 211, 238, 0.8), 0 0 20px rgba(34, 211, 238, 0.4)'
+          : '0 0 5px rgba(34, 211, 238, 0.4)',
+        color: isAnimating ? '#fff' : '#06b6d4',
+        transform: isAnimating ? 'scale(1.1)' : 'scale(1)',
+        letterSpacing: '1px',
+      }}
+    >
+      {displayValue.toLocaleString()}
+    </span>
+  );
+};
+
+// Shooting Star Component
+const ShootingStar: React.FC = () => {
+  const randomLeft = Math.random() * 100;
+  const randomDelay = Math.random() * 2;
+  const randomDuration = 2 + Math.random() * 1;
+
+  return (
+    <div
+      className="absolute rounded-full"
+      style={{
+        left: `${randomLeft}%`,
+        top: '-20px',
+        width: '6px',
+        height: '6px',
+        animation: `shootingStar ${randomDuration}s linear ${randomDelay}s infinite`,
+        boxShadow: '0 0 20px 4px rgba(255, 220, 100, 0.9), 0 0 40px 8px rgba(255, 200, 50, 0.6)',
+        background: 'linear-gradient(to right, rgba(255, 255, 200, 1), rgba(255, 220, 100, 0.5))',
+      }}
+    />
+  );
+};
+
 const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, isDarkMode = false }) => {
+  const navigate = useNavigate();
   const traits = Object.keys(scores) as Trait[];
   const topTrait = traits.reduce((a, b) => scores[a] > scores[b] ? a : b);
   
@@ -30,6 +107,27 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, is
 
   return (
     <div className={`h-full flex flex-col relative overflow-hidden transition-colors duration-500 ${isDarkMode ? 'bg-[#0a0a0f] text-indigo-100' : 'bg-[#0f172a] text-white'}`}>
+      {/* Shooting Stars Background */}
+      <style>{`
+        @keyframes shootingStar {
+          0% {
+            transform: translateX(0) translateY(0) rotate(45deg);
+            opacity: 1;
+          }
+          100% {
+            transform: translateX(100vw) translateY(100vh) rotate(45deg);
+            opacity: 0;
+          }
+        }
+      `}</style>
+      
+      {/* Shooting Stars Container */}
+      <div className="absolute inset-0 pointer-events-none">
+        {[...Array(8)].map((_, i) => (
+          <ShootingStar key={i} />
+        ))}
+      </div>
+      
       <div className="absolute inset-0 scanlines opacity-10 pointer-events-none"></div>
       
       {/* Title */}
@@ -73,7 +171,7 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, is
                               {player.type}
                           </div>
                           <div className="w-[25%] text-right font-press-start text-[1.5vmin] text-cyan-400">
-                              {player.score.toLocaleString()}
+                              <AnimatedScore finalValue={player.score} />
                           </div>
                       </div>
                   ))}
@@ -86,7 +184,7 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, is
                       </div>
                       <div className="w-[20%] text-center font-press-start text-[1vmin]">PLAYER_1</div>
                       <div className="w-[25%] text-right font-press-start text-[1.5vmin] text-white">
-                          {(totalScore * 100).toLocaleString()}
+                          <AnimatedScore finalValue={totalScore * 100} />
                       </div>
                   </div>
               </div>
@@ -95,7 +193,7 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, is
 
       <div className={`py-6 flex justify-center border-t-8 transition-colors duration-500 ${isDarkMode ? 'bg-black/80 border-indigo-950' : 'bg-black/60 border-sky-900'}`}>
           <button
-              onClick={() => window.location.reload()}
+              onClick={() => navigate('/home')}
               className={`font-press-start text-[2vmin] px-12 py-4 border-b-8 border-r-8 active:border-0 active:translate-y-2 transition-all ${isDarkMode ? 'bg-pink-600 border-pink-900' : 'bg-yellow-400 border-yellow-700 text-sky-950'}`}
           >
               PLAY AGAIN

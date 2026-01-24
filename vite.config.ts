@@ -8,6 +8,8 @@ export default defineConfig(({ mode }) => {
       server: {
         port: 5173,
         host: '0.0.0.0',
+        // Enable client-side routing fallback
+        historyApiFallback: true,
       },
       plugins: [react()],
       define: {
@@ -17,6 +19,14 @@ export default defineConfig(({ mode }) => {
       resolve: {
         alias: {
           '@': path.resolve(__dirname, '.'),
+        }
+      },
+      // Handle SPA routing in production builds
+      build: {
+        rollupOptions: {
+          output: {
+            manualChunks: undefined,
+          }
         }
       }
     };

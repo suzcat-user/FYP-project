@@ -103,15 +103,6 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, isDarkMode = fal
           .bottom-flicker {
             animation: bottomFlicker 2s infinite;
           }
-          @keyframes floatDown {
-            0% { transform: translateY(-100vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
-          }
-          .voxel-particle {
-            animation: floatDown 15s linear infinite;
-          }
           .perspective-grid {
             background-image: 
               linear-gradient(rgba(14,165,233,0.1) 1px, transparent 1px),
@@ -124,18 +115,6 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, isDarkMode = fal
       </style>
       {/* Animated Pixel Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Floating Voxel Particles */}
-        {Array.from({ length: 30 }, (_, i) => (
-          <div
-            key={i}
-            className={`absolute w-4 h-4 ${isDarkMode ? 'bg-slate-400/60 shadow-lg shadow-slate-400/50' : 'bg-sky-400/60 shadow-lg shadow-sky-400/50'} voxel-particle rounded-sm`}
-            style={{
-              left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 15}s`,
-              animationDuration: `${8 + Math.random() * 12}s`,
-            }}
-          />
-        ))}
         {/* 3D Perspective Grid */}
         <div className={`absolute bottom-0 left-0 right-0 h-80 perspective-grid ${isDarkMode ? 'opacity-40' : 'opacity-50'}`}></div>
       </div>
@@ -177,9 +156,9 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, isDarkMode = fal
 
             <ArcadeButton 
               onClick={onStart} 
-              className="px-16 py-8 text-[3vmin] group relative overflow-hidden bg-sky-600 border-sky-900 text-white shadow-[9px_9px_0px_#075985] hover:shadow-[5px_5px_0px_#075985] active:shadow-none"
+              className="px-16 py-8 text-[3vmin] group relative overflow-hidden !bg-sky-600 !border-sky-900 shadow-[9px_9px_0px_#075985] hover:shadow-[5px_5px_0px_#075985] active:shadow-none"
             >
-                <span className="relative z-10 animate-blink">PRESS START</span>
+                <span className="relative z-10 font-semibold" style={{ color: 'white' }}>PRESS START</span>
                 <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-700 skew-x-12"></div>
             </ArcadeButton>
 

@@ -123,7 +123,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, personalityScores
           
           {/* Communities Section */}
           <div className="mt-4 w-full">
-            <div className="font-press-start text-[1.2vmin] text-green-500 mb-2">YOUR COMMUNITIES</div>
+            <div className="font-press-start text-[1.6vmin] text-sky-900 mb-2">YOUR COMMUNITIES</div>
             <div className="flex flex-wrap gap-2 justify-center">
               {communities.map((community, index) => (
                 <div key={index} className={`px-4 py-2 font-vt323 text-[2vmin] ${isDarkMode ? 'bg-slate-800 text-indigo-300 border-2 border-indigo-600' : 'bg-white text-sky-900 border-2 border-sky-600'}`}>
@@ -138,7 +138,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, personalityScores
                     onSelectHobby(hobbies[0]);
                   }
                 }}
-                className={`font-press-start text-[1.5vmin] px-6 py-3 border-b-4 border-r-4 active:border-b-0 active:border-r-0 active:translate-y-1 transition-all uppercase ${isDarkMode ? 'bg-green-600 border-green-800 text-white hover:bg-green-500' : 'bg-green-500 border-green-700 text-white hover:bg-green-400'}`}
+                className={`font-press-start text-[1.5vmin] px-6 py-3 border-b-4 border-r-4 active:border-b-0 active:border-r-0 active:translate-y-1 transition-all uppercase text-white ${isDarkMode ? 'bg-sky-700 border-sky-800 hover:bg-sky-600' : 'bg-sky-700 border-sky-800 hover:bg-sky-600'}`}
               >
                 JOIN COMMUNITY
               </button>
@@ -154,6 +154,9 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, personalityScores
               {hobbies.slice(0, 4).map((hobby, index) => (
                 <div key={index} className={`p-4 border-4 ${isDarkMode ? 'bg-slate-900 border-indigo-700 text-white' : 'bg-white border-sky-900 text-sky-900'}`}>
                   <h3 className="font-press-start text-[2vmin] mb-2">{hobby.name}</h3>
+                  <p className={`font-vt323 text-[2vmin] leading-snug ${isDarkMode ? 'text-indigo-200' : 'text-sky-700'}`}>
+                    {hobby.description}
+                  </p>
                 </div>
               ))}
             </div>
@@ -215,8 +218,11 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, personalityScores
                           >
                             <div className={`flex justify-between items-start mb-2 border-b-2 pb-1 transition-colors duration-300 ${isDarkMode ? 'border-indigo-900' : 'border-sky-100'}`}>
                               <h4 className={`font-press-start text-[1.5vmin] leading-snug transition-colors duration-300 ${isDarkMode ? 'text-indigo-300 group-hover:text-pink-400' : 'text-sky-700 group-hover:text-sky-500'}`}>{hobby.name}</h4>
-                              <span className="text-[2vmin] opacity-0 group-hover:opacity-100 transition-opacity">💬</span>
+                              <span className="text-[2vmin] opacity-0 group-hover:opacity-100 transition-opacity">{personalityResult.emoji}</span>
                             </div>
+                            <p className={`font-vt323 text-[1.6vmin] leading-snug ${isDarkMode ? 'text-indigo-200' : 'text-sky-700'}`}>
+                              {hobby.description}
+                            </p>
                             <div className={`mt-auto opacity-0 group-hover:opacity-100 transition-opacity font-vt323 text-[1.5vmin] ${isDarkMode ? 'text-pink-400' : 'text-sky-600'}`}>
                               → Join Community
                             </div>
@@ -231,13 +237,13 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, personalityScores
       <div className={`py-[3vmin] flex justify-center border-t-8 shrink-0 gap-[3vmin] z-20 relative shadow-[0_-10px_20px_rgba(0,0,0,0.2)] transition-colors duration-500 ${isDarkMode ? 'bg-indigo-950 border-indigo-900' : 'bg-sky-950 border-sky-800'}`}>
            <button
               onClick={onNext}
-              className={`font-press-start text-[1.8vmin] text-white px-[5vmin] py-[2vmin] border-b-8 border-r-8 active:border-b-0 active:border-r-0 active:translate-y-2 transition-all uppercase ${isDarkMode ? 'bg-pink-600 border-pink-800' : 'bg-green-500 border-green-700'}`}
+              className={`font-press-start text-[1.8vmin] px-[5vmin] py-[2vmin] border-b-8 border-r-8 active:border-b-0 active:border-r-0 active:translate-y-2 transition-all uppercase text-white ${isDarkMode ? 'bg-green-600 border-green-800 hover:bg-green-500' : 'bg-green-500 border-green-700 hover:bg-green-400'}`}
           >
               GLOBAL LEADERBOARD
           </button>
           <button
               onClick={onReset}
-              className={`font-press-start text-[1.5vmin] px-[4vmin] py-[2vmin] border-b-8 border-r-8 active:border-b-0 active:border-r-0 active:translate-y-2 transition-all uppercase ${isDarkMode ? 'bg-indigo-900 border-indigo-950 text-indigo-200' : 'bg-sky-900 border-sky-950 text-sky-200'}`}
+              className={`font-press-start text-[1.5vmin] px-[4vmin] py-[2vmin] border-b-8 border-r-8 active:border-b-0 active:border-r-0 active:translate-y-2 transition-all uppercase text-white ${isDarkMode ? 'bg-green-600 border-green-800 hover:bg-green-500' : 'bg-green-500 border-green-700 hover:bg-green-400'}`}
           >
               REPLAY ALL
           </button>

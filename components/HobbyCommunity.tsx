@@ -303,6 +303,9 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
               <button onClick={onBack} className={`font-press-start text-[1.2vmin] px-4 py-2 border-2 ${isDarkMode ? 'border-pink-500 text-pink-500' : 'border-sky-800 text-sky-800'}`}>BACK</button>
               <div className="flex-1">
                   <h1 className="font-press-start text-[2vmin] uppercase">r/{hobby.name.replace(/\s+/g, '').toLowerCase()}</h1>
+                  <p className={`mt-2 font-vt323 text-[1.8vmin] leading-snug ${isDarkMode ? 'text-indigo-200' : 'text-sky-700'}`}>
+                    {hobby.description}
+                  </p>
               </div>
               <button 
                 onClick={() => setJoined(!joined)}

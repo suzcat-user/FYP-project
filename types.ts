@@ -53,6 +53,7 @@ export interface Hobby {
   name: string;
   description: string;
   trait?: Trait;
+  communityId?: number;
 }
 
 export interface Comment {

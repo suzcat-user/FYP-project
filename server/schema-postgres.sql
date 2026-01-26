@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS user_answers (
 CREATE TABLE IF NOT EXISTS posts (
     post_id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
+    community_id INT NOT NULL,
     title VARCHAR(255) NOT NULL,
     content TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -46,5 +47,6 @@ CREATE TABLE IF NOT EXISTS comments (
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_user_answers_user_id ON user_answers(user_id);
 CREATE INDEX IF NOT EXISTS idx_posts_user_id ON posts(user_id);
+CREATE INDEX IF NOT EXISTS idx_posts_community_id ON posts(community_id);
 CREATE INDEX IF NOT EXISTS idx_comments_post_id ON comments(post_id);
 CREATE INDEX IF NOT EXISTS idx_comments_user_id ON comments(user_id);

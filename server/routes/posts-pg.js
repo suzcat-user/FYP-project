@@ -5,16 +5,16 @@ const router = express.Router();
 
 // Create a post
 router.post('/', async (req, res) => {
-  const { user_id, title, content, description } = req.body;
+  const { user_id, title, content, description, community_id } = req.body;
 
-  if (!user_id || !title || !content) {
-    return res.status(400).json({ error: 'user_id, title, and content are required' });
+  if (!user_id || !title || !content || !community_id) {
+    return res.status(400).json({ error: 'user_id, community_id, title, and content are required' });
   }
 
   try {
     const result = await pool.query(
-      'INSERT INTO posts (user_id, title, content) VALUES ($1, $2, $3) RETURNING post_id',
-      [user_id, title, content || description]
+      'INSERT INTO posts (user_id, community_id, title, content) VALUES ($1, $2, $3, $4) RETURNING post_id',
+      [user_id, community_id, title, content || description]
     );
 
     res.json({
@@ -24,6 +24,7 @@ router.post('/', async (req, res) => {
       post: {
         post_id: result.rows[0].post_id,
         user_id,
+        community_id,
         title,
         content: content || description,
         created_at: new Date().toISOString()
@@ -38,6 +39,15 @@ router.post('/', async (req, res) => {
 // Get all posts
 router.get('/', async (req, res) => {
   try {
+    const { community_id } = req.query;
+    if (community_id) {
+      const result = await pool.query(
+        'SELECT p.*, u.username FROM posts p JOIN users u ON p.user_id = u.user_id WHERE p.community_id = $1 ORDER BY p.created_at DESC LIMIT 100',
+        [community_id]
+      );
+      return res.json(result.rows);
+    }
+
     const result = await pool.query(
       'SELECT p.*, u.username FROM posts p JOIN users u ON p.user_id = u.user_id ORDER BY p.created_at DESC LIMIT 100'
     );

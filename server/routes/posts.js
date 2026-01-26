@@ -6,14 +6,15 @@ module.exports = (db) => {
   // Create a post
   router.post('/', async (req, res) => {
     try {
-      const { user_id, title, content, description } = req.body;
+      const { user_id, title, content, description, community_id } = req.body;
 
-      if (!user_id || !title || !content) {
-        return res.status(400).json({ error: 'user_id, title, and content are required' });
+      if (!user_id || !title || !content || !community_id) {
+        return res.status(400).json({ error: 'user_id, community_id, title, and content are required' });
       }
 
-      const [result] = await db.execute('INSERT INTO posts (user_id, title, content) VALUES (?, ?, ?)', [
+      const [result] = await db.execute('INSERT INTO posts (user_id, community_id, title, content) VALUES (?, ?, ?, ?)', [
         user_id,
+        community_id,
         title,
         content || description,
       ]);
@@ -25,6 +26,7 @@ module.exports = (db) => {
         post: {
           post_id: result.insertId,
           user_id,
+          community_id,
           title,
           content: content || description,
           created_at: new Date().toISOString(),
@@ -37,8 +39,17 @@ module.exports = (db) => {
   });
 
   // Get all posts
-  router.get('/', async (_req, res) => {
+  router.get('/', async (req, res) => {
     try {
+      const { community_id } = req.query;
+      if (community_id) {
+        const [results] = await db.execute(
+          'SELECT p.*, u.username FROM posts p JOIN users u ON p.user_id = u.user_id WHERE p.community_id = ? ORDER BY p.created_at DESC LIMIT 100',
+          [community_id]
+        );
+        return res.json(results);
+      }
+
       const [results] = await db.execute(
         'SELECT p.*, u.username FROM posts p JOIN users u ON p.user_id = u.user_id ORDER BY p.created_at DESC LIMIT 100'
       );

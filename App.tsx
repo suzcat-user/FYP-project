@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { GameStep, Trait, Scores, Hobby, PersonalityCode, PersonalityScores } from './types';
 import WelcomeScreen from './components/WelcomeScreen';
@@ -37,11 +37,30 @@ const AppContent: React.FC = () => {
   });
 
   const handleLogin = useCallback((username: string, email: string, user_id: number) => {
+    const payload = { user_id, username, score: 0, email };
     setUserName(username);
     setUserEmail(email);
-    setUserData({ user_id, username, score: 0 });
+    setUserData(payload);
+    localStorage.setItem('hobbyArcadeUser', JSON.stringify(payload));
     navigate('/home');
   }, [navigate]);
+
+  useEffect(() => {
+    const cached = localStorage.getItem('hobbyArcadeUser');
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        if (parsed?.user_id && parsed?.username) {
+          setUserData(parsed);
+          setUserName(parsed.username);
+          setUserEmail(parsed.email || '');
+        }
+      } catch (err) {
+        console.warn('Failed to restore cached user', err);
+        localStorage.removeItem('hobbyArcadeUser');
+      }
+    }
+  }, []);
 
   const handleNextGame = useCallback(() => {
     const currentPath = location.pathname;
@@ -176,17 +195,23 @@ const AppContent: React.FC = () => {
                  </button>
 
                  {/* Log Out Button - Hidden on Auth screen */}
-                 {!isAuthPage && (
+                  {!isAuthPage && (
                    <button 
-                      onClick={() => navigate('/auth')}
-                      className={`px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 border-2 text-[9px] sm:text-[10px] md:text-[1.2vmin] transition-all hover:scale-105 active:scale-95 flex items-center gap-1 sm:gap-2 ${isDarkMode ? 'border-red-600 bg-red-600/20 text-red-300' : 'border-red-500 bg-red-500/20 text-red-400'}`}
-                      title="Log Out"
+                     onClick={() => {
+                      setUserData(null);
+                      setUserName('Guest_Player');
+                      setUserEmail('');
+                      localStorage.removeItem('hobbyArcadeUser');
+                      navigate('/auth');
+                     }}
+                     className={`px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 border-2 text-[9px] sm:text-[10px] md:text-[1.2vmin] transition-all hover:scale-105 active:scale-95 flex items-center gap-1 sm:gap-2 ${isDarkMode ? 'border-red-600 bg-red-600/20 text-red-300' : 'border-red-500 bg-red-500/20 text-red-400'}`}
+                     title="Log Out"
                    >
-                      <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${isDarkMode ? 'bg-red-300' : 'bg-red-400'}`}></div>
-                      <span className="hidden sm:inline">LOG OUT</span>
-                      <span className="sm:hidden">OUT</span>
+                     <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${isDarkMode ? 'bg-red-300' : 'bg-red-400'}`}></div>
+                     <span className="hidden sm:inline">LOG OUT</span>
+                     <span className="sm:hidden">OUT</span>
                    </button>
-                 )}
+                  )}
 
                  <div className="hidden md:flex flex-col items-end text-right">
                      <span className="text-sky-500/50 text-[8px] sm:text-[9px] md:text-[1vmin]">CREDITS</span>

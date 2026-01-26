@@ -23,7 +23,7 @@ const PERSONALITY_DATA: Record<PersonalityCode, PersonalityResult> = {
       { name: "Cycling", description: "Road or park rides that boost stamina and leg strength while letting you explore your surroundings. It is low-impact, great for long sessions, and easy to scale in intensity." },
       { name: "Bootcamp", description: "Group circuits that mix cardio and strength challenges for a fun, high-energy workout. The variety keeps boredom away while the group vibe pushes you to go further." },
       { name: "Yoga", description: "Flexibility and balance practice with mindful breathing to relax the body and sharpen focus. Regular sessions improve mobility and recovery while reducing stress." },
-      { name: "HIIT", description: "Short, intense intervals designed for maximum calorie burn in minimal time. It is perfect for busy schedules and delivers a big fitness boost quickly." },
+      { name: "High-Intensity Interval Training(HIIT)", description: "Short, intense intervals designed for maximum calorie burn in minimal time. It is perfect for busy schedules and delivers a big fitness boost quickly." },
       { name: "Outdoor challenges", description: "Obstacle or adventure-style events that test agility, strength, and grit. Training for these challenges adds purpose to workouts and builds confidence through achievement." }
     ]
   },

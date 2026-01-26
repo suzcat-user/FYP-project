@@ -17,14 +17,14 @@ const PERSONALITY_DATA: Record<PersonalityCode, PersonalityResult> = {
     description: "You thrive on movement, competition, and pushing your limits. Physical challenges energize you, and you feel most confident when you are actively improving your strength, stamina, or agility.",
     communities: ["Outdoor & Fitness"],
     hobbies: [
-      { name: "Jogging", description: "Steady-paced runs that build endurance and keep your heart strong. It is an easy habit to start, works well with music or podcasts, and helps clear your mind after a busy day." },
-      { name: "Hiking", description: "Trail walks that combine fitness with scenic exploration and fresh air. You can choose gentle routes or steep climbs, making it a flexible way to stay active and enjoy nature." },
-      { name: "Gym", description: "Strength and conditioning sessions using weights or machines to reach clear goals. Tracking progress over time keeps motivation high while improving power, posture, and overall health." },
-      { name: "Cycling", description: "Road or park rides that boost stamina and leg strength while letting you explore your surroundings. It is low-impact, great for long sessions, and easy to scale in intensity." },
-      { name: "Bootcamp", description: "Group circuits that mix cardio and strength challenges for a fun, high-energy workout. The variety keeps boredom away while the group vibe pushes you to go further." },
-      { name: "Yoga", description: "Flexibility and balance practice with mindful breathing to relax the body and sharpen focus. Regular sessions improve mobility and recovery while reducing stress." },
-      { name: "High-Intensity Interval Training (HIIT)", description: "Short, intense intervals designed for maximum calorie burn in minimal time. It is perfect for busy schedules and delivers a big fitness boost quickly." },
-      { name: "Outdoor challenges", description: "Obstacle or adventure-style events that test agility, strength, and grit. Training for these challenges adds purpose to workouts and builds confidence through achievement." }
+      { name: "Running", description: "Steady-paced runs that build endurance and keep your heart strong. It is an easy habit to start, works well with music or podcasts, and helps clear your mind after a busy day.", communityId: 1 },
+      { name: "Hiking", description: "Trail walks that combine fitness with scenic exploration and fresh air. You can choose gentle routes or steep climbs, making it a flexible way to stay active and enjoy nature.", communityId: 2 },
+      { name: "Gym", description: "Strength and conditioning sessions using weights or machines to reach clear goals. Tracking progress over time keeps motivation high while improving power, posture, and overall health.", communityId: 3 },
+      { name: "Cycling", description: "Road or park rides that boost stamina and leg strength while letting you explore your surroundings. It is low-impact, great for long sessions, and easy to scale in intensity.", communityId: 4 },
+      { name: "Bootcamp", description: "Group circuits that mix cardio and strength challenges for a fun, high-energy workout. The variety keeps boredom away while the group vibe pushes you to go further.", communityId: 5 },
+      { name: "Yoga", description: "Flexibility and balance practice with mindful breathing to relax the body and sharpen focus. Regular sessions improve mobility and recovery while reducing stress.", communityId: 6 },
+      { name: "High-Intensity Interval Training (HIIT)", description: "Short, intense intervals designed for maximum calorie burn in minimal time. It is perfect for busy schedules and delivers a big fitness boost quickly.", communityId: 7 },
+      { name: "Outdoor challenges", description: "Obstacle or adventure-style events that test agility, strength, and grit. Training for these challenges adds purpose to workouts and builds confidence through achievement.", communityId: 8 }
     ]
   },
   [PersonalityCode.C]: {

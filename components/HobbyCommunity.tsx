@@ -93,7 +93,8 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
         const data = await response.json();
         
         if (Array.isArray(data)) {
-          const formattedPosts = data.map((p: any) => ({
+          const scopedPosts = data.filter((p: any) => p.community_id === communityId);
+          const formattedPosts = scopedPosts.map((p: any) => ({
             id: p.post_id.toString(),
             author: p.username || 'Anonymous',
             title: p.title,

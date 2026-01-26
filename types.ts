@@ -20,11 +20,22 @@ export enum Trait {
   EXPLORER = 'EXPLORER'
 }
 
+// New Personality Codes
+export enum PersonalityCode {
+  F = 'F', // Fitness
+  C = 'C', // Creatives
+  N = 'N', // Nature
+  S = 'S', // Social
+  L = 'L'  // Lifestyle
+}
+
 export type Scores = Record<Trait, number>;
+export type PersonalityScores = Record<PersonalityCode, number>;
 
 export interface Answer {
   text: string;
   trait: Trait;
+  personalityCodes?: PersonalityCode[]; // New field for personality mapping
   description?: string;
 }
 

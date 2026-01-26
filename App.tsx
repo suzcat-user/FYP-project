@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import { GameStep, Trait, Scores, Hobby } from './types';
+import { GameStep, Trait, Scores, Hobby, PersonalityCode, PersonalityScores } from './types';
 import WelcomeScreen from './components/WelcomeScreen';
 import WouldYouRather from './components/WouldYouRather';
 import RingToss from './components/RingToss';
@@ -28,6 +28,14 @@ const AppContent: React.FC = () => {
     EXPLORER: 0
   });
 
+  const [personalityScores, setPersonalityScores] = useState<PersonalityScores>({
+    [PersonalityCode.F]: 0,
+    [PersonalityCode.C]: 0,
+    [PersonalityCode.N]: 0,
+    [PersonalityCode.S]: 0,
+    [PersonalityCode.L]: 0
+  });
+
   const handleLogin = useCallback((username: string, email: string, user_id: number) => {
     setUserName(username);
     setUserEmail(email);
@@ -47,21 +55,52 @@ const AppContent: React.FC = () => {
     else navigate('/home');
   }, [navigate, location.pathname]);
 
-  const handleAnswer = useCallback((traits: Trait[]) => {
+  const handleAnswer = useCallback((traits: Trait[], personalityCodes?: PersonalityCode[]) => {
     setScores(prevScores => {
       const newScores = { ...prevScores };
       traits.forEach(trait => {
-        const randomBonus = Math.random() * 0.75;
-        newScores[trait] = (newScores[trait] || 0) + (1 + randomBonus);
+        newScores[trait] = (newScores[trait] || 0) + 1; // Exactly +1 per trait
       });
       return newScores;
     });
+
+    // Add personality scoring
+    if (personalityCodes && personalityCodes.length > 0) {
+      setPersonalityScores(prevScores => {
+        const newScores = { ...prevScores };
+        personalityCodes.forEach(code => {
+          newScores[code] = (newScores[code] || 0) + 1; // Exactly +1 per code
+        });
+        return newScores;
+      });
+    }
   }, []);
 
   const handleGoToHobbyCommunity = (hobby: Hobby) => {
     setSelectedHobby(hobby);
     navigate(`/community/${hobby.name.toLowerCase().replace(/\s+/g, '-')}`);
   };
+
+  const handleResetGame = useCallback(() => {
+    // Reset all scores
+    setScores({
+      CREATIVE: 0,
+      ACTIVE: 0,
+      STRATEGIC: 0,
+      CALM: 0,
+      SOCIAL: 0,
+      EXPLORER: 0
+    });
+    setPersonalityScores({
+      [PersonalityCode.F]: 0,
+      [PersonalityCode.C]: 0,
+      [PersonalityCode.N]: 0,
+      [PersonalityCode.S]: 0,
+      [PersonalityCode.L]: 0
+    });
+    // Navigate back to home
+    navigate('/home');
+  }, [navigate]);
 
   const totalScore = useMemo(() => {
     const values = Object.values(scores) as number[];
@@ -165,7 +204,7 @@ const AppContent: React.FC = () => {
              <Route path="/games/would-you-rather" element={<WouldYouRather onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} userId={userData?.user_id} />} />
              <Route path="/games/ring-toss" element={<RingToss onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} />} />
              <Route path="/games/shooting-gallery" element={<ShootingGallery onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} />} />
-             <Route path="/results" element={<ResultsScreen scores={scores} onNext={handleNextGame} onSelectHobby={handleGoToHobbyCommunity} isDarkMode={isDarkMode} />} />
+             <Route path="/results" element={<ResultsScreen scores={scores} personalityScores={personalityScores} onNext={handleNextGame} onSelectHobby={handleGoToHobbyCommunity} onReset={handleResetGame} isDarkMode={isDarkMode} />} />
              <Route path="/community" element={<CommunityScreen onRestart={handleNextGame} scores={scores} isDarkMode={isDarkMode} />} />
              <Route path="/community/:hobbyName" element={<HobbyCommunity hobby={selectedHobby} onBack={() => navigate('/results')} isDarkMode={isDarkMode} currentUser={userData?.username || "GUEST"} userId={userData?.user_id} />} />
              <Route path="/profile" element={<ProfileScreen scores={scores} userName={userName} userEmail={userEmail} onBack={() => navigate('/home')} isDarkMode={isDarkMode} />} />

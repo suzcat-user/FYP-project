@@ -1,10 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { RING_TOSS_QUESTIONS } from '../constants';
-import { Trait } from '../types';
+import { Trait, PersonalityCode } from '../types';
 import GameContainer from './ui/GameContainer';
 
 interface RingTossProps {
-  onAnswer: (traits: Trait[]) => void;
+  onAnswer: (traits: Trait[], personalityCodes?: PersonalityCode[]) => void;
   onGameEnd: () => void;
   onSkip?: () => void;
   isDarkMode?: boolean;
@@ -153,11 +153,11 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
     }
   };
 
-  const handleThrow = (trait: Trait, index: number) => {
+  const handleThrow = (trait: Trait, personalityCodes: PersonalityCode[] | undefined, index: number) => {
     if (isThrown) return;
     setSelectedAnswer(index);
     setIsThrown(true);
-    onAnswer([trait]);
+    onAnswer([trait], personalityCodes);
     
     setTimeout(() => {
       if (round < TOTAL_ROUNDS - 1) {
@@ -221,7 +221,7 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
                     const pos = POSITIONS[index % POSITIONS.length];
                     return (
                         <div key={index} className="absolute bottom-0 transition-transform duration-500 left-1/2" style={{ transform: `translateX(-50%) translateX(${pos.x}vmin) translateY(${pos.y}vmin) scale(${pos.z})`, zIndex: Math.floor(pos.z * 100) }}>
-                            <Stake onClick={() => handleThrow(answer.trait, index)} isThrown={isThrown} isSelected={selectedAnswer === index} colorClass={STAKE_COLORS[index % STAKE_COLORS.length]} label={answer.text} isDarkMode={isDarkMode} />
+                            <Stake onClick={() => handleThrow(answer.trait, answer.personalityCodes, index)} isThrown={isThrown} isSelected={selectedAnswer === index} colorClass={STAKE_COLORS[index % STAKE_COLORS.length]} label={answer.text} isDarkMode={isDarkMode} />
                         </div>
                     );
                 })}

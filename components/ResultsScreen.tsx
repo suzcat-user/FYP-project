@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Scores, Hobby, Trait, Personalities } from '../types';
-import { getHobbySuggestions, getPersonalityDescription } from '../services/geminiService';
+import { Scores, Hobby, Trait, Personalities, PersonalityScores } from '../types';
+import { getPersonalityFromScores, getHobbyRecommendations, getCommunityRecommendations } from '../services/hobbyRecommendations';
 
 interface ResultsScreenProps {
   scores: Scores;
+  personalityScores: PersonalityScores;
   onNext?: () => void;
   onSelectHobby: (hobby: Hobby) => void;
+  onReset?: () => void;
   isDarkMode?: boolean;
 }
 
@@ -26,7 +28,7 @@ const TraitBar: React.FC<{ trait: string; score: number; max: number; color: str
         <div className="flex flex-col mb-2">
             <div className="flex justify-between items-end mb-1">
                  <span className={`font-press-start text-[1.2vmin] uppercase tracking-widest ${isDarkMode ? 'text-indigo-300' : 'text-sky-800'}`}>{trait}</span>
-                 <span className={`font-vt323 text-[2vmin] ${isDarkMode ? 'text-indigo-400' : 'text-sky-600'}`}>{score.toFixed(1)} PTS</span>
+                 <span className={`font-vt323 text-[2vmin] ${isDarkMode ? 'text-indigo-400' : 'text-sky-600'}`}>{score} PTS</span>
             </div>
             <div className={`flex gap-[2px] h-[1.5vmin] ${isDarkMode ? 'bg-slate-800' : 'bg-gray-200'}`}>
                 {Array.from({ length: segments }).map((_, i) => (
@@ -40,44 +42,25 @@ const TraitBar: React.FC<{ trait: string; score: number; max: number; color: str
     );
 };
 
-const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, onNext, onSelectHobby, isDarkMode = false }) => {
-  const [hobbies, setHobbies] = useState<Hobby[]>([]);
-  const[personality, setPersonality]= useState<Personalities[]>([]);
-  const [loading, setLoading] = useState(true);
+const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, personalityScores, onNext, onSelectHobby, onReset, isDarkMode = false }) => {
+  const [loading, setLoading] = useState(false);
+  
+  // Debug: Log personality scores
+  console.log('Personality Scores:', personalityScores);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchHobbies = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const suggestions = await getHobbySuggestions(scores);
-        setHobbies(suggestions);
-      } catch (err) {
-        setError('Failed to fetch hobby suggestions.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Get personality and recommendations directly
+  const personalityResult = useMemo(() => {
+    return getPersonalityFromScores(personalityScores);
+  }, [personalityScores]);
 
-    const fetchPersonalities = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const personalities = await getPersonalityDescription(scores);
-        setPersonality(personalities);
-      } catch (err) {
-        setError('Failed to fetch personality description.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const hobbies = useMemo(() => {
+    return getHobbyRecommendations(personalityScores);
+  }, [personalityScores]);
 
-    fetchHobbies();
-    fetchPersonalities();
-  }, [scores]);
+  const communities = useMemo(() => {
+    return getCommunityRecommendations(personalityScores);
+  }, [personalityScores]);
 
   const topTrait = useMemo(() => {
       const traits = Object.keys(scores) as Trait[];
@@ -85,24 +68,9 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, onNext, onSelectH
       return traits.reduce((a, b) => scores[a] > scores[b] ? a : b);
   }, [scores]);
 
-  const bestMatchHobby = useMemo(() => {
-      if (hobbies.length > 0) {
-        const randomIndex1 = Math.floor(Math.random() * hobbies.length);
-        return hobbies[randomIndex1];
-      }
-      return null;
-  }, [hobbies]);
-
-  const bestMatchPersonality = useMemo(() => {
-      if (personality.length > 0) {
-        const randomIndex = Math.floor(Math.random() * personality.length);
-        return personality[randomIndex];
-      }
-      return null;
-  }, [personality]);
- console.log("Best Match Personality:", bestMatchPersonality);
   const archetype = ARCHETYPES[topTrait] || ARCHETYPES.EXPLORER;
   const maxScore = Math.max(...(Object.values(scores) as number[]), 1);
+  const maxPersonalityScore = Math.max(...(Object.values(personalityScores) as number[]), 1);
 
   const TRAIT_COLORS: Record<string, string> = {
       CREATIVE: 'bg-pink-500 shadow-[0_0_10px_#ec4899]',
@@ -111,6 +79,22 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, onNext, onSelectH
       CALM: 'bg-teal-400 shadow-[0_0_10px_#2dd4bf]',
       SOCIAL: 'bg-yellow-400 shadow-[0_0_10px_#facc15]',
       EXPLORER: 'bg-orange-500 shadow-[0_0_10px_#f97316]'
+  };
+
+  const PERSONALITY_COLORS: Record<string, string> = {
+      F: 'bg-green-500 shadow-[0_0_10px_#22c55e]',
+      C: 'bg-pink-500 shadow-[0_0_10px_#ec4899]',
+      N: 'bg-teal-400 shadow-[0_0_10px_#2dd4bf]',
+      S: 'bg-yellow-400 shadow-[0_0_10px_#facc15]',
+      L: 'bg-purple-500 shadow-[0_0_10px_#a855f7]'
+  };
+
+  const PERSONALITY_NAMES: Record<string, string> = {
+      F: 'FITNESS',
+      C: 'CREATIVES',
+      N: 'NATURE',
+      S: 'SOCIAL',
+      L: 'LIFESTYLE'
   };
 
   return (
@@ -130,28 +114,46 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, onNext, onSelectH
                 REVEALING YOUR DESTINY...
             </h1>
         </div>
- {!loading && bestMatchPersonality && (
-           <div className={`p-[4vmin] border-8 shadow-[15px_15px_0px_rgba(0,0,0,0.2)] flex flex-col items-center text-center gap-4 transition-colors duration-500 ${isDarkMode ? 'bg-indigo-950/30 border-pink-500 shadow-[0_0_20px_rgba(236,72,153,0.3)]' : 'bg-cyan-50 border-cyan-400 shadow-[15px_15px_0px_rgba(0,0,0,0.1)]'}`}>
-              <div className="font-press-start text-[1.5vmin] text-red-500 animate-pulse">★★★ PERSONALITY REVEAL ★★★</div>
-              <h2 className={`font-press-start text-[5vmin] leading-tight ${isDarkMode ? 'text-white' : 'text-sky-900'}`}>{bestMatchPersonality.name}</h2>
-              <p className={`font-vt323 text-[3.5vmin] max-w-[80%] ${isDarkMode ? 'text-pink-100' : 'text-gray-800'}`}>{bestMatchPersonality.description}</p>
-             
-           </div>
-        )}
 
-
-        {!loading && bestMatchHobby && (
-           <div className={`p-[4vmin] border-8 shadow-[15px_15px_0px_rgba(0,0,0,0.2)] flex flex-col items-center text-center gap-4 transition-colors duration-500 ${isDarkMode ? 'bg-pink-900/40 border-pink-600' : 'bg-yellow-100 border-yellow-500'}`}>
-              <div className="font-press-start text-[1.5vmin] text-red-500 animate-pulse">★★★ ABSOLUTE BEST MATCH ★★★</div>
-              <h2 className={`font-press-start text-[5vmin] leading-tight ${isDarkMode ? 'text-white' : 'text-sky-900'}`}>{bestMatchHobby.name}</h2>
-              <p className={`font-vt323 text-[3.5vmin] max-w-[80%] ${isDarkMode ? 'text-pink-100' : 'text-gray-800'}`}>{bestMatchHobby.description}</p>
-              <button 
-                onClick={() => onSelectHobby(bestMatchHobby)}
-                className={`mt-4 px-8 py-4 font-press-start text-[2vmin] border-b-4 border-r-4 active:border-0 active:translate-y-1 transition-all ${isDarkMode ? 'bg-indigo-600 text-white border-indigo-900' : 'bg-sky-600 text-white border-sky-900'}`}
+        {/* Personality Reveal Section */}
+        <div className={`p-[4vmin] border-8 shadow-[15px_15px_0px_rgba(0,0,0,0.2)] flex flex-col items-center text-center gap-4 transition-colors duration-500 ${isDarkMode ? 'bg-indigo-950/30 border-pink-500 shadow-[0_0_20px_rgba(236,72,153,0.3)]' : 'bg-cyan-50 border-cyan-400 shadow-[15px_15px_0px_rgba(0,0,0,0.1)]'}`}>
+          <div className="font-press-start text-[1.5vmin] text-red-500 animate-pulse">★★★ PERSONALITY REVEAL ★★★</div>
+          <h2 className={`font-press-start text-[5vmin] leading-tight ${isDarkMode ? 'text-white' : 'text-sky-900'}`}>{personalityResult.name}</h2>
+          <p className={`font-vt323 text-[3.5vmin] max-w-[80%] ${isDarkMode ? 'text-pink-100' : 'text-gray-800'}`}>{personalityResult.description}</p>
+          
+          {/* Communities Section */}
+          <div className="mt-4 w-full">
+            <div className="font-press-start text-[1.2vmin] text-green-500 mb-2">YOUR COMMUNITIES</div>
+            <div className="flex flex-wrap gap-2 justify-center">
+              {communities.map((community, index) => (
+                <div key={index} className={`px-4 py-2 font-vt323 text-[2vmin] ${isDarkMode ? 'bg-slate-800 text-indigo-300 border-2 border-indigo-600' : 'bg-white text-sky-900 border-2 border-sky-600'}`}>
+                  {community}
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 flex justify-center">
+              <button
+                onClick={onNext}
+                className={`font-press-start text-[1.5vmin] px-6 py-3 border-b-4 border-r-4 active:border-b-0 active:border-r-0 active:translate-y-1 transition-all uppercase ${isDarkMode ? 'bg-green-600 border-green-800 text-white hover:bg-green-500' : 'bg-green-500 border-green-700 text-white hover:bg-green-400'}`}
               >
-                JOIN THE COMMUNITY
+                JOIN COMMUNITY
               </button>
-           </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Hobby Recommendations Section */}
+        {hobbies.length > 0 && (
+          <div className={`p-[4vmin] border-8 shadow-[15px_15px_0px_rgba(0,0,0,0.2)] flex flex-col items-center text-center gap-4 transition-colors duration-500 ${isDarkMode ? 'bg-pink-900/40 border-pink-600' : 'bg-yellow-100 border-yellow-500'}`}>
+            <div className="font-press-start text-[1.5vmin] text-red-500 animate-pulse">★★★ HOBBY RECOMMENDATIONS ★★★</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+              {hobbies.slice(0, 4).map((hobby, index) => (
+                <div key={index} className={`p-4 border-4 ${isDarkMode ? 'bg-slate-900 border-indigo-700 text-white' : 'bg-white border-sky-900 text-sky-900'}`}>
+                  <h3 className="font-press-start text-[2vmin] mb-2">{hobby.name}</h3>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
         <div className="flex flex-col md:flex-row gap-[3vmin] shrink-0">
@@ -177,12 +179,12 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, onNext, onSelectH
 
             <div className={`p-[2vmin] border-4 shadow-[8px_8px_0px_rgba(0,0,0,0.2)] text-white flex-1 flex flex-col transition-colors duration-500 ${isDarkMode ? 'bg-slate-900 border-indigo-700' : 'bg-sky-950 border-sky-600'}`}>
                 <h3 className={`font-press-start text-[1.5vmin] mb-[1vmin] text-center border-b-2 pb-1 transition-colors duration-500 ${isDarkMode ? 'text-pink-400 border-indigo-800' : 'text-cyan-300 border-sky-800'}`}>
-                    TRAIT SPECTRUM
+                    PERSONALITY SPECTRUM
                 </h3>
                 <div className="grid grid-cols-2 gap-x-[2vmin] gap-y-[0.5vmin]">
-                    {Object.entries(scores).map(([trait, score]) => (
-                        <div key={trait} className={`p-1 border transition-colors duration-500 ${isDarkMode ? 'bg-slate-950 border-indigo-900' : 'bg-sky-900/50 border-sky-700'}`}>
-                             <TraitBar trait={trait} score={score} max={maxScore} color={TRAIT_COLORS[trait]} isDarkMode={isDarkMode} />
+                    {Object.entries(personalityScores).map(([code, score]) => (
+                        <div key={code} className={`p-1 border transition-colors duration-500 ${isDarkMode ? 'bg-slate-950 border-indigo-900' : 'bg-sky-900/50 border-sky-700'}`}>
+                             <TraitBar trait={PERSONALITY_NAMES[code]} score={score} max={maxPersonalityScore} color={PERSONALITY_COLORS[code]} isDarkMode={isDarkMode} />
                         </div>
                     ))}
                 </div>
@@ -193,36 +195,30 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, onNext, onSelectH
         <div className="w-full flex flex-col gap-[2vmin] shrink-0 mt-[2vmin] pb-[4vmin]">
              <div className={`border-4 p-[3vmin] shadow-[8px_8px_0px_rgba(0,0,0,0.2)] relative transition-colors duration-500 ${isDarkMode ? 'bg-slate-900 border-indigo-700' : 'bg-sky-100 border-sky-500'}`}>
                   <div className={`absolute -top-7 left-1/2 -translate-x-1/2 border-4 px-6 py-2 z-10 shadow-md transition-colors duration-500 ${isDarkMode ? 'bg-pink-600 border-indigo-900 text-indigo-100' : 'bg-yellow-400 border-sky-900 text-sky-900'}`}>
-                      <h3 className="font-press-start text-[1.8vmin] whitespace-nowrap">OTHER TOP RECOMMENDATIONS</h3>
+                      <h3 className="font-press-start text-[1.8vmin] whitespace-nowrap">ALL HOBBIES FOR YOU</h3>
                   </div>
 
                   <div className="mt-[4vmin] w-full">
-                       {loading && (
-                           <div className={`h-[20vmin] flex items-center justify-center flex-col animate-pulse ${isDarkMode ? 'text-indigo-400' : 'text-sky-600'}`}>
-                               <div className={`w-[6vmin] h-[6vmin] border-4 border-t-transparent rounded-full animate-spin mb-2 ${isDarkMode ? 'border-indigo-500 border-t-pink-500' : 'border-sky-200 border-t-sky-500'}`}></div>
-                               <span className="font-press-start text-[1.5vmin]">DEEP SCANNING PERSONALITY PROFILE...</span>
-                           </div>
-                       )}
-                       {error && <div className="text-red-500 font-press-start text-[1.5vmin] text-center mt-10">{error}</div>}
-                       {!loading && !error && (
-                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[3vmin]">
-                               {hobbies.slice(1).map((hobby, index) => (
-                                   <button 
-                                      key={index} 
-                                      onClick={() => onSelectHobby(hobby)}
-                                      className={`group relative border-4 p-4 text-left transition-all duration-300 shadow-sm flex flex-col min-h-[160px] ${isDarkMode ? 'bg-slate-950 border-indigo-900 hover:bg-slate-800 hover:border-pink-600' : 'bg-white border-sky-800 hover:bg-sky-50 hover:border-sky-400'} hover:-translate-y-1`}
-                                   >
-                                       <div className={`flex justify-between items-start mb-2 border-b-2 pb-1 transition-colors duration-300 ${isDarkMode ? 'border-indigo-900' : 'border-sky-100'}`}>
-                                           <h4 className={`font-press-start text-[1.5vmin] leading-snug transition-colors duration-300 ${isDarkMode ? 'text-indigo-300 group-hover:text-pink-400' : 'text-sky-700'}`}>{hobby.name}</h4>
-                                           <div className={`font-press-start text-[0.8vmin] px-2 py-1 bg-sky-800 text-white`}>ENTER</div>
-                                       </div>
-                                       <p className={`font-vt323 text-[2.2vmin] leading-tight flex-1 transition-colors duration-300 ${isDarkMode ? 'text-indigo-100/80' : 'text-gray-700'}`}>
-                                           {hobby.description}
-                                       </p>
-                                   </button>
-                               ))}
-                           </div>
-                       )}
+                      <p className={`text-center mb-4 font-vt323 text-[2vmin] ${isDarkMode ? 'text-pink-300' : 'text-sky-700'}`}>
+                        💬 Click any hobby to join its community and start posting!
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[3vmin]">
+                        {hobbies.map((hobby, index) => (
+                          <button 
+                            key={index}
+                            onClick={() => onSelectHobby(hobby)}
+                            className={`group relative border-4 p-4 text-left transition-all duration-300 shadow-sm flex flex-col min-h-[160px] cursor-pointer active:translate-y-1 ${isDarkMode ? 'bg-slate-950 border-indigo-900 hover:bg-slate-800 hover:border-pink-600 hover:shadow-[0_0_20px_rgba(236,72,153,0.5)]' : 'bg-white border-sky-800 hover:bg-sky-50 hover:border-sky-400 hover:shadow-[0_0_20px_rgba(14,165,233,0.5)]'} hover:-translate-y-2`}
+                          >
+                            <div className={`flex justify-between items-start mb-2 border-b-2 pb-1 transition-colors duration-300 ${isDarkMode ? 'border-indigo-900' : 'border-sky-100'}`}>
+                              <h4 className={`font-press-start text-[1.5vmin] leading-snug transition-colors duration-300 ${isDarkMode ? 'text-indigo-300 group-hover:text-pink-400' : 'text-sky-700 group-hover:text-sky-500'}`}>{hobby.name}</h4>
+                              <span className="text-[2vmin] opacity-0 group-hover:opacity-100 transition-opacity">💬</span>
+                            </div>
+                            <div className={`mt-auto opacity-0 group-hover:opacity-100 transition-opacity font-vt323 text-[1.5vmin] ${isDarkMode ? 'text-pink-400' : 'text-sky-600'}`}>
+                              → Join Community
+                            </div>
+                          </button>
+                        ))}
+                      </div>
                   </div>
              </div>
         </div>
@@ -236,7 +232,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, onNext, onSelectH
               GLOBAL LEADERBOARD
           </button>
           <button
-              onClick={() => window.location.reload()}
+              onClick={onReset}
               className={`font-press-start text-[1.5vmin] px-[4vmin] py-[2vmin] border-b-8 border-r-8 active:border-b-0 active:border-r-0 active:translate-y-2 transition-all uppercase ${isDarkMode ? 'bg-indigo-900 border-indigo-950 text-indigo-200' : 'bg-sky-900 border-sky-950 text-sky-200'}`}
           >
               REPLAY ALL

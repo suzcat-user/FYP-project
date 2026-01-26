@@ -1,10 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { SHOOTING_GALLERY_QUESTIONS } from '../constants';
-import { Trait } from '../types';
+import { Trait, PersonalityCode } from '../types';
 import GameContainer from './ui/GameContainer';
 
 interface ShootingGalleryProps {
-  onAnswer: (traits: Trait[]) => void;
+  onAnswer: (traits: Trait[], personalityCodes?: PersonalityCode[]) => void;
   onGameEnd: () => void;
   onSkip?: () => void;
   isDarkMode?: boolean;
@@ -116,11 +116,11 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
     };
   }), [currentQuestionIndex]);
 
-  const handleShot = (trait: Trait, index: number) => {
+  const handleShot = (trait: Trait, personalityCodes: PersonalityCode[] | undefined, index: number) => {
     if (isShot) return;
     setIsShot(true);
     setPoppedId(index);
-    onAnswer([trait]);
+    onAnswer([trait], personalityCodes);
     
     setTimeout(() => {
       if (round < TOTAL_ROUNDS - 1) {
@@ -203,7 +203,7 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
                           trait={answer.trait}
                           isDarkMode={isDarkMode} 
                           isPopped={poppedId === index}
-                          onClick={() => handleShot(answer.trait, index)} 
+                          onClick={() => handleShot(answer.trait, answer.personalityCodes, index)} 
                         />
                     </div>
                 );

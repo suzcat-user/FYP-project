@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { WOULD_YOU_RATHER_QUESTIONS } from '../constants';
-import { Trait } from '../types';
+import { Trait, PersonalityCode } from '../types';
 import GameContainer from './ui/GameContainer';
 
 interface WouldYouRatherProps {
-  onAnswer: (traits: Trait[]) => void;
+  onAnswer: (traits: Trait[], personalityCodes?: PersonalityCode[]) => void;
   onGameEnd: () => void;
   onSkip?: () => void;
   isDarkMode?: boolean;
@@ -55,7 +55,7 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
 
     const choice = currentQuestion.answers[index];
     saveAnswer(choice, index);
-    onAnswer([choice.trait]);
+    onAnswer([choice.trait], choice.personalityCodes);
     setAnimating(index === 0 ? 'left' : 'right');
 
     setTimeout(() => {

@@ -70,7 +70,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, personalityScores
 
   const archetype = ARCHETYPES[topTrait] || ARCHETYPES.EXPLORER;
   const maxScore = Math.max(...(Object.values(scores) as number[]), 1);
-  const maxPersonalityScore = Math.max(...(Object.values(personalityScores) as number[]), 1);
+  const maxPersonalityScore = 22; // Each personality code has exactly 22 opportunities
 
   const TRAIT_COLORS: Record<string, string> = {
       CREATIVE: 'bg-pink-500 shadow-[0_0_10px_#ec4899]',

@@ -71,15 +71,15 @@ module.exports = (db) => {
   // LOGIN: Authenticate existing user
   router.post('/login', async (req, res) => {
     try {
-      const { username, password } = req.body;
+      const { email, password } = req.body;
 
       // Validate required fields
-      if (!username || !password) {
-        return res.status(400).json({ error: 'Username and password are required' });
+      if (!email || !password) {
+        return res.status(400).json({ error: 'Email and password are required' });
       }
 
-      // Find user by username
-      const [results] = await db.execute('SELECT * FROM users WHERE username = ?', [username.trim()]);
+      // Find user by email
+      const [results] = await db.execute('SELECT * FROM users WHERE email = ?', [email.trim()]);
 
       if (results.length === 0) {
         return res.status(401).json({ error: 'Invalid username or password' });
@@ -140,9 +140,6 @@ module.exports = (db) => {
       return res.status(500).json({ error: 'Database error' });
     }
   });
-
-  return router;
-};
 
   return router;
 };

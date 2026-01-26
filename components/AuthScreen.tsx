@@ -20,37 +20,61 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, isDarkMode = false }) 
     setError('');
     setLoading(true);
 
-    if (!email.trim()) {
-      setError('Email is required');
-      setLoading(false);
-      return;
-    }
-
-    if (!password.trim()) {
-      setError('Password is required');
-      setLoading(false);
-      return;
-    }
-
     try {
-      const response = await fetch('http://localhost:3001/api/users/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: email.trim(),
-          password
-        })
-      });
+      if (isLogin) {
+        // LOGIN MODE - Only email and password required
+        if (!email.trim() || !password.trim()) {
+          setError('Email and password are required');
+          setLoading(false);
+          return;
+        }
 
-      const data = await response.json();
+        const response = await fetch('http://localhost:3001/api/users/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email.trim(),
+            password
+          })
+        });
 
-      if (data.success && data.user) {
-        onLogin(data.user.username, data.user.email || email, data.user.user_id);
+        const data = await response.json();
+
+        if (data.success && data.user) {
+          onLogin(data.user.username, data.user.email || email, data.user.user_id);
+        } else {
+          setError(data.error || 'Login failed. Please try again.');
+        }
       } else {
-        setError(data.error || 'Login failed. Please try again.');
+        // SIGNUP MODE
+        if (!username.trim() || !email.trim() || !password.trim()) {
+          setError('Username, email, and password are all required');
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch('http://localhost:3001/api/users/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: username.trim(),
+            email: email.trim(),
+            password
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success && data.user) {
+          setError('');
+          // Auto-login after signup
+          onLogin(data.user.username, data.user.email, data.user.user_id);
+        } else {
+          setError(data.error || 'Signup failed. Please try again.');
+        }
       }
     } catch (err) {
-      console.error('Login error:', err);
+      console.error('Auth error:', err);
       setError('Network error. Could not connect to server.');
     } finally {
       setLoading(false);
@@ -85,6 +109,13 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, isDarkMode = false }) 
             {isLogin ? 'INSERT CREDENTIALS' : 'NEW PLAYER ENTRY'}
         </h2>
 
+        {/* Error Message Display */}
+        {error && (
+          <div className={`w-full p-3 rounded border-2 mb-3 font-vt323 text-[12px] sm:text-[13px] md:text-[14px] text-center ${isDarkMode ? 'bg-red-900/20 border-red-700 text-red-300' : 'bg-red-50 border-red-400 text-red-700'}`}>
+            {error}
+          </div>
+        )}
+
         {/* Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:gap-3.5 md:gap-4">
             {!isLogin && (
@@ -96,7 +127,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, isDarkMode = false }) 
                         onChange={(e) => setUsername(e.target.value)}
                         className={`w-full font-vt323 text-[15px] sm:text-[16px] md:text-[18px] lg:text-[2.4vmin] p-2.5 sm:p-3 border-2 md:border-3 outline-none shadow-inner transition-colors ${isDarkMode ? 'bg-slate-900 border-indigo-900 text-white focus:border-pink-500' : 'bg-gray-50 border-gray-300 text-gray-900 focus:border-sky-500'}`}
                         placeholder="Enter your username"
-                        required
+                        required={!isLogin}
                     />
                 </div>
             )}

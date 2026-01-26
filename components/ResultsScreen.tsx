@@ -133,7 +133,11 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, personalityScores
             </div>
             <div className="mt-4 flex justify-center">
               <button
-                onClick={onNext}
+                onClick={() => {
+                  if (hobbies && hobbies.length > 0) {
+                    onSelectHobby(hobbies[0]);
+                  }
+                }}
                 className={`font-press-start text-[1.5vmin] px-6 py-3 border-b-4 border-r-4 active:border-b-0 active:border-r-0 active:translate-y-1 transition-all uppercase ${isDarkMode ? 'bg-green-600 border-green-800 text-white hover:bg-green-500' : 'bg-green-500 border-green-700 text-white hover:bg-green-400'}`}
               >
                 JOIN COMMUNITY

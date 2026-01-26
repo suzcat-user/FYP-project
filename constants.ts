@@ -13,7 +13,7 @@ export const WOULD_YOU_RATHER_QUESTIONS = [
     id: 2,
     question: "Would you rather feel challenged than relaxed?",
     answers: [
-      { text: "Challenged", trait: Trait.CREATIVE, personalityCodes: [PersonalityCode.F, PersonalityCode.S] },
+      { text: "Challenged", trait: Trait.CREATIVE, personalityCodes: [PersonalityCode.F, PersonalityCode.S, PersonalityCode.N] },
       { text: "Relaxed", trait: Trait.STRATEGIC, personalityCodes: [PersonalityCode.L, PersonalityCode.C, PersonalityCode.N] }
     ]
   },
@@ -30,7 +30,7 @@ export const WOULD_YOU_RATHER_QUESTIONS = [
     question: "Would you describe yourself as patient rather than impatient?",
     answers: [
       { text: "Patient", trait: Trait.CREATIVE, personalityCodes: [PersonalityCode.C, PersonalityCode.N] },
-      { text: "Impatient", trait: Trait.SOCIAL, personalityCodes: [PersonalityCode.F] }
+      { text: "Impatient", trait: Trait.SOCIAL, personalityCodes: [PersonalityCode.F, PersonalityCode.S] }
     ]
   },
   {
@@ -48,7 +48,7 @@ export const RING_TOSS_QUESTIONS = [
     id: 1,
     question: "Why do you want a hobby?",
     answers: [
-      { text: "I have free time", trait: Trait.CALM, personalityCodes: [PersonalityCode.F, PersonalityCode.C, PersonalityCode.N, PersonalityCode.S, PersonalityCode.L] },
+      { text: "I have free time", trait: Trait.CALM, personalityCodes: [PersonalityCode.F, PersonalityCode.N, PersonalityCode.S] },
       { text: "Improve lifestyle & health", trait: Trait.ACTIVE, personalityCodes: [PersonalityCode.F, PersonalityCode.L, PersonalityCode.N] },
       { text: "Express myself creatively", trait: Trait.CREATIVE, personalityCodes: [PersonalityCode.C, PersonalityCode.L] },
       { text: "Meet new people & socialize", trait: Trait.SOCIAL, personalityCodes: [PersonalityCode.F, PersonalityCode.C, PersonalityCode.S] },
@@ -64,7 +64,7 @@ export const RING_TOSS_QUESTIONS = [
       { text: "Auditory", trait: Trait.CALM, personalityCodes: [PersonalityCode.C, PersonalityCode.N] },
       { text: "Kinaesthetic", trait: Trait.ACTIVE, personalityCodes: [PersonalityCode.F, PersonalityCode.L, PersonalityCode.S] },
       { text: "Reading / Writing", trait: Trait.STRATEGIC, personalityCodes: [PersonalityCode.C, PersonalityCode.L] },
-      { text: "Social", trait: Trait.SOCIAL, personalityCodes: [PersonalityCode.S, PersonalityCode.L] },
+      { text: "Social", trait: Trait.SOCIAL, personalityCodes: [PersonalityCode.S] },
       { text: "Trial & error", trait: Trait.EXPLORER, personalityCodes: [PersonalityCode.F, PersonalityCode.N] }
     ]
   },
@@ -89,7 +89,7 @@ export const RING_TOSS_QUESTIONS = [
       { text: "Better mindset & inner calm", trait: Trait.CALM, personalityCodes: [PersonalityCode.N] },
       { text: "Stronger social connections", trait: Trait.SOCIAL, personalityCodes: [PersonalityCode.S] },
       { text: "Better habits & routines", trait: Trait.STRATEGIC, personalityCodes: [PersonalityCode.L] },
-      { text: "Overall personal growth", trait: Trait.EXPLORER, personalityCodes: [PersonalityCode.C, PersonalityCode.N, PersonalityCode.L] }
+      { text: "Overall personal growth", trait: Trait.EXPLORER, personalityCodes: [PersonalityCode.C, PersonalityCode.N, PersonalityCode.L, PersonalityCode.S] }
     ]
   },
   {
@@ -116,7 +116,7 @@ export const SHOOTING_GALLERY_QUESTIONS = [
       { text: "Peaceful & close to nature", description: "🌿", trait: Trait.CALM, personalityCodes: [PersonalityCode.N] },
       { text: "Connecting with people", description: "👥", trait: Trait.SOCIAL, personalityCodes: [PersonalityCode.S] },
       { text: "Improve lifestyle & comfort", description: "🏠", trait: Trait.STRATEGIC, personalityCodes: [PersonalityCode.L] },
-      { text: "Teaching others", description: "📚", trait: Trait.EXPLORER, personalityCodes: [PersonalityCode.S, PersonalityCode.C] }
+      { text: "Teaching others", description: "📚", trait: Trait.EXPLORER, personalityCodes: [PersonalityCode.S, PersonalityCode.C, PersonalityCode.N] }
     ]
   },
   {
@@ -128,7 +128,7 @@ export const SHOOTING_GALLERY_QUESTIONS = [
       { text: "Positive feedback from others", description: "💬", trait: Trait.SOCIAL, personalityCodes: [PersonalityCode.S] },
       { text: "Creating something unique", description: "✨", trait: Trait.CREATIVE, personalityCodes: [PersonalityCode.C] },
       { text: "Consistency and routine", description: "📋", trait: Trait.STRATEGIC, personalityCodes: [PersonalityCode.L] },
-      { text: "Mixing growth with enjoyment", description: "🎯", trait: Trait.EXPLORER, personalityCodes: [PersonalityCode.F, PersonalityCode.S] }
+      { text: "Mixing growth with enjoyment", description: "🎯", trait: Trait.EXPLORER, personalityCodes: [PersonalityCode.S] }
     ]
   },
   {
@@ -152,7 +152,7 @@ export const SHOOTING_GALLERY_QUESTIONS = [
       { text: "Find peace and reconnect with nature", description: "🌿", trait: Trait.CALM, personalityCodes: [PersonalityCode.N] },
       { text: "Meet people and build community", description: "👥", trait: Trait.SOCIAL, personalityCodes: [PersonalityCode.S] },
       { text: "Improve my daily lifestyle", description: "📈", trait: Trait.STRATEGIC, personalityCodes: [PersonalityCode.L] },
-      { text: "Challenge myself and grow", description: "🚀", trait: Trait.EXPLORER, personalityCodes: [PersonalityCode.F, PersonalityCode.C, PersonalityCode.S] }
+      { text: "Challenge myself and grow", description: "🚀", trait: Trait.EXPLORER, personalityCodes: [PersonalityCode.F, PersonalityCode.C, PersonalityCode.S, PersonalityCode.N] }
     ]
   },
   {
@@ -160,7 +160,7 @@ export const SHOOTING_GALLERY_QUESTIONS = [
     question: "How do you prefer to learn new things?",
     answers: [
       { text: "Doing it physically", description: "🤸", trait: Trait.ACTIVE, personalityCodes: [PersonalityCode.F] },
-      { text: "Explore & experiment", description: "🗺️", trait: Trait.CALM, personalityCodes: [PersonalityCode.F, PersonalityCode.N, PersonalityCode.S] },
+      { text: "Explore & experiment", description: "🗺️", trait: Trait.CALM, personalityCodes: [PersonalityCode.N, PersonalityCode.S] },
       { text: "Watch & observe", description: "🔬", trait: Trait.EXPLORER, personalityCodes: [PersonalityCode.C, PersonalityCode.N] },
       { text: "Discussing and learning with others", description: "💬", trait: Trait.SOCIAL, personalityCodes: [PersonalityCode.S] },
       { text: "Reading and following written guides", description: "📖", trait: Trait.STRATEGIC, personalityCodes: [PersonalityCode.L] },

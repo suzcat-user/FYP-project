@@ -4,51 +4,109 @@ const bcrypt = require('bcrypt');
 module.exports = (db) => {
   const router = express.Router();
 
-  // Upsert user: always capture email, username, password (no strict login/signup split)
-  router.post('/login', async (req, res) => {
+  // SIGNUP: Create a new user account
+  router.post('/signup', async (req, res) => {
     try {
-      const { email = '', username, password } = req.body;
-      const resolvedUsername = (username && username.trim()) || (email ? email.split('@')[0] : '');
+      const { username, email, password } = req.body;
 
-      if (!resolvedUsername || !password) {
-        return res.status(400).json({ error: 'Username and password are required' });
+      // Validate all required fields
+      if (!username || !email || !password) {
+        return res.status(400).json({ error: 'Username, email, and password are all required' });
       }
 
-      const [existing] = await db.execute('SELECT * FROM users WHERE username = ?', [resolvedUsername]);
+      // Trim and validate username
+      const trimmedUsername = username.trim();
+      if (trimmedUsername.length < 3) {
+        return res.status(400).json({ error: 'Username must be at least 3 characters' });
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: 'Please provide a valid email address' });
+      }
+
+      // Validate password
+      if (password.length < 6) {
+        return res.status(400).json({ error: 'Password must be at least 6 characters' });
+      }
+
+      // Check if username already exists
+      const [existing] = await db.execute('SELECT user_id FROM users WHERE username = ?', [trimmedUsername]);
+      if (existing.length > 0) {
+        return res.status(400).json({ error: 'Username already exists' });
+      }
+
+      // Check if email already exists
+      const [emailExists] = await db.execute('SELECT user_id FROM users WHERE email = ?', [email]);
+      if (emailExists.length > 0) {
+        return res.status(400).json({ error: 'Email already registered' });
+      }
+
+      // Hash password
       const passwordHash = await bcrypt.hash(password, 10);
 
-      if (existing.length > 0) {
-        const user = existing[0];
-        await db.execute('UPDATE users SET email = ?, password_hash = ? WHERE user_id = ?', [email, passwordHash, user.user_id]);
-
-        return res.json({
-          success: true,
-          message: 'User updated',
-          user: {
-            user_id: user.user_id,
-            username: user.username,
-            score: user.score,
-          },
-        });
-      }
-
+      // Create new user
       const [result] = await db.execute(
         'INSERT INTO users (username, email, password_hash, score) VALUES (?, ?, ?, 0)',
-        [resolvedUsername, email, passwordHash]
+        [trimmedUsername, email, passwordHash]
       );
 
-      return res.json({
+      return res.status(201).json({
         success: true,
-        message: 'User registered successfully',
+        message: 'Account created successfully',
         user: {
           user_id: result.insertId,
-          username: resolvedUsername,
+          username: trimmedUsername,
+          email: email,
           score: 0,
         },
       });
     } catch (err) {
       console.error('Database error:', err);
-      return res.status(500).json({ error: 'Unexpected server error' });
+      return res.status(500).json({ error: 'Failed to create account' });
+    }
+  });
+
+  // LOGIN: Authenticate existing user
+  router.post('/login', async (req, res) => {
+    try {
+      const { username, password } = req.body;
+
+      // Validate required fields
+      if (!username || !password) {
+        return res.status(400).json({ error: 'Username and password are required' });
+      }
+
+      // Find user by username
+      const [results] = await db.execute('SELECT * FROM users WHERE username = ?', [username.trim()]);
+
+      if (results.length === 0) {
+        return res.status(401).json({ error: 'Invalid username or password' });
+      }
+
+      const user = results[0];
+
+      // Verify password
+      const passwordMatch = await bcrypt.compare(password, user.password_hash);
+      if (!passwordMatch) {
+        return res.status(401).json({ error: 'Invalid username or password' });
+      }
+
+      // Login successful
+      return res.json({
+        success: true,
+        message: 'Login successful',
+        user: {
+          user_id: user.user_id,
+          username: user.username,
+          email: user.email,
+          score: user.score,
+        },
+      });
+    } catch (err) {
+      console.error('Database error:', err);
+      return res.status(500).json({ error: 'Login failed' });
     }
   });
 
@@ -56,7 +114,7 @@ module.exports = (db) => {
   router.get('/:userId', async (req, res) => {
     try {
       const { userId } = req.params;
-      const [results] = await db.execute('SELECT * FROM users WHERE user_id = ?', [userId]);
+      const [results] = await db.execute('SELECT user_id, username, email, score, created_at FROM users WHERE user_id = ?', [userId]);
 
       if (results.length === 0) {
         return res.status(404).json({ error: 'User not found' });
@@ -82,6 +140,9 @@ module.exports = (db) => {
       return res.status(500).json({ error: 'Database error' });
     }
   });
+
+  return router;
+};
 
   return router;
 };

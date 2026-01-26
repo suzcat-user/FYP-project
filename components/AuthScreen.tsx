@@ -20,8 +20,8 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, isDarkMode = false }) 
     setError('');
     setLoading(true);
 
-    if (!username.trim()) {
-      setError('Username is required');
+    if (!email.trim()) {
+      setError('Email is required');
       setLoading(false);
       return;
     }
@@ -37,8 +37,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, isDarkMode = false }) 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          username: username.trim(),
-          email: email.trim() || null,
+          email: email.trim(),
           password
         })
       });
@@ -112,19 +111,6 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, isDarkMode = false }) 
                     placeholder="player@example.com"
                 />
             </div>
-                        {isLogin && (
-                            <div>
-                                <label className={`font-press-start text-[9px] sm:text-[10px] md:text-[11px] lg:text-[1.2vmin] mb-1.5 block transition-colors ${isDarkMode ? 'text-indigo-400' : 'text-gray-600'}`}>USERNAME</label>
-                                <input 
-                                    type="text" 
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
-                                    required
-                                    className={`w-full font-vt323 text-[15px] sm:text-[16px] md:text-[18px] lg:text-[2.4vmin] p-2.5 sm:p-3 border-2 md:border-3 outline-none shadow-inner transition-colors ${isDarkMode ? 'bg-slate-900 border-indigo-900 text-white focus:border-pink-500' : 'bg-gray-50 border-gray-300 text-gray-900 focus:border-sky-500'}`}
-                                    placeholder="player123"
-                                />
-                            </div>
-                        )}
             <div>
                 <label className={`font-press-start text-[9px] sm:text-[10px] md:text-[11px] lg:text-[1.2vmin] mb-1.5 block transition-colors ${isDarkMode ? 'text-indigo-400' : 'text-gray-600'}`}>PASSWORD</label>
                 <input 

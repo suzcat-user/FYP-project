@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { GameStep, Trait, Scores, Hobby, PersonalityCode, PersonalityScores } from './types';
+import { getHobbyRecommendations } from './services/hobbyRecommendations';
 import WelcomeScreen from './components/WelcomeScreen';
 import WouldYouRather from './components/WouldYouRather';
 import RingToss from './components/RingToss';
@@ -127,6 +128,10 @@ const AppContent: React.FC = () => {
     return Math.floor(sum * 100);
   }, [scores]);
 
+  const communityHobbies = useMemo(() => {
+    return getHobbyRecommendations(personalityScores);
+  }, [personalityScores]);
+
   const gameProgress = useMemo(() => {
     const path = location.pathname;
     if (path === '/games/would-you-rather') return 1;
@@ -230,7 +235,7 @@ const AppContent: React.FC = () => {
              <Route path="/games/ring-toss" element={<RingToss onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} />} />
              <Route path="/games/shooting-gallery" element={<ShootingGallery onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} />} />
              <Route path="/results" element={<ResultsScreen scores={scores} personalityScores={personalityScores} onNext={handleNextGame} onSelectHobby={handleGoToHobbyCommunity} onReset={handleResetGame} isDarkMode={isDarkMode} />} />
-             <Route path="/community" element={<CommunityScreen onRestart={handleNextGame} scores={scores} isDarkMode={isDarkMode} />} />
+             <Route path="/community" element={<CommunityScreen onRestart={handleNextGame} scores={scores} hobbies={communityHobbies} onSelectHobby={handleGoToHobbyCommunity} isDarkMode={isDarkMode} />} />
              <Route path="/community/:hobbyName" element={<HobbyCommunity hobby={selectedHobby} onBack={() => navigate('/results')} isDarkMode={isDarkMode} currentUser={userData?.username || "GUEST"} userId={userData?.user_id} />} />
              <Route path="/profile" element={<ProfileScreen scores={scores} userName={userName} userEmail={userEmail} onBack={() => navigate('/home')} isDarkMode={isDarkMode} />} />
            </Routes>

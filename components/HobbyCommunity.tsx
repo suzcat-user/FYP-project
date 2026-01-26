@@ -33,6 +33,8 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
   const [newPostContent, setNewPostContent] = useState('');
   const [newPostTitle, setNewPostTitle] = useState('');
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [resolvedUserId, setResolvedUserId] = useState<number | undefined>(userId);
+  const [resolvedUsername, setResolvedUsername] = useState<string>(currentUser || 'USER_1');
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -50,6 +52,30 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [postError, setPostError] = useState<string>('');
+
+  // Recover user info from localStorage if not provided (handles refreshes/direct links)
+  useEffect(() => {
+    if (userId) {
+      setResolvedUserId(userId);
+    } else {
+      const cached = localStorage.getItem('hobbyArcadeUser');
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (parsed?.user_id) {
+            setResolvedUserId(parsed.user_id);
+            if (parsed?.username) setResolvedUsername(parsed.username);
+          }
+        } catch (err) {
+          console.warn('Failed to parse cached user', err);
+          localStorage.removeItem('hobbyArcadeUser');
+        }
+      }
+    }
+    if (currentUser && currentUser !== resolvedUsername) {
+      setResolvedUsername(currentUser);
+    }
+  }, [userId, currentUser, resolvedUsername]);
 
   // Load posts from database on mount
   useEffect(() => {
@@ -88,7 +114,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
       return;
     }
     
-    if (!userId) {
+    if (!resolvedUserId) {
       setPostError('User ID not found. Please login again.');
       return;
     }
@@ -98,7 +124,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          user_id: userId,
+          user_id: resolvedUserId,
           title: newPostTitle,
           content: newPostContent || 'No description'
         })
@@ -109,7 +135,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
       if (data.success) {
         const newPost: Post = {
           id: data.post_id.toString(),
-          author: currentUser,
+          author: resolvedUsername,
           title: newPostTitle,
           content: newPostContent,
           upvotes: 0,
@@ -129,14 +155,17 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
   };
 
   const handleAddComment = async (postId: string, content: string, gifs?: string[]) => {
-    if (!userId) return;
+    if (!resolvedUserId) {
+      setPostError('User ID not found. Please login again.');
+      return;
+    }
     
     try {
       const response = await fetch('http://localhost:3001/api/comments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          user_id: userId,
+          user_id: resolvedUserId,
           post_id: postId,
           content
         })
@@ -174,7 +203,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
       return;
     }
 
-    if (!userId) {
+    if (!resolvedUserId) {
       setPostError('User ID not found. Please login again.');
       return;
     }
@@ -184,7 +213,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          user_id: userId
+          user_id: resolvedUserId
         })
       });
 
@@ -220,7 +249,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
       return;
     }
 
-    if (!userId) {
+    if (!resolvedUserId) {
       setPostError('User ID not found. Please login again.');
       return;
     }
@@ -230,7 +259,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          user_id: userId,
+          user_id: resolvedUserId,
           title: newPostTitle,
           content: newPostContent
         })

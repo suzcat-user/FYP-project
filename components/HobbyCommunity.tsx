@@ -1,5 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Hobby, Post, Comment } from '../types';
+import { getHobbyByName } from '../services/hobbyRecommendations';
 import ArcadeButton from './ui/ArcadeButton';
 
 interface HobbyCommunityProps {
@@ -26,6 +28,7 @@ const PIXEL_GIFS = [
 ];
 
 const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMode = false, currentUser = 'USER_1', userId }) => {
+  const { hobbyName: hobbySlug } = useParams();
   const [joined, setJoined] = useState(false);
   const [activePostId, setActivePostId] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -77,11 +80,16 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
     }
   }, [userId, currentUser, resolvedUsername]);
 
-  // Load posts from database on mount
+  const resolvedHobby = hobby || (hobbySlug ? getHobbyByName(hobbySlug.replace(/-/g, ' ')) : undefined);
+  const communityId = resolvedHobby?.communityId;
+  const displayHobbyName = resolvedHobby?.name || (hobbySlug ? hobbySlug.replace(/-/g, ' ') : 'HOBBY');
+
+  // Load posts from database on mount or when hobby changes
   useEffect(() => {
     const loadPosts = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/posts');
+          if (!communityId) return;
+          const response = await fetch(`http://localhost:3001/api/posts?community_id=${communityId}`);
         const data = await response.json();
         
         if (Array.isArray(data)) {
@@ -102,7 +110,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
     };
 
     loadPosts();
-  }, []);
+  }, [communityId]);
 
   const activePost = useMemo(() => posts.find(p => p.id === activePostId), [posts, activePostId]);
 
@@ -120,11 +128,17 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
     }
     
     try {
-      const response = await fetch('http://localhost:3001/api/posts', {
+        if (!communityId) {
+          setPostError('Hobby not found. Please go back and select a hobby.');
+          return;
+        }
+
+        const response = await fetch('http://localhost:3001/api/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           user_id: resolvedUserId,
+            community_id: communityId,
           title: newPostTitle,
           content: newPostContent || 'No description'
         })
@@ -292,7 +306,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
     setEditingPostId(null);
   };
 
-  if (!hobby) return <div className="p-10 text-center font-press-start">SELECT A HOBBY FIRST</div>;
+  if (!resolvedHobby && !hobbySlug) return <div className="p-10 text-center font-press-start">SELECT A HOBBY FIRST</div>;
 
   return (
     <div className={`h-full flex flex-col transition-colors duration-500 ${isDarkMode ? 'bg-[#0f111a] text-sky-100' : 'bg-[#dae0e6] text-gray-900'} relative`}>
@@ -302,9 +316,9 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
           <div className="flex items-center gap-4 p-4 max-w-5xl mx-auto w-full">
               <button onClick={onBack} className={`font-press-start text-[1.2vmin] px-4 py-2 border-2 ${isDarkMode ? 'border-pink-500 text-pink-500' : 'border-sky-800 text-sky-800'}`}>BACK</button>
               <div className="flex-1">
-                  <h1 className="font-press-start text-[2vmin] uppercase">r/{hobby.name.replace(/\s+/g, '').toLowerCase()}</h1>
+                  <h1 className="font-press-start text-[2vmin] uppercase">r/{displayHobbyName.replace(/\s+/g, '').toLowerCase()}</h1>
                   <p className={`mt-2 font-vt323 text-[1.8vmin] leading-snug ${isDarkMode ? 'text-indigo-200' : 'text-sky-700'}`}>
-                    {hobby.description}
+                    {resolvedHobby?.description || 'Explore posts and conversations in this hobby community.'}
                   </p>
               </div>
               <button 
@@ -366,7 +380,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
               <div className="w-full md:w-[300px] flex flex-col gap-4">
                   <div className={`border-2 p-4 ${isDarkMode ? 'bg-[#1a1c27] border-indigo-950' : 'bg-white border-gray-300'}`}>
                       <h3 className="font-press-start text-[1.2vmin] border-b-2 mb-4">ABOUT COMMUNITY</h3>
-                      <p className="font-vt323 text-lg leading-tight mb-4">{hobby.description}</p>
+                      <p className="font-vt323 text-lg leading-tight mb-4">{resolvedHobby?.description || 'Explore posts and conversations in this hobby community.'}</p>
                       <ArcadeButton onClick={() => setShowCreateModal(true)} className="w-full">CREATE POST</ArcadeButton>
                   </div>
               </div>

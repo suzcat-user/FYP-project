@@ -18,7 +18,7 @@ export function useHobbies() {
   useEffect(() => {
     const fetchHobbies = async () => {
       try {
-        const response = await fetch('http://localhost:3002/api/hobbies');
+        const response = await fetch('http://localhost:3001/api/hobbies');
         if (!response.ok) {
           throw new Error('Failed to fetch hobbies');
         }
@@ -67,7 +67,7 @@ export function useHobbiesByPersonality(personalityCode: PersonalityCode | null)
 
     const fetchHobbies = async () => {
       try {
-        const response = await fetch(`http://localhost:3002/api/hobbies/personality/${personalityCode}`);
+        const response = await fetch(`http://localhost:3001/api/hobbies/personality/${personalityCode}`);
         if (!response.ok) {
           throw new Error('Failed to fetch hobbies for personality');
         }

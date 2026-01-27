@@ -11,7 +11,7 @@ interface WouldYouRatherProps {
   userId?: number;
 }
 
-const TOTAL_ROUNDS = 5;
+const DEFAULT_TOTAL_ROUNDS = 5;
 
 type WouldYouRatherOption = {
   text: string;
@@ -88,6 +88,7 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
     );
   }
 
+  const totalRounds = questions.length > 0 ? questions.length : DEFAULT_TOTAL_ROUNDS;
   const currentQuestion = questions[currentQuestionIndex % questions.length];
   const currentOptions = currentQuestion?.options || [];
 
@@ -112,7 +113,7 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
   };
 
   const handleSkip = () => {
-    if (round < TOTAL_ROUNDS - 1) {
+    if (round < totalRounds - 1) {
       setRound(prev => prev + 1);
       setCurrentQuestionIndex(prev => (prev + 1) % questions.length);
     } else {
@@ -132,7 +133,7 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
 
     setTimeout(() => {
         setAnimating(null);
-        if (round < TOTAL_ROUNDS - 1) {
+        if (round < totalRounds - 1) {
             setRound(prev => prev + 1);
             setCurrentQuestionIndex(prev => (prev + 1) % questions.length);
         } else {

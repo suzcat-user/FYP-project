@@ -6,7 +6,7 @@ module.exports = (db) => {
   // Store user answer to a question
   router.post('/', async (req, res) => {
     try {
-      const { user_id, game_type, question_id, answer_choice, trait_awarded } = req.body;
+      const { user_id, game_type, question_id, answer_choice, personality_code } = req.body;
 
       if (!user_id || !game_type || !answer_choice) {
         return res.status(400).json({ error: 'user_id, game_type, and answer_choice are required' });
@@ -26,8 +26,8 @@ module.exports = (db) => {
       }
 
       const [result] = await db.execute(
-        'INSERT INTO user_answers (user_id, game_type, question_id, answer_choice, trait_awarded) VALUES (?, ?, ?, ?, ?)',
-        [user_id, game_type, safeQuestionId, answer_choice, trait_awarded || null]
+        'INSERT INTO user_answers (user_id, game_type, question_id, answer_choice, personality_code) VALUES (?, ?, ?, ?, ?)',
+        [user_id, game_type, safeQuestionId, answer_choice, personality_code || null]
       );
 
       res.json({ success: true, message: 'Answer saved', answer_id: result.insertId });

@@ -64,12 +64,12 @@ router.get('/user/:user_id/recommended', async (req, res) => {
   try {
     const { user_id } = req.params;
     
-    // Get the user's most common personality traits from their answers
+    // Get the user's most common personality codes from their answers
     const [traits] = await db.execute(
-      `SELECT trait_awarded, COUNT(*) as count
+      `SELECT personality_code, COUNT(*) as count
        FROM user_answers
-       WHERE user_id = ? AND trait_awarded IS NOT NULL
-       GROUP BY trait_awarded
+       WHERE user_id = ? AND personality_code IS NOT NULL
+       GROUP BY personality_code
        ORDER BY count DESC
        LIMIT 3`,
       [user_id]
@@ -80,7 +80,7 @@ router.get('/user/:user_id/recommended', async (req, res) => {
     }
     
     // Get communities for these personality types
-    const personalityCodes = traits.map(t => t.trait_awarded);
+    const personalityCodes = traits.map(t => t.personality_code);
     const placeholders = personalityCodes.map(() => '?').join(',');
     
     const [communities] = await db.execute(

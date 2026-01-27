@@ -95,6 +95,11 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
   const saveAnswer = async (option: WouldYouRatherOption) => {
     if (userId) {
       try {
+        // Get the first personality code from the option
+        const personalityCode = option.personalityCodes && option.personalityCodes.length > 0 
+          ? option.personalityCodes[0] 
+          : null;
+        
         await fetch(`${API_BASE_URL}/api/answers`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -103,7 +108,7 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
             game_type: 'WOULD_YOU_RATHER',
             question_id: currentQuestion?.id ?? null,
             answer_choice: option.text,
-            trait_awarded: option.trait || 'UNKNOWN'
+            personality_code: personalityCode
           })
         });
       } catch (err) {

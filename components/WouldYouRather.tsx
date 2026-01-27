@@ -25,7 +25,7 @@ type WouldYouRatherQuestion = {
   options: WouldYouRatherOption[];
 };
 
-const API_BASE_URL = 'http://localhost:3002';
+const API_BASE_URL = 'http://localhost:3001';
 
 const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, onSkip, isDarkMode = false, progress, userId }) => {
   const [round, setRound] = useState(0);

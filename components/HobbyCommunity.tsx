@@ -27,12 +27,80 @@ const PIXEL_GIFS = [
   "https://media1.tenor.com/m/rxjtdE-oKtMAAAAC/little-mermaid-laughing.gif"
 ];
 
+
+const AttachmentCarousel: React.FC<{ urls: string[]; className?: string }> = ({ urls, className }) => {
+  const [index, setIndex] = useState(0);
+  const [isFading, setIsFading] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  if (!urls.length) return null;
+
+  const goTo = (nextIndex: number) => {
+    if (nextIndex === index) return;
+    setIsFading(true);
+    setIsLoaded(false);
+    setTimeout(() => {
+      setIndex(nextIndex);
+      setIsFading(false);
+    }, 180);
+  };
+
+  const goPrev = () => goTo((index - 1 + urls.length) % urls.length);
+  const goNext = () => goTo((index + 1) % urls.length);
+
+  return (
+    <div className={`w-full relative ${className || ''}`}>
+      <div className="relative w-full">
+        {!isLoaded && (
+          <div className="w-full h-[320px] bg-black/10 border-2 border-current animate-pulse rounded-2xl" />
+        )}
+        <img
+          src={urls[index]}
+          alt={`Attachment ${index + 1}`}
+          loading="lazy"
+          decoding="async"
+          onLoad={() => setIsLoaded(true)}
+          className={`w-full max-h-[420px] object-contain border-2 border-current bg-black/5 transition-opacity duration-300 ease-in-out rounded-2xl ${isFading || !isLoaded ? 'opacity-0' : 'opacity-100'} ${!isLoaded ? 'absolute inset-0' : ''}`}
+        />
+      </div>
+      {urls.length > 1 && (
+        <>
+          <button
+            onClick={goPrev}
+            className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/60 text-white flex items-center justify-center border-2 border-white/50"
+            aria-label="Previous image"
+          >
+            ‹
+          </button>
+          <button
+            onClick={goNext}
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/60 text-white flex items-center justify-center border-2 border-white/50"
+            aria-label="Next image"
+          >
+            ›
+          </button>
+          <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-2">
+            {urls.map((_, dotIndex) => (
+              <button
+                key={dotIndex}
+                onClick={() => goTo(dotIndex)}
+                className={`w-2.5 h-2.5 rounded-full border ${dotIndex === index ? 'bg-white border-white' : 'bg-white/30 border-white/50'}`}
+                aria-label={`Go to image ${dotIndex + 1}`}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
 const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMode = false, currentUser = 'USER_1', userId }) => {
   const { hobbyName: hobbySlug } = useParams();
   const [joined, setJoined] = useState(false);
   const [activePostId, setActivePostId] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [attachments, setAttachments] = useState<string[]>([]);
+  const [attachments, setAttachments] = useState<Array<{ file: File; preview: string }>>([]);
   const [newPostContent, setNewPostContent] = useState('');
   const [newPostTitle, setNewPostTitle] = useState('');
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
@@ -44,7 +112,10 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      const newAttachments = Array.from(files).map((file: File) => URL.createObjectURL(file));
+      const newAttachments = Array.from(files).map((file: File) => ({
+        file,
+        preview: URL.createObjectURL(file)
+      }));
       setAttachments(prev => [...prev, ...newAttachments]);
     }
   };
@@ -94,15 +165,32 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
         
         if (Array.isArray(data)) {
           const scopedPosts = data.filter((p: any) => p.community_id === communityId);
-          const formattedPosts = scopedPosts.map((p: any) => ({
+          const formattedPosts = scopedPosts.map((p: any) => {
+            let parsedAttachments: string[] | undefined;
+            if (p.image_urls) {
+              if (Array.isArray(p.image_urls)) {
+                parsedAttachments = p.image_urls;
+              } else if (typeof p.image_urls === 'string') {
+                try {
+                  parsedAttachments = JSON.parse(p.image_urls);
+                } catch (err) {
+                  parsedAttachments = undefined;
+                }
+              }
+            }
+
+            return {
             id: p.post_id.toString(),
             author: p.username || 'Anonymous',
             title: p.title,
             content: p.content,
             upvotes: 0,
-            timestamp: new Date(p.created_at).toLocaleDateString(),
+            timestamp: '',
+            createdAt: p.created_at,
+            attachments: parsedAttachments,
             comments: []
-          }));
+          };
+          });
           setPosts(formattedPosts);
         }
       } catch (err) {
@@ -148,14 +236,45 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
       const data = await response.json();
 
       if (data.success) {
+        let imageUrls: string[] = [];
+
+        if (attachments.length > 0) {
+          const formData = new FormData();
+          attachments.forEach((att) => formData.append('photos', att.file));
+
+          const uploadResponse = await fetch(`http://localhost:3001/api/uploads/posts?post_id=${data.post_id}`, {
+            method: 'POST',
+            body: formData
+          });
+
+          const uploadData = await uploadResponse.json();
+          if (!uploadResponse.ok || !uploadData?.urls) {
+            throw new Error(uploadData?.error || 'Failed to upload attachments');
+          }
+
+          imageUrls = uploadData.urls;
+
+          await fetch(`http://localhost:3001/api/posts/${data.post_id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              user_id: resolvedUserId,
+              title: newPostTitle,
+              content: newPostContent || 'No description',
+              image_urls: imageUrls
+            })
+          });
+        }
+
         const newPost: Post = {
           id: data.post_id.toString(),
           author: resolvedUsername,
           title: newPostTitle,
           content: newPostContent,
           upvotes: 0,
-          timestamp: 'Just now',
-          attachments: attachments.length > 0 ? attachments : undefined,
+          timestamp: '',
+          createdAt: new Date().toISOString(),
+          attachments: imageUrls.length > 0 ? imageUrls : undefined,
           comments: []
         };
         setPosts([newPost, ...posts]);
@@ -350,12 +469,12 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
                             </div>
                             <h2 className="font-press-start text-[1.8vmin] mb-2">{post.title}</h2>
                             <p className="font-vt323 text-xl mb-2 line-clamp-3">{post.content}</p>
-                            {post.attachments && post.attachments.slice(0, 1).map(att => (
-                                <img key={att} src={att} alt="Attachment" className="max-h-[300px] w-full object-cover mb-4 border-2 border-current" />
-                            ))}
+                            {post.attachments && post.attachments.length > 0 && (
+                              <AttachmentCarousel urls={post.attachments} className="mb-4" />
+                            )}
                             <div className="flex gap-4 font-press-start text-[1vmin] opacity-70 items-center">
-                                <span className="cursor-pointer hover:opacity-100" onClick={() => setActivePostId(post.id)}>💬 {post.comments.length} Comments</span>
-                                {post.author === currentUser && (
+                              <span className="cursor-pointer hover:opacity-100" onClick={() => setActivePostId(post.id)}>💬 {post.comments.length} Comments</span>
+                              {post.author === currentUser && (
                                   <>
                                     <button 
                                       onClick={() => handleEditPost(post.id)}
@@ -398,7 +517,6 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
                         <div className="flex items-center gap-2">
                           <span className={`font-press-start text-[1.2vmin] ${activePost.author === currentUser ? 'text-yellow-400' : 'text-gray-400'}`}>u/{activePost.author}</span>
                           {activePost.author === currentUser && <span className={`font-press-start text-[0.8vmin] px-2 py-1 rounded ${isDarkMode ? 'bg-yellow-600 text-white' : 'bg-yellow-300 text-gray-900'}`}>YOUR POST</span>}
-                          <span className="text-gray-500">• {activePost.timestamp}</span>
                         </div>
                       </div>
                       <div className="flex gap-2">
@@ -426,9 +544,9 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
                   <div className="font-vt323 text-2xl leading-relaxed">
                       {activePost.content}
                   </div>
-                  {activePost.attachments && activePost.attachments.map(att => (
-                      <img key={att} src={att} alt="Attachment" className="w-full max-h-[500px] object-contain border-4 border-current mb-2" />
-                  ))}
+                  {activePost.attachments && activePost.attachments.length > 0 && (
+                    <AttachmentCarousel urls={activePost.attachments} className="mb-2" />
+                  )}
 
                   {/* Comment Section */}
                   <div className="mt-8 border-t-4 pt-6">
@@ -489,12 +607,12 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
                         >
                           ATTACH FILES ({attachments.length})
                         </button>
-                        <input type="file" ref={fileInputRef} hidden multiple onChange={handleFileChange} accept="image/*,image/gif" />
+                        <input type="file" ref={fileInputRef} hidden multiple onChange={handleFileChange} accept="image/*" />
                         {attachments.length > 0 && (
                           <div className="flex gap-2 flex-wrap">
                             {attachments.map((att, index) => (
                               <div key={index} className="relative">
-                                <img src={att} alt={`Attachment ${index + 1}`} className="w-16 h-16 object-cover border-2" />
+                                <img src={att.preview} alt={`Attachment ${index + 1}`} className="w-16 h-16 object-cover border-2" />
                                 <button 
                                   onClick={() => removeAttachment(index)}
                                   className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs"

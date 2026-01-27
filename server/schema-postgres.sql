@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS posts (
     community_id INT NOT NULL,
     title VARCHAR(255) NOT NULL,
     content TEXT,
+    image_urls JSONB,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );

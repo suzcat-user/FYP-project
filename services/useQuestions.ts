@@ -30,7 +30,7 @@ export const useQuestions = (gameType: string) => {
         setLoading(true);
         setError(null);
         
-        const response = await fetch(`http://localhost:3002/api/questions/game/${gameType}`);
+        const response = await fetch(`http://localhost:3001/api/questions/game/${gameType}`);
         
         if (!response.ok) {
           throw new Error(`Failed to fetch questions: ${response.statusText}`);
@@ -66,7 +66,7 @@ export const useQuestion = (questionId: number) => {
         setLoading(true);
         setError(null);
         
-        const response = await fetch(`http://localhost:3002/api/questions/${questionId}`);
+        const response = await fetch(`http://localhost:3001/api/questions/${questionId}`);
         
         if (!response.ok) {
           throw new Error(`Failed to fetch question: ${response.statusText}`);

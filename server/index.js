@@ -1,13 +1,15 @@
 const express = require('express');
 const mysql = require('mysql2/promise');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
-const PORT = 3002;
+const PORT = 3001;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Initialize MySQL pool (promise API)
 async function start() {
@@ -33,6 +35,7 @@ async function start() {
     const postsRoutes = require('./routes/posts');
     const commentsRoutes = require('./routes/comments');
     const gameQuestionsRoutes = require('./routes/game-questions');
+    const uploadsRoutes = require('./routes/uploads');
 
     // Mount routes with promise pool
     app.use('/api/users', userRoutes(db));
@@ -40,6 +43,7 @@ async function start() {
     app.use('/api/posts', postsRoutes(db));
     app.use('/api/comments', commentsRoutes(db));
     app.use('/api/game-questions', gameQuestionsRoutes(db));
+    app.use('/api/uploads', uploadsRoutes(db));
 
     // Test route
     app.get('/api/test', (req, res) => {

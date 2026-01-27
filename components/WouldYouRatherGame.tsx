@@ -10,7 +10,7 @@ type QuestionItem = {
   colors: string[];
 };
 
-const API_BASE_URL = 'http://localhost:3002';
+const API_BASE_URL = 'http://localhost:3001';
 
 const WouldYouRatherGame: React.FC<WouldYouRatherGameProps> = ({ onComplete }) => {
   const [currentIndex, setCurrentIndex] = useState(0);

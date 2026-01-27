@@ -42,7 +42,7 @@ type ShootingGalleryQuestion = {
   answers: ShootingGalleryAnswer[];
 };
 
-const API_BASE_URL = 'http://localhost:3002';
+const API_BASE_URL = 'http://localhost:3001';
 
 const BubbleTarget: React.FC<{ 
   text: string; 

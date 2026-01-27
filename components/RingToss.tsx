@@ -121,7 +121,7 @@ const STAKE_COLORS = [
 
 const TOTAL_ROUNDS = 5;
 
-const API_BASE_URL = 'http://localhost:3002';
+const API_BASE_URL = 'http://localhost:3001';
 
 type RingTossAnswer = {
   text: string;

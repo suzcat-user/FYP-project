@@ -70,8 +70,11 @@ const AllHobbiesScreen: React.FC<AllHobbiesScreenProps> = ({ onSelectHobby, isDa
           <h1 className={`font-press-start text-[2.5vmin] mb-[2vmin] ${isDarkMode ? 'text-pink-400' : 'text-sky-700'}`}>
             🎮 COMPLETE HOBBY CATALOG
           </h1>
-          <p className={`font-vt323 text-[2vmin] ${isDarkMode ? 'text-indigo-300' : 'text-sky-600'}`}>
-            Browse all hobbies across every personality type. Click any hobby to join its community!
+          <p className={`font-vt323 text-[2vmin] mb-[1vmin] ${isDarkMode ? 'text-indigo-300' : 'text-sky-600'}`}>
+            Browse all hobbies across every personality type.
+          </p>
+          <p className={`font-press-start text-[1.5vmin] ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>
+            👆 CLICK ANY HOBBY TO ENTER ITS COMMUNITY PAGE
           </p>
         </div>
 
@@ -114,7 +117,7 @@ const AllHobbiesScreen: React.FC<AllHobbiesScreenProps> = ({ onSelectHobby, isDa
                       {hobby.description}
                     </p>
                     <div className={`mt-auto pt-[1vmin] opacity-0 group-hover:opacity-100 transition-opacity font-vt323 text-[1.7vmin] ${isDarkMode ? 'text-pink-400' : 'text-sky-600'}`}>
-                      → Join Community
+                      → Enter Community
                     </div>
                   </button>
                 ))}

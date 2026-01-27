@@ -8,7 +8,18 @@ interface RingTossProps {
   onSkip?: () => void;
   isDarkMode?: boolean;
   progress?: number;
+  userId?: number;
 }
+
+// Map personality types to Trait enum
+const personalityTypeToTrait: Record<string, Trait> = {
+  'CREATIVE': Trait.CREATIVE,
+  'SOCIAL': Trait.SOCIAL,
+  'STRATEGIC': Trait.STRATEGIC,
+  'ACTIVE': Trait.ACTIVE,
+  'EXPLORER': Trait.EXPLORER,
+  'CALM': Trait.CALM,
+};
 
 interface DecorativeProps {
     className?: string;
@@ -190,6 +201,7 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
     if (round < TOTAL_ROUNDS - 1 && questions.length) {
       setRound(prev => prev + 1);
       setCurrentQuestionIndex(prev => (prev + 1) % questions.length);
+      setCurrentQuestionIndex(prev => (prev + 1) % questions.length);
       setSelectedAnswer(null);
       setIsThrown(false);
     } else {
@@ -197,7 +209,7 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
     }
   };
 
-  const handleThrow = (trait: Trait, personalityCodes: PersonalityCode[] | undefined, index: number) => {
+  const handleThrow = (option: any, index: number) => {
     if (isThrown) return;
     setSelectedAnswer(index);
     setIsThrown(true);
@@ -206,6 +218,7 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
     setTimeout(() => {
       if (round < TOTAL_ROUNDS - 1 && questions.length) {
         setRound(prev => prev + 1);
+        setCurrentQuestionIndex(prev => (prev + 1) % questions.length);
         setCurrentQuestionIndex(prev => (prev + 1) % questions.length);
         setSelectedAnswer(null);
         setIsThrown(false);

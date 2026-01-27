@@ -169,32 +169,3 @@ export const SHOOTING_GALLERY_QUESTIONS = [
   }
 ];
 
-export const WHACK_A_MOLE_QUESTIONS = [
-  {
-    id: 1,
-    question: "Quick! Whack the activity you'd try first!",
-    answers: [
-      { text: "Street Photography", trait: Trait.EXPLORER },
-      { text: "Baking Bread", trait: Trait.CREATIVE },
-      { text: "Kickboxing", trait: Trait.ACTIVE },
-      { text: "Meditation", trait: Trait.CALM },
-      { text: "Board Game Night", trait: Trait.SOCIAL },
-      { text: "Stock Trading", trait: Trait.STRATEGIC }
-    ]
-  }
-];
-
-export const BINGO_QUESTIONS = [
-  { id: 'q1', question: "Do you enjoy making things with your hands?", trait: Trait.CREATIVE },
-  { id: 'q2', question: "Do you prefer team sports over solo activities?", trait: Trait.SOCIAL },
-  { id: 'q3', question: "Does solving a complex puzzle sound fun?", trait: Trait.STRATEGIC },
-  { id: 'q4', question: "Do you enjoy spending time outdoors?", trait: Trait.ACTIVE },
-  { id: 'q5', question: "Do you like trying new foods and restaurants?", trait: Trait.EXPLORER },
-  { id: 'q6', question: "Is a quiet evening with a book a perfect evening?", trait: Trait.CALM }
-];
-
-export const BINGO_BOARD_LAYOUT: (Trait | null)[] = [
-  Trait.CREATIVE, Trait.SOCIAL, Trait.STRATEGIC,
-  Trait.ACTIVE, Trait.EXPLORER, Trait.CALM,
-  Trait.STRATEGIC, Trait.CREATIVE, Trait.ACTIVE
-];

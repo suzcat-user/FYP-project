@@ -6,17 +6,22 @@ module.exports = (db) => {
   // Create a post
   router.post('/', async (req, res) => {
     try {
-      const { user_id, title, content, description, community_id } = req.body;
+      const { user_id, title, content, description, community_id, image_urls } = req.body;
 
       if (!user_id || !title || !content || !community_id) {
         return res.status(400).json({ error: 'user_id, community_id, title, and content are required' });
       }
 
-      const [result] = await db.execute('INSERT INTO posts (user_id, community_id, title, content) VALUES (?, ?, ?, ?)', [
+      const normalizedImages = Array.isArray(image_urls) && image_urls.length
+        ? JSON.stringify(image_urls)
+        : null;
+
+      const [result] = await db.execute('INSERT INTO posts (user_id, community_id, title, content, image_urls) VALUES (?, ?, ?, ?, ?)', [
         user_id,
         community_id,
         title,
         content || description,
+        normalizedImages,
       ]);
 
       res.json({
@@ -29,6 +34,7 @@ module.exports = (db) => {
           community_id,
           title,
           content: content || description,
+          image_urls: normalizedImages,
           created_at: new Date().toISOString(),
         },
       });
@@ -80,15 +86,42 @@ module.exports = (db) => {
     }
   });
 
+  // Get post image by ID
+  router.get('/:post_id/images/:image_id', async (req, res) => {
+    try {
+      const { post_id, image_id } = req.params;
+      const [rows] = await db.execute(
+        'SELECT mime_type, image_data FROM post_images WHERE post_id = ? AND image_id = ? LIMIT 1',
+        [post_id, image_id]
+      );
+
+      if (!rows.length) {
+        return res.status(404).json({ error: 'Image not found' });
+      }
+
+      const { mime_type, image_data } = rows[0];
+      res.setHeader('Content-Type', mime_type);
+      res.send(image_data);
+    } catch (err) {
+      console.error('Database error:', err);
+      return res.status(500).json({ error: 'Failed to fetch image' });
+    }
+  });
+
   // Update post
   router.put('/:post_id', async (req, res) => {
     try {
       const { post_id } = req.params;
-      const { user_id, title, content, description } = req.body;
+      const { user_id, title, content, description, image_urls } = req.body;
 
-      const [result] = await db.execute('UPDATE posts SET title = ?, content = ? WHERE post_id = ? AND user_id = ?', [
+      const normalizedImages = Array.isArray(image_urls) && image_urls.length
+        ? JSON.stringify(image_urls)
+        : null;
+
+      const [result] = await db.execute('UPDATE posts SET title = ?, content = ?, image_urls = ? WHERE post_id = ? AND user_id = ?', [
         title,
         content || description,
+        normalizedImages,
         post_id,
         user_id,
       ]);
@@ -109,6 +142,8 @@ module.exports = (db) => {
     try {
       const { post_id } = req.params;
       const { user_id } = req.body;
+
+      await db.execute('DELETE FROM post_images WHERE post_id = ?', [post_id]);
 
       const [result] = await db.execute('DELETE FROM posts WHERE post_id = ? AND user_id = ?', [post_id, user_id]);
 

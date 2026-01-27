@@ -74,4 +74,5 @@ export interface Post {
   upvotes: number;
   comments: Comment[];
   timestamp: string;
+  createdAt?: string;
 }

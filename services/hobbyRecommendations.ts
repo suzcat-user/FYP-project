@@ -55,7 +55,10 @@ const PERSONALITY_DATA: Record<PersonalityCode, PersonalityResult> = {
       { name: "Nature walks", description: "Slow strolls to unwind and observe wildlife, trees, and changing weather. It is a gentle routine that supports mental clarity and everyday balance.", communityId: 18 },
       { name: "Nature photography", description: "Capturing landscapes, plants, and outdoor moments to preserve beauty and detail. It encourages you to slow down, notice light, and appreciate small scenes.", communityId: 19 },
       { name: "Hiking", description: "Exploring trails for exercise and fresh air while discovering quiet, scenic places. Each route offers a new experience and a refreshing break from screens.", communityId: 20 },
-      { name: "Beach clean-ups", description: "Community efforts to protect coastlines and habitats through hands-on action. It is meaningful, social, and leaves a visible positive impact on nature.", communityId: 21 }
+      { name: "Beach clean-ups", description: "Community efforts to protect coastlines and habitats through hands-on action. It is meaningful, social, and leaves a visible positive impact on nature.", communityId: 21 },
+      { name: "Birdwatching", description: "Observing and identifying birds in their natural habitat for quiet focus and discovery. It sharpens attention to detail and deepens your connection with local wildlife.", communityId: 32 },
+      { name: "Camping", description: "Outdoor overnight trips that immerse you in nature away from daily routines. It builds self-reliance, creates memorable experiences, and offers complete digital detox.", communityId: 33 },
+      { name: "Foraging", description: "Learning to identify and gather edible plants, mushrooms, and herbs from the wild. It combines education with adventure while fostering respect for natural ecosystems.", communityId: 34 }
     ]
   },
   [PersonalityCode.S]: {
@@ -68,7 +71,11 @@ const PERSONALITY_DATA: Record<PersonalityCode, PersonalityResult> = {
       { name: "Badminton matches", description: "Friendly rallies that keep you active together while boosting coordination. It is fast-paced, easy to learn, and perfect for social play.", communityId: 22 },
       { name: "Group cooking", description: "Sharing recipes and preparing meals as a team to bond and learn. It turns everyday food into a fun event and encourages creative collaboration.", communityId: 23 },
       { name: "Multiplayer games", description: "Co-op or competitive play with friends that builds teamwork and friendly rivalry. It is a great way to stay connected and share memorable moments.", communityId: 24 },
-      { name: "Board games", description: "Tabletop sessions that spark conversation, laughter, and strategy. From party games to deep tactics, there is always something new to try together.", communityId: 25 }
+      { name: "Board games", description: "Tabletop sessions that spark conversation, laughter, and strategy. From party games to deep tactics, there is always something new to try together.", communityId: 25 },
+      { name: "Team sports", description: "Joining recreational leagues for soccer, volleyball, or basketball to build camaraderie. Regular games create routine social connection while keeping you fit and engaged.", communityId: 35 },
+      { name: "Karaoke nights", description: "Singing with friends in a supportive environment that encourages fun and self-expression. It breaks the ice, creates shared memories, and celebrates everyone's unique style.", communityId: 36 },
+      { name: "Potluck dinners", description: "Gathering with friends where everyone brings a dish to share stories and flavors. It fosters community, celebrates diversity, and makes hosting easy and inclusive.", communityId: 37 },
+      { name: "Escape rooms", description: "Collaborative puzzle-solving adventures that test communication and quick thinking. Working together under time pressure creates excitement and strengthens team bonds.", communityId: 38 }
     ]
   },
   [PersonalityCode.L]: {
@@ -83,7 +90,9 @@ const PERSONALITY_DATA: Record<PersonalityCode, PersonalityResult> = {
       { name: "Journaling", description: "Reflective writing for clarity and routine, helping you track goals and feelings. It is a peaceful habit that supports self-awareness over time.", communityId: 28 },
       { name: "DIY decor", description: "Personalizing your space with simple crafts that make home feel special. Small projects add warmth and let your personality show through details.", communityId: 29 },
       { name: "Playing instruments", description: "Practicing music to unwind and improve focus with steady progress. It builds patience and gives you a creative outlet whenever you need a reset.", communityId: 30 },
-      { name: "Making playlists", description: "Curating music to match moods and moments for study, relaxation, or workouts. It is a simple ritual that can boost energy or bring calm.", communityId: 31 }
+      { name: "Making playlists", description: "Curating music to match moods and moments for study, relaxation, or workouts. It is a simple ritual that can boost energy or bring calm.", communityId: 31 },
+      { name: "Reading", description: "Diving into books for relaxation, knowledge, or escapism as part of your wind-down routine. It expands perspective, reduces stress, and creates a comforting daily ritual.", communityId: 39 },
+      { name: "Meditation", description: "Daily mindfulness practice to center yourself and manage stress through breathing and awareness. Even short sessions improve focus, calm, and emotional balance over time.", communityId: 40 }
     ]
   }
 };

@@ -1,31 +1,58 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface WouldYouRatherGameProps {
   onComplete: (selections: string[]) => void;
 }
 
-const QUESTIONS = [
-  // Curated list of 10 questions
-  { question: "Would you rather...", options: ["Build a giant pillow fort", "Explore a secret garden"], colors: ["bg-[#84D2F6]", "bg-[#90F1AC]"] },
-  { question: "Would you rather have the power to...", options: ["Talk to animals", "Invent a flying car"], colors: ["bg-[#F8A07E]", "bg-[#FDE24F]"] },
-  { question: "How would you spend a free afternoon?", options: ["At a bustling arcade", "In a cozy library"], colors: ["bg-[#FF8FAB]", "bg-[#A78BFA]"] },
-  { question: "What would be your dream pet?", options: ["A tiny dragon", "A loyal robot dog"], colors: ["bg-[#FDE24F]", "bg-[#90F1AC]"] },
-  { question: "You find a mysterious old map. Do you...", options: ["Follow it immediately", "Research it at the library first"], colors: ["bg-[#F8A07E]", "bg-[#A78BFA]"] },
-  { question: "For your birthday party, would you prefer...", options: ["A huge party with all your friends", "A small gathering with your closest pals"], colors: ["bg-[#FF8FAB]", "bg-[#84D2F6]"] },
-  { question: "Would you rather have a room that is...", options: ["Perfectly organized and tidy", "A creative, beautiful mess"], colors: ["bg-[#84D2F6]", "bg-[#F8A07E]"] },
-  { question: "You're directing a movie. It would be...", options: ["A hilarious comedy", "An epic action-adventure"], colors: ["bg-[#FDE24F]", "bg-[#F8A07E]"] },
-  { question: "Would you rather have a notebook that...", options: ["Brings your drawings to life", "Answers any question you write in it"], colors: ["bg-[#F8A07E]", "bg-[#84D2F6]"] },
-  { question: "Would you rather explore...", options: ["The deepest part of the ocean", "The farthest reaches of outer space"], colors: ["bg-[#84D2F6]", "bg-[#333] text-white"] },
-];
+type QuestionItem = {
+  question: string;
+  options: Array<{ text: string; personalityCodes?: string[] }>;
+  colors: string[];
+};
+
+const API_BASE_URL = 'http://localhost:3001';
 
 const WouldYouRatherGame: React.FC<WouldYouRatherGameProps> = ({ onComplete }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [questions, setQuestions] = useState<QuestionItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadQuestions = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/game-questions/would_you_rather`);
+        if (!response.ok) {
+          throw new Error('Failed to load questions');
+        }
+        const data = await response.json();
+        if (isMounted && Array.isArray(data?.questions)) {
+          setQuestions(data.questions);
+        }
+      } catch (error) {
+        if (isMounted) {
+          setLoadError('Failed to load questions from the database.');
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadQuestions();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleNext = (newAnswers: string[]) => {
      setTimeout(() => {
-        if (currentIndex + 1 < QUESTIONS.length) {
+        if (currentIndex + 1 < questions.length) {
             setCurrentIndex(currentIndex + 1);
         } else {
             onComplete(newAnswers);
@@ -34,11 +61,11 @@ const WouldYouRatherGame: React.FC<WouldYouRatherGameProps> = ({ onComplete }) =
     }, 300);
   }
 
-  const handleAnswer = (option: string) => {
+  const handleAnswer = (optionText: string) => {
     if (isAnimating) return;
     
     setIsAnimating(true);
-    const newAnswers = [...answers, option];
+    const newAnswers = [...answers, optionText];
     setAnswers(newAnswers);
     handleNext(newAnswers);
   };
@@ -62,8 +89,10 @@ const WouldYouRatherGame: React.FC<WouldYouRatherGameProps> = ({ onComplete }) =
     }, 300);
   }
 
-  const currentQuestion = QUESTIONS[currentIndex];
-  const progressPercentage = ((currentIndex + 1) / QUESTIONS.length) * 100;
+  const currentQuestion = questions[currentIndex];
+  const progressPercentage = questions.length
+    ? ((currentIndex + 1) / questions.length) * 100
+    : 0;
 
   return (
     <div className="w-full flex flex-col items-center animate-fade-in">
@@ -73,29 +102,41 @@ const WouldYouRatherGame: React.FC<WouldYouRatherGameProps> = ({ onComplete }) =
       </div>
 
       <div className={`bg-white p-8 rounded-3xl border-4 border-black shadow-[8px_8px_0px_rgba(0,0,0,1)] w-full max-w-2xl transition-transform duration-300 ${isAnimating ? 'scale-95 opacity-0' : 'scale-100 opacity-100'}`}>
-        <p className="text-center font-bold text-2xl mb-8">{currentQuestion.question}</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {currentQuestion.options.map((option, index) => (
-            <button
-              key={option}
-              onClick={() => handleAnswer(option)}
-              className={`${currentQuestion.colors[index]} font-fredoka text-black text-xl p-6 rounded-2xl border-4 border-black text-center h-48 flex items-center justify-center transition-transform transform hover:scale-105 active:scale-95 shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_rgba(0,0,0,1)]`}
-            >
-              {option}
-            </button>
-          ))}
-        </div>
+        {isLoading ? (
+          <p className="text-center font-bold text-2xl mb-8">Loading questions...</p>
+        ) : currentQuestion ? (
+          <>
+            <p className="text-center font-bold text-2xl mb-8">{currentQuestion.question}</p>
+            {loadError && (
+              <p className="text-center text-sm text-gray-500 mb-4">{loadError}</p>
+            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {currentQuestion.options.map((option, index) => (
+                <button
+                  key={`${option.text}-${index}`}
+                  onClick={() => handleAnswer(option.text)}
+                  className={`${currentQuestion.colors[index]} font-fredoka text-black text-xl p-6 rounded-2xl border-4 border-black text-center h-48 flex items-center justify-center transition-transform transform hover:scale-105 active:scale-95 shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_rgba(0,0,0,1)]`}
+                >
+                  {option.text}
+                </button>
+              ))}
+            </div>
+          </>
+        ) : (
+          <p className="text-center font-bold text-2xl mb-8">No questions found in the database.</p>
+        )}
         <div className="grid grid-cols-2 gap-4 mt-6">
             <button
               onClick={handleBack}
-              disabled={currentIndex === 0}
+              disabled={currentIndex === 0 || !currentQuestion}
               className="bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 text-black font-bold py-3 px-6 rounded-2xl border-4 border-black transition-all disabled:cursor-not-allowed"
             >
                 ← Back
             </button>
             <button
               onClick={handleSkip}
-              className="bg-white hover:bg-gray-50 text-black font-bold py-3 px-6 rounded-2xl border-4 border-black transition-all"
+              disabled={!currentQuestion}
+              className="bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 text-black font-bold py-3 px-6 rounded-2xl border-4 border-black transition-all disabled:cursor-not-allowed"
             >
                 Skip Question →
             </button>
@@ -109,7 +150,7 @@ const WouldYouRatherGame: React.FC<WouldYouRatherGameProps> = ({ onComplete }) =
                 style={{ width: `${progressPercentage}%`}}
               ></div>
           </div>
-          <p className="text-center font-bold mt-2 text-sm">Question {currentIndex + 1} of {QUESTIONS.length}</p>
+            <p className="text-center font-bold mt-2 text-sm">Question {questions.length ? currentIndex + 1 : 0} of {questions.length}</p>
       </div>
        <style>{`
         @keyframes fade-in {

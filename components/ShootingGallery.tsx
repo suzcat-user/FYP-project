@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useQuestions } from '../services/useQuestions';
 import { Trait, PersonalityCode } from '../types';
 import GameContainer from './ui/GameContainer';
 
@@ -29,6 +28,21 @@ const TRAIT_COLORS: Record<Trait, string> = {
   [Trait.EXPLORER]: 'from-cyan-300 to-sky-500',
   [Trait.CALM]: 'from-violet-300 to-purple-600'
 };
+
+type ShootingGalleryAnswer = {
+  text: string;
+  description?: string;
+  trait: Trait | string;
+  personalityCodes?: Array<PersonalityCode | string>;
+};
+
+type ShootingGalleryQuestion = {
+  id: number;
+  question: string;
+  answers: ShootingGalleryAnswer[];
+};
+
+const API_BASE_URL = 'http://localhost:3001';
 
 const BubbleTarget: React.FC<{ 
   text: string; 
@@ -90,57 +104,49 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
   const [isShot, setIsShot] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [poppedId, setPoppedId] = useState<number | null>(null);
-  const { questions, loading, error } = useQuestions('SHOOTING_GALLERY');
-  const TOTAL_ROUNDS = 5;
+  const [questions, setQuestions] = useState<ShootingGalleryQuestion[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
-  // Map personality types to Trait enum
-  const personalityTypeToTrait: Record<string, Trait> = {
-    'CREATIVE': Trait.CREATIVE,
-    'SOCIAL': Trait.SOCIAL,
-    'STRATEGIC': Trait.STRATEGIC,
-    'ACTIVE': Trait.ACTIVE,
-    'EXPLORER': Trait.EXPLORER,
-    'CALM': Trait.CALM,
-  };
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadQuestions = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/game-questions/shooting_gallery`);
+        if (!response.ok) {
+          throw new Error('Failed to load questions');
+        }
+        const data = await response.json();
+        if (isMounted && Array.isArray(data?.questions)) {
+          setQuestions(data.questions);
+        }
+      } catch (error) {
+        if (isMounted) {
+          setLoadError('Failed to load questions from the database.');
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadQuestions();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const currentQuestion = questions.length > 0 ? questions[currentQuestionIndex % questions.length] : null;
-  const currentOptions = currentQuestion?.options || [];
-
-  const bubbleConfigs = useMemo(() => currentOptions.map(() => {
-    return {
-      top: 15 + Math.random() * 50,
-      left: 10 + Math.random() * 70,
-      delay: Math.random() * 8, 
-      duration: 5 + Math.random() * 6,
-      moveX: Math.random() * 100 - 50,
-      moveY: Math.random() * 80 - 40
-    };
-  }), [currentQuestionIndex, currentOptions.length]);
-
-  if (loading) {
-    return (
-      <GameContainer title="Reflex Pop" instruction="LOADING..." isDarkMode={isDarkMode}>
-        <div className="flex items-center justify-center w-full h-full">
-          <div className="text-white text-2xl">Loading questions...</div>
-        </div>
-      </GameContainer>
-    );
-  }
-
-  if (error || questions.length === 0) {
-    return (
-      <GameContainer title="Reflex Pop" instruction="ERROR" isDarkMode={isDarkMode}>
-        <div className="flex items-center justify-center w-full h-full">
-          <div className="text-red-400 text-2xl">{error || 'No questions found'}</div>
-        </div>
-      </GameContainer>
-    );
-  }
+  const TOTAL_ROUNDS = 5;
 
   const handleSkip = () => {
     if (round < TOTAL_ROUNDS - 1) {
       setRound(prev => prev + 1);
-      setCurrentQuestionIndex(prev => (prev + 1) % questions.length);
+      if (questions.length) {
+        setCurrentQuestionIndex(prev => (prev + 1) % questions.length);
+      }
       setIsShot(false);
       setPoppedId(null);
     } else {
@@ -148,38 +154,30 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
     }
   };
 
-  const saveAnswer = async (option: any) => {
-    if (userId) {
-      try {
-        await fetch('http://localhost:3002/api/answers', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            user_id: userId,
-            game_type: 'SHOOTING_GALLERY',
-            question_id: currentQuestion.question_id,
-            answer_choice: option.option_text,
-            trait_awarded: option.personality_type || 'CALM'
-          })
-        });
-      } catch (err) {
-        console.error('Error saving answer:', err);
-      }
-    }
-  };
+  const bubbleConfigs = useMemo(() => (currentQuestion?.answers || []).map(() => {
+    return {
+      top: 15 + Math.random() * 50,
+      left: 10 + Math.random() * 70,
+      delay: Math.random() * 8, 
+      duration: 5 + Math.random() * 6,
+      // Random drift vectors for movement
+      moveX: Math.random() * 100 - 50,
+      moveY: Math.random() * 80 - 40
+    };
+  }), [currentQuestionIndex, questions.length]);
 
-  const handleShot = (option: any, index: number) => {
+  const handleShot = (trait: Trait, personalityCodes: PersonalityCode[] | undefined, index: number) => {
     if (isShot) return;
     setIsShot(true);
     setPoppedId(index);
-    const trait = personalityTypeToTrait[option.personality_type || 'CALM'] || Trait.CALM;
-    saveAnswer(option);
-    onAnswer([trait]);
+    onAnswer([trait as Trait], personalityCodes as PersonalityCode[] | undefined);
     
     setTimeout(() => {
       if (round < TOTAL_ROUNDS - 1) {
         setRound(prev => prev + 1);
-        setCurrentQuestionIndex(prev => (prev + 1) % questions.length);
+        if (questions.length) {
+          setCurrentQuestionIndex(prev => (prev + 1) % questions.length);
+        }
         setIsShot(false);
         setPoppedId(null);
       } else {
@@ -199,13 +197,16 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
   return (
     <GameContainer 
       title="Reflex Pop" 
-      instruction={currentQuestion.question_text || "POP THE TARGETS!"} 
+      instruction={currentQuestion?.question || (isLoading ? 'Loading question...' : 'No questions found.')} 
       onSkip={handleSkip} 
       isDarkMode={isDarkMode} 
       progress={progress}
       howToPlay="The Radar identifies personality nodes floating in the digital void. Use your cursor (the Targeting Crosshair) to hover over a node and view its trait data. Left-click to 'Pop' the node and absorb its characteristics into your profile."
       scoringRules="Quick pops grant 'Reaction XP.' Popping nodes in rapid succession triggers the 'Combo Multiplier,' significantly increasing your final trait values. Avoid hesitant clicks to maintain high sensor accuracy."
     >
+      {loadError && (
+        <div className="w-full text-center text-sm text-red-500 mb-2">{loadError}</div>
+      )}
       <div 
         onMouseMove={handleMouseMove}
         className={`flex-1 w-full h-full flex flex-col relative overflow-hidden cursor-none transition-colors duration-500 ${isDarkMode ? 'bg-slate-950' : 'bg-slate-900'}`}
@@ -235,10 +236,9 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
         </div>
 
         <div className="absolute inset-0 z-20">
-            {currentOptions.map((option, index) => {
+            {(currentQuestion?.answers || []).map((answer, index) => {
                 const config = bubbleConfigs[index];
                 if (!config) return null;
-                const trait = personalityTypeToTrait[option.personality_type || 'CALM'] || Trait.CALM;
                 return (
                     <div 
                       key={`${currentQuestionIndex}-${index}`} 
@@ -253,12 +253,12 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
                       }}
                     >
                         <BubbleTarget 
-                          text={option.option_text || 'Option'} 
-                          description={option.option_icon || ''} 
-                          trait={trait}
+                          text={answer.text} 
+                          description={answer.description} 
+                          trait={answer.trait as Trait}
                           isDarkMode={isDarkMode} 
                           isPopped={poppedId === index}
-                          onClick={() => handleShot(option, index)} 
+                          onClick={() => handleShot(answer.trait as Trait, answer.personalityCodes as PersonalityCode[] | undefined, index)} 
                         />
                     </div>
                 );

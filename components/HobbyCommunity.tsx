@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Hobby, Post, Comment } from '../types';
 import { getHobbyByName } from '../services/hobbyRecommendations';
 import ArcadeButton from './ui/ArcadeButton';
@@ -98,7 +98,6 @@ const AttachmentCarousel: React.FC<{ urls: string[]; className?: string }> = ({ 
 const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMode = false, currentUser = 'USER_1', userId }) => {
   const { hobbyName: hobbySlug } = useParams();
   const [joined, setJoined] = useState(false);
-  const [activePostId, setActivePostId] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [attachments, setAttachments] = useState<Array<{ file: File; preview: string }>>([]);
   const [newPostContent, setNewPostContent] = useState('');
@@ -106,6 +105,8 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [resolvedUserId, setResolvedUserId] = useState<number | undefined>(userId);
   const [resolvedUsername, setResolvedUsername] = useState<string>(currentUser || 'USER_1');
+
+  const navigate = useNavigate();
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -201,8 +202,6 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
     loadPosts();
   }, [communityId]);
 
-  const activePost = useMemo(() => posts.find(p => p.id === activePostId), [posts, activePostId]);
-
   const handleCreatePost = async () => {
     setPostError('');
     
@@ -288,47 +287,6 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
     }
   };
 
-  const handleAddComment = async (postId: string, content: string, gifs?: string[]) => {
-    if (!resolvedUserId) {
-      setPostError('User ID not found. Please login again.');
-      return;
-    }
-    
-    try {
-      const response = await fetch('http://localhost:3001/api/comments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_id: resolvedUserId,
-          post_id: postId,
-          content
-        })
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setPosts(prev => prev.map(p => {
-          if (p.id === postId) {
-            return {
-              ...p,
-              comments: [...p.comments, {
-                id: data.comment_id.toString(),
-                author: 'YOU',
-                content,
-                timestamp: 'Just now',
-                upvotes: 0,
-                gifs
-              }]
-            };
-          }
-          return p;
-        }));
-      }
-    } catch (err) {
-      console.error('Error adding comment:', err);
-    }
-  };
 
   const handleDeletePost = async (postId: string) => {
     const post = posts.find(p => p.id === postId);
@@ -355,7 +313,6 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
 
       if (data.success) {
         setPosts(prev => prev.filter(p => p.id !== postId));
-        setActivePostId(null);
         setPostError('');
       } else {
         setPostError(data.error || 'Failed to delete post');
@@ -373,7 +330,6 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
       setNewPostContent(post.content);
       setEditingPostId(postId);
       setShowCreateModal(true);
-      setActivePostId(null);
     }
   };
 
@@ -473,7 +429,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
                               <AttachmentCarousel urls={post.attachments} className="mb-4" />
                             )}
                             <div className="flex gap-4 font-press-start text-[1vmin] opacity-70 items-center">
-                              <span className="cursor-pointer hover:opacity-100" onClick={() => setActivePostId(post.id)}>💬 {post.comments.length} Comments</span>
+                              <span className="cursor-pointer hover:opacity-100" onClick={() => navigate(`/posts/${post.id}`)}>💬 {post.comments.length} Comments</span>
                               {post.author === currentUser && (
                                   <>
                                     <button 
@@ -506,73 +462,6 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
               </div>
           </div>
       </div>
-
-      {/* Post Detail Modal */}
-      {activePost && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-              <div className={`w-full max-w-4xl max-h-[90vh] overflow-y-auto border-8 p-6 flex flex-col gap-6 ${isDarkMode ? 'bg-[#0f111a] border-indigo-900' : 'bg-white border-sky-800'}`}>
-                  <div className="flex justify-between items-center border-b-4 pb-2">
-                      <div className="flex-1">
-                        <h2 className="font-press-start text-[2vmin] mb-2">{activePost.title}</h2>
-                        <div className="flex items-center gap-2">
-                          <span className={`font-press-start text-[1.2vmin] ${activePost.author === currentUser ? 'text-yellow-400' : 'text-gray-400'}`}>u/{activePost.author}</span>
-                          {activePost.author === currentUser && <span className={`font-press-start text-[0.8vmin] px-2 py-1 rounded ${isDarkMode ? 'bg-yellow-600 text-white' : 'bg-yellow-300 text-gray-900'}`}>YOUR POST</span>}
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                          {activePost.author === currentUser && (
-                            <>
-                              <button 
-                                onClick={() => handleEditPost(activePost.id)}
-                                className={`font-press-start text-[1vmin] px-3 py-1 border-2 ${isDarkMode ? 'bg-blue-600 border-blue-900 text-white' : 'bg-blue-400 border-blue-700'}`}
-                                title="Edit Post"
-                              >
-                                EDIT
-                              </button>
-                              <button 
-                                onClick={() => handleDeletePost(activePost.id)}
-                                className={`font-press-start text-[1vmin] px-3 py-1 border-2 ${isDarkMode ? 'bg-red-600 border-red-900 text-white' : 'bg-red-400 border-red-700'}`}
-                                title="Delete Post"
-                              >
-                                DELETE
-                              </button>
-                            </>
-                          )}
-                          <button onClick={() => setActivePostId(null)} className="font-press-start text-red-500">X</button>
-                      </div>
-                  </div>
-                  <div className="font-vt323 text-2xl leading-relaxed">
-                      {activePost.content}
-                  </div>
-                  {activePost.attachments && activePost.attachments.length > 0 && (
-                    <AttachmentCarousel urls={activePost.attachments} className="mb-2" />
-                  )}
-
-                  {/* Comment Section */}
-                  <div className="mt-8 border-t-4 pt-6">
-                      <h3 className="font-press-start text-[1.5vmin] mb-4">COMMENTS</h3>
-                      <CommentInput onAdd={(c, g) => handleAddComment(activePost.id, c, g)} isDarkMode={isDarkMode} />
-                      <div className="flex flex-col gap-6 mt-8">
-                          {activePost.comments.map(c => (
-                              <div key={c.id} className="flex gap-4 border-l-4 pl-4 border-gray-400">
-                                  <div className="flex-1">
-                                      <div className="flex gap-2 font-vt323 text-lg opacity-60 mb-1">
-                                          <span>u/{c.author}</span>
-                                          <span>•</span>
-                                          <span>{c.timestamp}</span>
-                                      </div>
-                                      <p className="font-vt323 text-xl">{c.content}</p>
-                                      {c.gifs && c.gifs.map(gif => (
-                                          <img key={gif} src={gif} alt="GIF" className="mt-2 max-w-[200px] border-2" />
-                                      ))}
-                                  </div>
-                              </div>
-                          ))}
-                      </div>
-                  </div>
-              </div>
-          </div>
-      )}
 
       {/* Create Post Modal */}
       {showCreateModal && (

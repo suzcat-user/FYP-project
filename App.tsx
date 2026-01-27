@@ -11,6 +11,7 @@ import CommunityScreen from './components/CommunityScreen';
 import HobbyCommunity from './components/HobbyCommunity';
 import AuthScreen from './components/AuthScreen';
 import ProfileScreen from './components/ProfileScreen';
+import PostPage from './components/PostPage';
 
 const AppContent: React.FC = () => {
   const navigate = useNavigate();
@@ -237,6 +238,7 @@ const AppContent: React.FC = () => {
              <Route path="/results" element={<ResultsScreen scores={scores} personalityScores={personalityScores} onNext={handleNextGame} onSelectHobby={handleGoToHobbyCommunity} onReset={handleResetGame} isDarkMode={isDarkMode} />} />
              <Route path="/community" element={<CommunityScreen onRestart={handleNextGame} scores={scores} hobbies={communityHobbies} onSelectHobby={handleGoToHobbyCommunity} isDarkMode={isDarkMode} />} />
              <Route path="/community/:hobbyName" element={<HobbyCommunity hobby={selectedHobby} onBack={() => navigate('/results')} isDarkMode={isDarkMode} currentUser={userData?.username || "GUEST"} userId={userData?.user_id} />} />
+             <Route path="/posts/:postId" element={<PostPage isDarkMode={isDarkMode} currentUser={userData?.username || "GUEST"} userId={userData?.user_id} />} />
              <Route path="/profile" element={<ProfileScreen scores={scores} userName={userName} userEmail={userEmail} onBack={() => navigate('/home')} isDarkMode={isDarkMode} />} />
            </Routes>
         </div>

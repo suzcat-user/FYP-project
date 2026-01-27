@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Trait, PersonalityCode } from '../types';
-import { useQuestions } from '../services/useQuestions';
 import GameContainer from './ui/GameContainer';
 
 interface WouldYouRatherProps {
@@ -14,21 +13,60 @@ interface WouldYouRatherProps {
 
 const TOTAL_ROUNDS = 5;
 
-// Map personality types to Trait enum
-const personalityTypeToTrait: Record<string, Trait> = {
-  'CREATIVE': Trait.CREATIVE,
-  'SOCIAL': Trait.SOCIAL,
-  'STRATEGIC': Trait.STRATEGIC,
-  'ACTIVE': Trait.ACTIVE,
-  'EXPLORER': Trait.EXPLORER,
-  'CALM': Trait.CALM,
+type WouldYouRatherOption = {
+  text: string;
+  trait: Trait | string;
+  personalityCodes?: Array<PersonalityCode | string>;
 };
+
+type WouldYouRatherQuestion = {
+  id?: number;
+  question: string;
+  options: WouldYouRatherOption[];
+};
+
+const API_BASE_URL = 'http://localhost:3002';
 
 const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, onSkip, isDarkMode = false, progress, userId }) => {
   const [round, setRound] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [animating, setAnimating] = useState<'left' | 'right' | null>(null);
-  const { questions, loading, error } = useQuestions('WOULD_YOU_RATHER');
+  const [questions, setQuestions] = useState<WouldYouRatherQuestion[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadQuestions = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await fetch(`${API_BASE_URL}/api/game-questions/would_you_rather`);
+        if (!response.ok) {
+          throw new Error('Failed to load questions');
+        }
+        const data = await response.json();
+        if (isMounted && Array.isArray(data?.questions)) {
+          setQuestions(data.questions);
+        }
+      } catch (err) {
+        if (isMounted) {
+          const message = err instanceof Error ? err.message : 'Failed to load questions';
+          setError(message);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadQuestions();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   if (loading) {
     return (
@@ -51,20 +89,20 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
   }
 
   const currentQuestion = questions[currentQuestionIndex % questions.length];
-  const currentOptions = currentQuestion.options || [];
+  const currentOptions = currentQuestion?.options || [];
 
-  const saveAnswer = async (option: any) => {
+  const saveAnswer = async (option: WouldYouRatherOption) => {
     if (userId) {
       try {
-        await fetch('http://localhost:3002/api/answers', {
+        await fetch(`${API_BASE_URL}/api/answers`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             user_id: userId,
             game_type: 'WOULD_YOU_RATHER',
-            question_id: currentQuestion.question_id,
-            answer_choice: option.option_text,
-            trait_awarded: option.personality_type || 'UNKNOWN'
+            question_id: currentQuestion?.id ?? null,
+            answer_choice: option.text,
+            trait_awarded: option.trait || 'UNKNOWN'
           })
         });
       } catch (err) {
@@ -89,8 +127,7 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
     if (!option) return;
     
     saveAnswer(option);
-    const trait = personalityTypeToTrait[option.personality_type || 'CALM'] || Trait.CALM;
-    onAnswer([trait]);
+    onAnswer([option.trait as Trait], option.personalityCodes as PersonalityCode[] | undefined);
     setAnimating(index === 0 ? 'left' : 'right');
 
     setTimeout(() => {
@@ -107,7 +144,7 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
   return (
     <GameContainer 
       title="Decision Duel" 
-      instruction={currentQuestion.question_text || "PICK YOUR DESTINY!"} 
+      instruction={currentQuestion?.question || "PICK YOUR DESTINY!"} 
       onSkip={handleSkip} 
       isDarkMode={isDarkMode} 
       progress={progress}
@@ -140,7 +177,7 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
           <div className="relative z-10 text-center transform group-hover/left:scale-105 transition-transform duration-300">
             <span className="font-press-start text-[1.5vmin] text-rose-300 mb-4 block animate-pulse">PATH_01</span>
             <h2 className="font-vt323 text-[7.5vmin] text-white leading-none mb-6 drop-shadow-[0_0_15px_#f43f5e] chromatic">
-              {currentOptions[0]?.option_text || 'N/A'}
+              {currentOptions[0]?.text || 'N/A'}
             </h2>
             <div className="w-24 h-1.5 bg-rose-500 mx-auto shadow-[0_0_15px_#f43f5e]"></div>
           </div>
@@ -181,7 +218,7 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
           <div className="relative z-10 text-center transform group-hover/right:scale-105 transition-transform duration-300">
             <span className="font-press-start text-[1.5vmin] text-cyan-300 mb-4 block animate-pulse">PATH_02</span>
             <h2 className="font-vt323 text-[7.5vmin] text-white leading-none mb-6 drop-shadow-[0_0_15px_#06b6d4] chromatic">
-              {currentOptions[1]?.option_text || 'N/A'}
+              {currentOptions[1]?.text || 'N/A'}
             </h2>
             <div className="w-24 h-1.5 bg-cyan-500 mx-auto shadow-[0_0_15px_#06b6d4]"></div>
           </div>

@@ -42,6 +42,8 @@ type ShootingGalleryQuestion = {
   answers: ShootingGalleryAnswer[];
 };
 
+const API_BASE_URL = 'http://localhost:3002';
+
 const BubbleTarget: React.FC<{ 
   text: string; 
   description?: string; 
@@ -111,7 +113,7 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
 
     const loadQuestions = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/game-questions/shooting_gallery');
+        const response = await fetch(`${API_BASE_URL}/api/game-questions/shooting_gallery`);
         if (!response.ok) {
           throw new Error('Failed to load questions');
         }

@@ -121,6 +121,8 @@ const STAKE_COLORS = [
 
 const TOTAL_ROUNDS = 5;
 
+const API_BASE_URL = 'http://localhost:3002';
+
 type RingTossAnswer = {
   text: string;
   trait: Trait | string;
@@ -169,7 +171,7 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
 
     const loadQuestions = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/game-questions/ring_toss');
+        const response = await fetch(`${API_BASE_URL}/api/game-questions/ring_toss`);
         if (!response.ok) {
           throw new Error('Failed to load questions');
         }

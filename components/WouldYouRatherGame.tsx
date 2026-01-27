@@ -10,6 +10,8 @@ type QuestionItem = {
   colors: string[];
 };
 
+const API_BASE_URL = 'http://localhost:3002';
+
 const WouldYouRatherGame: React.FC<WouldYouRatherGameProps> = ({ onComplete }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
@@ -23,7 +25,7 @@ const WouldYouRatherGame: React.FC<WouldYouRatherGameProps> = ({ onComplete }) =
 
     const loadQuestions = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/game-questions/would_you_rather');
+        const response = await fetch(`${API_BASE_URL}/api/game-questions/would_you_rather`);
         if (!response.ok) {
           throw new Error('Failed to load questions');
         }

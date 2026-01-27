@@ -192,6 +192,19 @@ const AppContent: React.FC = () => {
              </div>
 
              <div className="flex gap-2 sm:gap-3 lg:gap-8 items-center order-2 lg:order-3 flex-shrink-0">
+                 {/* See All Communities Button - Hidden on Auth screen */}
+                 {!isAuthPage && (
+                   <button 
+                     onClick={() => navigate('/all-hobbies')}
+                     className={`px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 border-2 text-[9px] sm:text-[10px] md:text-[1.2vmin] transition-all hover:scale-105 active:scale-95 flex items-center gap-1 sm:gap-2 ${isDarkMode ? 'border-green-500 bg-green-500/20 text-green-300' : 'border-green-500 bg-green-500/20 text-green-400'}`}
+                     title="See All Communities"
+                   >
+                     <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full animate-pulse ${isDarkMode ? 'bg-green-300' : 'bg-green-400'}`}></div>
+                     <span className="hidden sm:inline">COMMUNITIES</span>
+                     <span className="sm:hidden">🏘️</span>
+                   </button>
+                 )}
+
                  <button 
                     onClick={() => setIsDarkMode(!isDarkMode)}
                     className={`px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 border-2 text-[9px] sm:text-[10px] md:text-[1.2vmin] transition-all hover:scale-105 active:scale-95 flex items-center gap-1 sm:gap-2 ${isDarkMode ? 'border-purple-500 bg-purple-500/20 text-purple-400' : 'border-sky-400 bg-sky-400/20 text-sky-300'}`}

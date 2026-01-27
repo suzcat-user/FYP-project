@@ -64,7 +64,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, personalityScores
       try {
         setLoading(true);
         const topCode = personalityResult.code;
-        const response = await fetch(`http://localhost:3002/api/hobbies/personality/${topCode}`);
+        const response = await fetch(`http://localhost:3001/api/hobbies/personality/${topCode}`);
         if (response.ok) {
           const data = await response.json();
           setHobbies(data.hobbies || []);

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { RING_TOSS_QUESTIONS } from '../constants';
+import { useQuestions } from '../services/useQuestions';
 import { Trait, PersonalityCode } from '../types';
 import GameContainer from './ui/GameContainer';
 
@@ -9,7 +9,18 @@ interface RingTossProps {
   onSkip?: () => void;
   isDarkMode?: boolean;
   progress?: number;
+  userId?: number;
 }
+
+// Map personality types to Trait enum
+const personalityTypeToTrait: Record<string, Trait> = {
+  'CREATIVE': Trait.CREATIVE,
+  'SOCIAL': Trait.SOCIAL,
+  'STRATEGIC': Trait.STRATEGIC,
+  'ACTIVE': Trait.ACTIVE,
+  'EXPLORER': Trait.EXPLORER,
+  'CALM': Trait.CALM,
+};
 
 interface DecorativeProps {
     className?: string;
@@ -111,11 +122,25 @@ const STAKE_COLORS = [
 
 const TOTAL_ROUNDS = 5;
 
-const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDarkMode = false, progress }) => {
+const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDarkMode = false, progress, userId }) => {
   const [round, setRound] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isThrown, setIsThrown] = useState(false);
+  const { questions, loading, error } = useQuestions('RING_TOSS');
+
+  // Map personality types to Trait enum
+  const personalityTypeToTrait: Record<string, Trait> = {
+    'CREATIVE': Trait.CREATIVE,
+    'SOCIAL': Trait.SOCIAL,
+    'STRATEGIC': Trait.STRATEGIC,
+    'ACTIVE': Trait.ACTIVE,
+    'EXPLORER': Trait.EXPLORER,
+    'CALM': Trait.CALM,
+  };
+
+  const currentQuestion = questions.length > 0 ? questions[currentQuestionIndex % questions.length] : null;
+  const currentOptions = currentQuestion?.options || [];
 
   const grassPositions = useMemo(() => Array.from({ length: 100 }).map(() => ({
       top: `${-10 + Math.random() * 110}%`,
@@ -139,13 +164,51 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
     flap: (0.1 + Math.random() * 0.2).toFixed(2)
   })), []);
 
-  const currentQuestion = RING_TOSS_QUESTIONS[currentQuestionIndex];
+  if (loading) {
+    return (
+      <GameContainer title="Precision Toss" instruction="LOADING..." isDarkMode={isDarkMode}>
+        <div className="flex items-center justify-center w-full h-full">
+          <div className="text-white text-2xl">Loading questions...</div>
+        </div>
+      </GameContainer>
+    );
+  }
+
+  if (error || questions.length === 0) {
+    return (
+      <GameContainer title="Precision Toss" instruction="ERROR" isDarkMode={isDarkMode}>
+        <div className="flex items-center justify-center w-full h-full">
+          <div className="text-red-400 text-2xl">{error || 'No questions found'}</div>
+        </div>
+      </GameContainer>
+    );
+  }
+
+  const saveAnswer = async (option: any) => {
+    if (userId) {
+      try {
+        await fetch('http://localhost:3002/api/answers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: userId,
+            game_type: 'RING_TOSS',
+            question_id: currentQuestion.question_id,
+            answer_choice: option.option_text,
+            trait_awarded: option.personality_type || 'CALM'
+          })
+        });
+      } catch (err) {
+        console.error('Error saving answer:', err);
+      }
+    }
+  };
 
   const handleSkip = () => {
     if (isThrown) return;
     if (round < TOTAL_ROUNDS - 1) {
       setRound(prev => prev + 1);
-      setCurrentQuestionIndex(prev => (prev + 1) % RING_TOSS_QUESTIONS.length);
+      setCurrentQuestionIndex(prev => (prev + 1) % questions.length);
       setSelectedAnswer(null);
       setIsThrown(false);
     } else {
@@ -153,16 +216,18 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
     }
   };
 
-  const handleThrow = (trait: Trait, personalityCodes: PersonalityCode[] | undefined, index: number) => {
+  const handleThrow = (option: any, index: number) => {
     if (isThrown) return;
     setSelectedAnswer(index);
     setIsThrown(true);
-    onAnswer([trait], personalityCodes);
+    const trait = personalityTypeToTrait[option.personality_type || 'CALM'] || Trait.CALM;
+    saveAnswer(option);
+    onAnswer([trait]);
     
     setTimeout(() => {
       if (round < TOTAL_ROUNDS - 1) {
         setRound(prev => prev + 1);
-        setCurrentQuestionIndex(prev => (prev + 1) % RING_TOSS_QUESTIONS.length);
+        setCurrentQuestionIndex(prev => (prev + 1) % questions.length);
         setSelectedAnswer(null);
         setIsThrown(false);
       } else {
@@ -179,7 +244,7 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
   return (
     <GameContainer 
       title="Precision Toss" 
-      instruction={currentQuestion.question} 
+      instruction={currentQuestion.question_text || "PICK YOUR DESTINY!"} 
       onSkip={handleSkip} 
       isDarkMode={isDarkMode} 
       progress={progress}
@@ -217,11 +282,11 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
 
           <div className="absolute inset-0 flex items-end justify-center pb-[12vmin] z-10" style={{ perspective: '100vmin' }}>
             <div className="relative w-full h-[60vmin] flex justify-center items-end" style={{ transformStyle: 'preserve-3d' }}>
-                {currentQuestion.answers.slice(0, 6).map((answer, index) => {
+                {currentOptions.slice(0, 6).map((option, index) => {
                     const pos = POSITIONS[index % POSITIONS.length];
                     return (
                         <div key={index} className="absolute bottom-0 transition-transform duration-500 left-1/2" style={{ transform: `translateX(-50%) translateX(${pos.x}vmin) translateY(${pos.y}vmin) scale(${pos.z})`, zIndex: Math.floor(pos.z * 100) }}>
-                            <Stake onClick={() => handleThrow(answer.trait, answer.personalityCodes, index)} isThrown={isThrown} isSelected={selectedAnswer === index} colorClass={STAKE_COLORS[index % STAKE_COLORS.length]} label={answer.text} isDarkMode={isDarkMode} />
+                            <Stake onClick={() => handleThrow(option, index)} isThrown={isThrown} isSelected={selectedAnswer === index} colorClass={STAKE_COLORS[index % STAKE_COLORS.length]} label={option.option_text || 'Option'} isDarkMode={isDarkMode} />
                         </div>
                     );
                 })}

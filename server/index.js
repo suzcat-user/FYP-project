@@ -3,7 +3,7 @@ const mysql = require('mysql2/promise');
 const cors = require('cors');
 
 const app = express();
-const PORT = 3001;
+const PORT = 3002;
 
 // Middleware
 app.use(cors());
@@ -32,12 +32,14 @@ async function start() {
     const answersRoutes = require('./routes/answers');
     const postsRoutes = require('./routes/posts');
     const commentsRoutes = require('./routes/comments');
+    const questionsRoutes = require('./routes/questions');
 
     // Mount routes with promise pool
     app.use('/api/users', userRoutes(db));
     app.use('/api/answers', answersRoutes(db));
     app.use('/api/posts', postsRoutes(db));
     app.use('/api/comments', commentsRoutes(db));
+    app.use('/api/questions', questionsRoutes(db));
 
     // Test route
     app.get('/api/test', (req, res) => {

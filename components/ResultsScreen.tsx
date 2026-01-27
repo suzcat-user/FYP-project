@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Scores, Hobby, Trait, Personalities, PersonalityScores } from '../types';
-import { getPersonalityFromScores, getHobbyRecommendations, getCommunityRecommendations } from '../services/hobbyRecommendations';
+import { useNavigate } from 'react-router-dom';
+import { Scores, Hobby, Trait, Personalities, PersonalityScores, PersonalityCode } from '../types';
+import { getPersonalityFromScores, getCommunityRecommendations } from '../services/hobbyRecommendations';
 
 interface ResultsScreenProps {
   scores: Scores;
@@ -43,7 +44,9 @@ const TraitBar: React.FC<{ trait: string; score: number; max: number; color: str
 };
 
 const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, personalityScores, onNext, onSelectHobby, onReset, isDarkMode = false }) => {
-  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [hobbies, setHobbies] = useState<Hobby[]>([]);
   
   // Debug: Log personality scores
   console.log('Personality Scores:', personalityScores);
@@ -54,9 +57,30 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, personalityScores
     return getPersonalityFromScores(personalityScores);
   }, [personalityScores]);
 
-  const hobbies = useMemo(() => {
-    return getHobbyRecommendations(personalityScores);
-  }, [personalityScores]);
+  // Fetch hobbies from database based on top personality
+  useEffect(() => {
+    const fetchHobbies = async () => {
+      try {
+        setLoading(true);
+        const topCode = personalityResult.code;
+        const response = await fetch(`http://localhost:3002/api/hobbies/personality/${topCode}`);
+        if (response.ok) {
+          const data = await response.json();
+          setHobbies(data.hobbies || []);
+        } else {
+          // Fallback to empty if API fails
+          setHobbies([]);
+        }
+      } catch (err) {
+        console.error('Error fetching hobbies:', err);
+        setHobbies([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchHobbies();
+  }, [personalityResult.code]);
 
   const communities = useMemo(() => {
     return getCommunityRecommendations(personalityScores);
@@ -228,6 +252,16 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, personalityScores
                             </div>
                           </button>
                         ))}
+                      </div>
+
+                      {/* See All Hobbies Button */}
+                      <div className="mt-[3vmin] flex justify-center">
+                        <button
+                          onClick={() => navigate('/all-hobbies')}
+                          className={`font-press-start text-[1.5vmin] px-[4vmin] py-[2vmin] border-4 border-b-8 active:border-b-4 active:translate-y-1 transition-all ${isDarkMode ? 'bg-purple-600 border-purple-800 text-purple-100 hover:bg-purple-500' : 'bg-indigo-500 border-indigo-700 text-white hover:bg-indigo-400'}`}
+                        >
+                          🎯 SEE ALL HOBBIES FOR ALL PERSONALITIES
+                        </button>
                       </div>
                   </div>
              </div>

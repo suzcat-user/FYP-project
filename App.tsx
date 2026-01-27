@@ -7,6 +7,7 @@ import WouldYouRather from './components/WouldYouRather';
 import RingToss from './components/RingToss';
 import ShootingGallery from './components/ShootingGallery';
 import ResultsScreen from './components/ResultsScreen';
+import AllHobbiesScreen from './components/AllHobbiesScreen';
 import CommunityScreen from './components/CommunityScreen';
 import HobbyCommunity from './components/HobbyCommunity';
 import AuthScreen from './components/AuthScreen';
@@ -235,6 +236,7 @@ const AppContent: React.FC = () => {
              <Route path="/games/ring-toss" element={<RingToss onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} userId={userData?.user_id} />} />
              <Route path="/games/shooting-gallery" element={<ShootingGallery onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} userId={userData?.user_id} />} />
              <Route path="/results" element={<ResultsScreen scores={scores} personalityScores={personalityScores} onNext={handleNextGame} onSelectHobby={handleGoToHobbyCommunity} onReset={handleResetGame} isDarkMode={isDarkMode} />} />
+             <Route path="/all-hobbies" element={<AllHobbiesScreen onSelectHobby={handleGoToHobbyCommunity} isDarkMode={isDarkMode} />} />
              <Route path="/community" element={<CommunityScreen onRestart={handleNextGame} scores={scores} hobbies={communityHobbies} onSelectHobby={handleGoToHobbyCommunity} isDarkMode={isDarkMode} />} />
              <Route path="/community/:hobbyName" element={<HobbyCommunity hobby={selectedHobby} onBack={() => navigate('/results')} isDarkMode={isDarkMode} currentUser={userData?.username || "GUEST"} userId={userData?.user_id} />} />
              <Route path="/profile" element={<ProfileScreen scores={scores} userName={userName} userEmail={userEmail} onBack={() => navigate('/home')} isDarkMode={isDarkMode} />} />

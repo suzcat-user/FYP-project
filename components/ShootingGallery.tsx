@@ -136,52 +136,8 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
     };
   }, []);
 
-  const currentQuestion = questions[currentQuestionIndex];
-  const TOTAL_ROUNDS = 5;
-
-  // Map personality types to Trait enum
-  const personalityTypeToTrait: Record<string, Trait> = {
-    'CREATIVE': Trait.CREATIVE,
-    'SOCIAL': Trait.SOCIAL,
-    'STRATEGIC': Trait.STRATEGIC,
-    'ACTIVE': Trait.ACTIVE,
-    'EXPLORER': Trait.EXPLORER,
-    'CALM': Trait.CALM,
-  };
-
   const currentQuestion = questions.length > 0 ? questions[currentQuestionIndex % questions.length] : null;
-  const currentOptions = currentQuestion?.options || [];
-
-  const bubbleConfigs = useMemo(() => currentOptions.map(() => {
-    return {
-      top: 15 + Math.random() * 50,
-      left: 10 + Math.random() * 70,
-      delay: Math.random() * 8, 
-      duration: 5 + Math.random() * 6,
-      moveX: Math.random() * 100 - 50,
-      moveY: Math.random() * 80 - 40
-    };
-  }), [currentQuestionIndex, currentOptions.length]);
-
-  if (loading) {
-    return (
-      <GameContainer title="Reflex Pop" instruction="LOADING..." isDarkMode={isDarkMode}>
-        <div className="flex items-center justify-center w-full h-full">
-          <div className="text-white text-2xl">Loading questions...</div>
-        </div>
-      </GameContainer>
-    );
-  }
-
-  if (error || questions.length === 0) {
-    return (
-      <GameContainer title="Reflex Pop" instruction="ERROR" isDarkMode={isDarkMode}>
-        <div className="flex items-center justify-center w-full h-full">
-          <div className="text-red-400 text-2xl">{error || 'No questions found'}</div>
-        </div>
-      </GameContainer>
-    );
-  }
+  const TOTAL_ROUNDS = 5;
 
   const handleSkip = () => {
     if (round < TOTAL_ROUNDS - 1) {
@@ -281,7 +237,6 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
             {(currentQuestion?.answers || []).map((answer, index) => {
                 const config = bubbleConfigs[index];
                 if (!config) return null;
-                const trait = personalityTypeToTrait[option.personality_type || 'CALM'] || Trait.CALM;
                 return (
                     <div 
                       key={`${currentQuestionIndex}-${index}`} 

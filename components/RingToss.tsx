@@ -201,7 +201,6 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
     if (round < TOTAL_ROUNDS - 1 && questions.length) {
       setRound(prev => prev + 1);
       setCurrentQuestionIndex(prev => (prev + 1) % questions.length);
-      setCurrentQuestionIndex(prev => (prev + 1) % questions.length);
       setSelectedAnswer(null);
       setIsThrown(false);
     } else {
@@ -209,16 +208,15 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
     }
   };
 
-  const handleThrow = (option: any, index: number) => {
+  const handleThrow = (answer: RingTossAnswer, index: number) => {
     if (isThrown) return;
     setSelectedAnswer(index);
     setIsThrown(true);
-    onAnswer([trait as Trait], personalityCodes as PersonalityCode[] | undefined);
+    onAnswer([answer.trait as Trait], answer.personalityCodes as PersonalityCode[] | undefined);
     
     setTimeout(() => {
       if (round < TOTAL_ROUNDS - 1 && questions.length) {
         setRound(prev => prev + 1);
-        setCurrentQuestionIndex(prev => (prev + 1) % questions.length);
         setCurrentQuestionIndex(prev => (prev + 1) % questions.length);
         setSelectedAnswer(null);
         setIsThrown(false);
@@ -281,7 +279,7 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
                     const pos = POSITIONS[index % POSITIONS.length];
                     return (
                         <div key={index} className="absolute bottom-0 transition-transform duration-500 left-1/2" style={{ transform: `translateX(-50%) translateX(${pos.x}vmin) translateY(${pos.y}vmin) scale(${pos.z})`, zIndex: Math.floor(pos.z * 100) }}>
-                    <Stake onClick={() => handleThrow(answer.trait as Trait, answer.personalityCodes as PersonalityCode[] | undefined, index)} isThrown={isThrown} isSelected={selectedAnswer === index} colorClass={STAKE_COLORS[index % STAKE_COLORS.length]} label={answer.text} isDarkMode={isDarkMode} />
+                  <Stake onClick={() => handleThrow(answer, index)} isThrown={isThrown} isSelected={selectedAnswer === index} colorClass={STAKE_COLORS[index % STAKE_COLORS.length]} label={answer.text} isDarkMode={isDarkMode} />
                         </div>
                     );
                 })}

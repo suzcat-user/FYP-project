@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Scores, Hobby, Trait, Personalities, PersonalityScores, PersonalityCode } from '../types';
-import { getPersonalityFromScores, getCommunityRecommendations } from '../services/hobbyRecommendations';
+import { getPersonalityFromScores } from '../services/hobbyRecommendations';
 
 interface ResultsScreenProps {
   scores: Scores;
@@ -47,6 +47,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, personalityScores
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [hobbies, setHobbies] = useState<Hobby[]>([]);
+  const [communities, setCommunities] = useState<string[]>([]);
   
   // Debug: Log personality scores
   console.log('Personality Scores:', personalityScores);
@@ -57,9 +58,9 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, personalityScores
     return getPersonalityFromScores(personalityScores);
   }, [personalityScores]);
 
-  // Fetch hobbies from database based on top personality
+  // Fetch hobbies and communities from database based on top personality
   useEffect(() => {
-    const fetchHobbies = async () => {
+    const fetchHobbiesAndCommunities = async () => {
       try {
         setLoading(true);
         const topCode = personalityResult.code;
@@ -67,24 +68,23 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ scores, personalityScores
         if (response.ok) {
           const data = await response.json();
           setHobbies(data.hobbies || []);
+          setCommunities(data.communities || []);
         } else {
           // Fallback to empty if API fails
           setHobbies([]);
+          setCommunities([]);
         }
       } catch (err) {
-        console.error('Error fetching hobbies:', err);
+        console.error('Error fetching hobbies and communities:', err);
         setHobbies([]);
+        setCommunities([]);
       } finally {
         setLoading(false);
       }
     };
     
-    fetchHobbies();
+    fetchHobbiesAndCommunities();
   }, [personalityResult.code]);
-
-  const communities = useMemo(() => {
-    return getCommunityRecommendations(personalityScores);
-  }, [personalityScores]);
 
   const topTrait = useMemo(() => {
       const traits = Object.keys(scores) as Trait[];

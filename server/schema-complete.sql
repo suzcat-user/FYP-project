@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS quiz_sessions;
 DROP TABLE IF EXISTS question_options;
 DROP TABLE IF EXISTS choices;
 DROP TABLE IF EXISTS questions;
+DROP TABLE IF EXISTS game_question_sets;
 DROP TABLE IF EXISTS users;
 
 -- Re-enable foreign key checks
@@ -72,6 +73,14 @@ CREATE TABLE questions (
     INDEX idx_questions_order (question_order)
 );
 
+-- Game Question Sets (store full question sets in JSON per game)
+CREATE TABLE game_question_sets (
+    game_name VARCHAR(100) PRIMARY KEY,
+    questions JSON NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
 -- Question Options table
 CREATE TABLE question_options (
     option_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -129,3 +138,62 @@ CREATE TABLE user_answers (
     INDEX idx_user_answers_question_id (question_id),
     INDEX idx_user_answers_created_at (created_at)
 );
+
+-- Seed: Would You Rather game questions
+INSERT INTO game_question_sets (game_name, questions)
+VALUES (
+    'would_you_rather',
+    JSON_ARRAY(
+        JSON_OBJECT(
+            'question', 'Would you rather...',
+            'options', JSON_ARRAY('Build a giant pillow fort', 'Explore a secret garden'),
+            'colors', JSON_ARRAY('bg-[#84D2F6]', 'bg-[#90F1AC]')
+        ),
+        JSON_OBJECT(
+            'question', 'Would you rather have the power to...',
+            'options', JSON_ARRAY('Talk to animals', 'Invent a flying car'),
+            'colors', JSON_ARRAY('bg-[#F8A07E]', 'bg-[#FDE24F]')
+        ),
+        JSON_OBJECT(
+            'question', 'How would you spend a free afternoon?',
+            'options', JSON_ARRAY('At a bustling arcade', 'In a cozy library'),
+            'colors', JSON_ARRAY('bg-[#FF8FAB]', 'bg-[#A78BFA]')
+        ),
+        JSON_OBJECT(
+            'question', 'What would be your dream pet?',
+            'options', JSON_ARRAY('A tiny dragon', 'A loyal robot dog'),
+            'colors', JSON_ARRAY('bg-[#FDE24F]', 'bg-[#90F1AC]')
+        ),
+        JSON_OBJECT(
+            'question', 'You find a mysterious old map. Do you...',
+            'options', JSON_ARRAY('Follow it immediately', 'Research it at the library first'),
+            'colors', JSON_ARRAY('bg-[#F8A07E]', 'bg-[#A78BFA]')
+        ),
+        JSON_OBJECT(
+            'question', 'For your birthday party, would you prefer...',
+            'options', JSON_ARRAY('A huge party with all your friends', 'A small gathering with your closest pals'),
+            'colors', JSON_ARRAY('bg-[#FF8FAB]', 'bg-[#84D2F6]')
+        ),
+        JSON_OBJECT(
+            'question', 'Would you rather have a room that is...',
+            'options', JSON_ARRAY('Perfectly organized and tidy', 'A creative, beautiful mess'),
+            'colors', JSON_ARRAY('bg-[#84D2F6]', 'bg-[#F8A07E]')
+        ),
+        JSON_OBJECT(
+            'question', 'You''re directing a movie. It would be...',
+            'options', JSON_ARRAY('A hilarious comedy', 'An epic action-adventure'),
+            'colors', JSON_ARRAY('bg-[#FDE24F]', 'bg-[#F8A07E]')
+        ),
+        JSON_OBJECT(
+            'question', 'Would you rather have a notebook that...',
+            'options', JSON_ARRAY('Brings your drawings to life', 'Answers any question you write in it'),
+            'colors', JSON_ARRAY('bg-[#F8A07E]', 'bg-[#84D2F6]')
+        ),
+        JSON_OBJECT(
+            'question', 'Would you rather explore...',
+            'options', JSON_ARRAY('The deepest part of the ocean', 'The farthest reaches of outer space'),
+            'colors', JSON_ARRAY('bg-[#84D2F6]', 'bg-[#333] text-white')
+        )
+    )
+)
+ON DUPLICATE KEY UPDATE questions = VALUES(questions);

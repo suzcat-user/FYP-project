@@ -12,9 +12,22 @@ module.exports = (db) => {
         return res.status(400).json({ error: 'user_id, game_type, and answer_choice are required' });
       }
 
+      let safeQuestionId = question_id ?? null;
+
+      if (safeQuestionId !== null && safeQuestionId !== undefined) {
+        const [questionRows] = await db.execute(
+          'SELECT question_id FROM questions WHERE question_id = ? LIMIT 1',
+          [safeQuestionId]
+        );
+
+        if (!questionRows.length) {
+          safeQuestionId = null;
+        }
+      }
+
       const [result] = await db.execute(
         'INSERT INTO user_answers (user_id, game_type, question_id, answer_choice, trait_awarded) VALUES (?, ?, ?, ?, ?)',
-        [user_id, game_type, question_id || null, answer_choice, trait_awarded || null]
+        [user_id, game_type, safeQuestionId, answer_choice, trait_awarded || null]
       );
 
       res.json({ success: true, message: 'Answer saved', answer_id: result.insertId });

@@ -91,7 +91,7 @@ module.exports = (db) => {
     try {
       const { post_id, image_id } = req.params;
       const [rows] = await db.execute(
-        'SELECT mime_type, image_data FROM post_images WHERE post_id = ? AND image_id = ? LIMIT 1',
+        'SELECT mime_type, image_data, created_at FROM post_images WHERE post_id = ? AND image_id = ? LIMIT 1',
         [post_id, image_id]
       );
 
@@ -99,8 +99,13 @@ module.exports = (db) => {
         return res.status(404).json({ error: 'Image not found' });
       }
 
-      const { mime_type, image_data } = rows[0];
+      const { mime_type, image_data, created_at } = rows[0];
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      if (created_at) {
+        res.setHeader('Last-Modified', new Date(created_at).toUTCString());
+      }
       res.setHeader('Content-Type', mime_type);
+      res.setHeader('Content-Length', image_data.length);
       res.send(image_data);
     } catch (err) {
       console.error('Database error:', err);

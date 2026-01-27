@@ -38,8 +38,9 @@ const AttachmentCarousel: React.FC<{ urls: string[]; className?: string }> = ({ 
         <img
           src={urls[index]}
           alt={`Attachment ${index + 1}`}
-          loading="lazy"
+          loading="eager"
           decoding="async"
+          fetchPriority="high"
           onLoad={() => setIsLoaded(true)}
           className={`w-full max-h-[420px] object-contain border-2 border-current bg-black/5 transition-opacity duration-300 ease-in-out rounded-2xl ${isFading || !isLoaded ? 'opacity-0' : 'opacity-100'} ${!isLoaded ? 'absolute inset-0' : ''}`}
         />

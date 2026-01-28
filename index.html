@@ -30,6 +30,20 @@
       
       .font-press-start { font-family: 'Press Start 2P', cursive; }
 
+      /* HIDE CHATBOT BY DEFAULT - ONLY SHOW ON HOME PAGE */
+      #bp-web-widget-container,
+      [id^="bp-web-widget"],
+      .bp-widget-web,
+      .bpWidget,
+      div[style*="position: fixed"][style*="bottom"],
+      iframe[src*="botpress"] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        z-index: -9999 !important;
+      }
+
       /* Neon Pulse */
       @keyframes neon-pulse {
         0%, 100% { filter: drop-shadow(0 0 5px #0ea5e9) drop-shadow(0 0 10px #0ea5e9); }

@@ -6,6 +6,36 @@ interface WelcomeScreenProps {
   isDarkMode?: boolean;
 }
 
+// Function to load chatbot scripts
+const loadChatbotScripts = () => {
+  // Add cache-busting parameter to force fresh load
+  const cacheBuster = `?v=${Date.now()}`;
+  
+  // Load the first script (inject.js)
+  const script1 = document.createElement('script');
+  script1.src = `https://cdn.botpress.cloud/webchat/v3.5/inject.js${cacheBuster}`;
+  script1.async = true;
+  document.body.appendChild(script1);
+
+  // Load the second script (bot configuration)
+  const script2 = document.createElement('script');
+  script2.src = `https://files.bpcontent.cloud/2026/01/27/08/20260127082808-R5CGNPDZ.js${cacheBuster}`;
+  script2.defer = true;
+  document.body.appendChild(script2);
+
+  return () => {
+    // Cleanup: Remove scripts when component unmounts
+    if (script1.parentNode) script1.parentNode.removeChild(script1);
+    if (script2.parentNode) script2.parentNode.removeChild(script2);
+    
+    // Remove chatbot widget if it exists
+    const chatbotContainer = document.getElementById('bp-web-widget-container');
+    if (chatbotContainer && chatbotContainer.parentNode) {
+      chatbotContainer.parentNode.removeChild(chatbotContainer);
+    }
+  };
+};
+
 const TRAITS = [
     { name: "Creative", icon: "🎨", color: "text-sky-400", desc: "Builds from imagination.", stat: "DREAMER", gear: "Infinite Pen" },
     { name: "Active", icon: "⚡", color: "text-blue-400", desc: "Always in high gear.", stat: "KINETIC", gear: "Turbo Kicks" },
@@ -42,6 +72,12 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, isDarkMode = fal
   const [selectedUsername, setSelectedUsername] = useState(ListOfUsernames[Math.floor(Math.random() * ListOfUsernames.length)]);
   const [typedText, setTypedText] = useState('');
   const fullText = '"Find the spark that starts the flame." Discover your ultimate hobby through three precision-tuned arcade tests.';
+
+  // Load chatbot scripts only on home page
+  useEffect(() => {
+    const cleanup = loadChatbotScripts();
+    return cleanup;
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {

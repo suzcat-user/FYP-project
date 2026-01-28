@@ -86,30 +86,30 @@ module.exports = (db) => {
     }
   });
 
-  // Get post image by ID
-  router.get('/:post_id/images/:image_id', async (req, res) => {
+  // Get post media by ID
+  router.get('/:post_id/media/:media_id', async (req, res) => {
     try {
-      const { post_id, image_id } = req.params;
+      const { post_id, media_id } = req.params;
       const [rows] = await db.execute(
-        'SELECT mime_type, image_data, created_at FROM post_images WHERE post_id = ? AND image_id = ? LIMIT 1',
-        [post_id, image_id]
+        'SELECT mime_type, media_data, created_at FROM post_media WHERE post_id = ? AND media_id = ? LIMIT 1',
+        [post_id, media_id]
       );
 
       if (!rows.length) {
-        return res.status(404).json({ error: 'Image not found' });
+        return res.status(404).json({ error: 'Media not found' });
       }
 
-      const { mime_type, image_data, created_at } = rows[0];
+      const { mime_type, media_data, created_at } = rows[0];
       res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
       if (created_at) {
         res.setHeader('Last-Modified', new Date(created_at).toUTCString());
       }
       res.setHeader('Content-Type', mime_type);
-      res.setHeader('Content-Length', image_data.length);
-      res.send(image_data);
+      res.setHeader('Content-Length', media_data.length);
+      res.send(media_data);
     } catch (err) {
       console.error('Database error:', err);
-      return res.status(500).json({ error: 'Failed to fetch image' });
+      return res.status(500).json({ error: 'Failed to fetch media' });
     }
   });
 
@@ -148,7 +148,7 @@ module.exports = (db) => {
       const { post_id } = req.params;
       const { user_id } = req.body;
 
-      await db.execute('DELETE FROM post_images WHERE post_id = ?', [post_id]);
+      await db.execute('DELETE FROM post_media WHERE post_id = ?', [post_id]);
 
       const [result] = await db.execute('DELETE FROM posts WHERE post_id = ? AND user_id = ?', [post_id, user_id]);
 

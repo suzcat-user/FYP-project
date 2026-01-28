@@ -69,16 +69,16 @@ db.connect((err) => {
     )
   `;
 
-  // Create post_images table
-  const postImagesTable = `
-    CREATE TABLE IF NOT EXISTS post_images (
-      image_id INT AUTO_INCREMENT PRIMARY KEY,
+  // Create post_media table (DB stored media)
+  const postMediaTable = `
+    CREATE TABLE IF NOT EXISTS post_media (
+      media_id INT AUTO_INCREMENT PRIMARY KEY,
       post_id INT NOT NULL,
       mime_type VARCHAR(100) NOT NULL,
-      image_data LONGBLOB NOT NULL,
+      media_data LONGBLOB NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
-      INDEX idx_post_images_post_id (post_id)
+      INDEX idx_post_media_post_id (post_id)
     )
   `;
 
@@ -120,12 +120,12 @@ db.connect((err) => {
     console.log('✅ Posts table created');
   });
 
-  db.query(postImagesTable, (err) => {
+  db.query(postMediaTable, (err) => {
     if (err) {
-      console.error('Error creating post_images table:', err);
+      console.error('Error creating post_media table:', err);
       return;
     }
-    console.log('✅ Post images table created');
+    console.log('✅ Post media table created');
   });
 
   db.query(gameQuestionSetsTable, (err) => {

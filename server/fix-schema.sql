@@ -71,6 +71,17 @@ CREATE TABLE user_answers (
     INDEX idx_user_answers_question_id (question_id)
 );
 
+-- Post media table (stored in DB)
+CREATE TABLE IF NOT EXISTS post_media (
+    media_id INT AUTO_INCREMENT PRIMARY KEY,
+    post_id INT NOT NULL,
+    mime_type VARCHAR(100) NOT NULL,
+    media_data LONGBLOB NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
+    INDEX idx_post_media_post_id (post_id)
+);
+
 -- Seed: Would You Rather game questions
 INSERT INTO game_question_sets (game_name, questions)
 VALUES (

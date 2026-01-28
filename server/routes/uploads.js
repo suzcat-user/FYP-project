@@ -39,12 +39,12 @@ module.exports = (db) => {
 
       for (const file of files) {
         const [result] = await db.execute(
-          'INSERT INTO post_images (post_id, mime_type, image_data) VALUES (?, ?, ?)',
+          'INSERT INTO post_media (post_id, mime_type, media_data) VALUES (?, ?, ?)',
           [postId, file.mimetype, file.buffer]
         );
 
-        const imageId = result.insertId;
-        urls.push(`${host}/api/posts/${postId}/images/${imageId}`);
+        const mediaId = result.insertId;
+        urls.push(`${host}/api/posts/${postId}/media/${mediaId}`);
       }
 
       res.json({ success: true, urls });

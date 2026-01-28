@@ -27,6 +27,26 @@ const PIXEL_GIFS = [
   "https://media1.tenor.com/m/rxjtdE-oKtMAAAAC/little-mermaid-laughing.gif"
 ];
 
+const DEFAULT_EMOJIS = [
+  '😀','😃','😄','😁','😆','😅','😂','🤣','😊','😇','🙂','😉',
+  '😍','😘','😜','🤪','😎','🥳','🤩','😴','🤔','🫡','😤','😭',
+  '😮','😱','😬','😷','🤒','🤕','🥶','🥵','🤗','🙃','😵‍💫',
+  '🙌','👏','🫶','🙏','🤝','👍','👎','💪','✌️','🤘','👌','🤙',
+  '🔥','✨','💥','💫','🌟','🌈','⚡','☀️','🌙','🌧️','❄️','🌊',
+  '❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💖','💘','💯',
+  '🎉','🎊','🎈','🎁','🎂','🎯','🏆','🏅','🎮','🎨','🎵','🎬',
+  '📌','📣','📢','📷','📸','🧠','💡','📚','✏️','📝','🧩','🛠️',
+  '🚀','🛸','🏝️','🗺️','🍀','🌸','🌻','🍕','🍔','🍟','🍣','☕',
+  '🍩','🍪','🍰','🍫','🍿','🥤','🧋','🍹','🍺','🥂','🍎','🍉',
+  '🍓','🍒','🍇','🍍','🥑','🥦','🥕','🌽','🍔','🌮','🌯','🥗',
+  '🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐸',
+  '🐵','🐥','🐧','🐦','🦄','🐢','🐠','🐬','🦋','🐝','🌼','🌺',
+  '🏀','⚽','🏈','⚾','🎾','🏐','🏓','🎳','🛼','🚴','🏃','🧘',
+  '⌛','⏰','📍','🧭','🧳','🎒','🛍️','🎧','📱','💻','🖥️','🖱️',
+  '🔮','🧿','💎','🪄','🧸','🪅','🪩','🎀','🧵','🧶','🧷','🪡',
+  '✅','❌','⚠️','❗','❓','➕','➖','➗','✖️','🔔','🔒','🔑'
+];
+
 
 const AttachmentCarousel: React.FC<{ urls: string[]; className?: string }> = ({ urls, className }) => {
   const [index, setIndex] = useState(0);
@@ -104,6 +124,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
   const [newPostContent, setNewPostContent] = useState('');
   const [newPostTitle, setNewPostTitle] = useState('');
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [resolvedUserId, setResolvedUserId] = useState<number | undefined>(userId);
   const [resolvedUsername, setResolvedUsername] = useState<string>(currentUser || 'USER_1');
 
@@ -124,6 +145,10 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
 
   const removeAttachment = (index: number) => {
     setAttachments(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleAddEmoji = (emoji: string) => {
+    setNewPostContent(prev => `${prev}${emoji}`);
   };
 
   const [posts, setPosts] = useState<Post[]>([]);
@@ -381,6 +406,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
     setNewPostContent('');
     setAttachments([]);
     setEditingPostId(null);
+    setShowEmojiPicker(false);
   };
 
   if (!resolvedHobby && !hobbySlug) return <div className="p-10 text-center font-press-start">SELECT A HOBBY FIRST</div>;
@@ -488,6 +514,29 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
                     onChange={e => setNewPostContent(e.target.value)}
                     className={`p-3 font-vt323 text-2xl border-4 ${isDarkMode ? 'bg-slate-900 border-indigo-900' : 'bg-gray-50 border-gray-300'}`}
                   ></textarea>
+
+                  <div className="relative inline-block">
+                    <button
+                      onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                      className={`font-press-start text-[1vmin] px-4 py-2 border-2 ${isDarkMode ? 'bg-indigo-950 border-indigo-800' : 'bg-gray-100 border-gray-300'}`}
+                    >
+                      EMOJI
+                    </button>
+                    {showEmojiPicker && (
+                      <div className={`absolute z-20 mt-3 p-3 border-2 grid grid-cols-5 gap-2 w-64 max-h-48 overflow-y-auto shadow-lg ${isDarkMode ? 'bg-[#0f111a] border-indigo-900' : 'bg-white border-gray-300'}`}>
+                        {DEFAULT_EMOJIS.map((emoji) => (
+                          <button
+                            key={emoji}
+                            onClick={() => handleAddEmoji(emoji)}
+                            className="text-2xl hover:scale-110 transition"
+                            aria-label={`Insert ${emoji}`}
+                          >
+                            {emoji}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                   
                   {!editingPostId && (
                     <div className="flex items-center gap-4">

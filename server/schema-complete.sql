@@ -6,6 +6,8 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 -- Drop all existing tables to start fresh
 DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS post_images;
+DROP TABLE IF EXISTS post_media;
 DROP TABLE IF EXISTS user_answers;
 DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS quiz_sessions;
@@ -44,15 +46,15 @@ CREATE TABLE posts (
     INDEX idx_posts_created_at (created_at)
 );
 
--- Post images (stored in DB)
-CREATE TABLE post_images (
-    image_id INT AUTO_INCREMENT PRIMARY KEY,
+-- Post media (stored in DB)
+CREATE TABLE post_media (
+    media_id INT AUTO_INCREMENT PRIMARY KEY,
     post_id INT NOT NULL,
     mime_type VARCHAR(100) NOT NULL,
-    image_data LONGBLOB NOT NULL,
+    media_data LONGBLOB NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
-    INDEX idx_post_images_post_id (post_id)
+    INDEX idx_post_media_post_id (post_id)
 );
 
 -- Comments table

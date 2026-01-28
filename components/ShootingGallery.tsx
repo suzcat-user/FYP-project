@@ -44,56 +44,36 @@ type ShootingGalleryQuestion = {
 
 const API_BASE_URL = 'http://localhost:3001';
 
-const BubbleTarget: React.FC<{ 
-  text: string; 
-  description?: string; 
+
+const BubbleTarget: React.FC<{
+  text: string;
+  description?: string;
   trait: Trait;
-  onClick: () => void; 
+  onClick: () => void;
   isDarkMode: boolean;
   isPopped: boolean;
 }> = ({ text, description, trait, onClick, isDarkMode, isPopped }) => {
-  const [showBelow, setShowBelow] = React.useState(false);
-
-  const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const parentRect = e.currentTarget.parentElement?.getBoundingClientRect();
-    
-    if (parentRect) {
-      // Check if there's enough space above (at least 150px for tooltip)
-      const spaceAbove = rect.top - parentRect.top;
-      setShowBelow(spaceAbove < 150);
-    }
-  };
-
   return (
-    <button 
+    <button
       onClick={onClick}
-      onMouseEnter={handleMouseEnter}
       className={`absolute w-[16vmin] h-[16vmin] rounded-full flex flex-col items-center justify-center p-2 text-center group z-30 transition-all active:scale-95 focus:outline-none 
         ${isPopped ? 'scale-150 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}`}
     >
-      <div className={`absolute inset-0 rounded-full backdrop-blur-[4px] border-4 shadow-2xl transition-all duration-500 overflow-hidden bg-gradient-to-br ${TRAIT_COLORS[trait]} opacity-30 group-hover:opacity-60`}>
-          <div className="absolute top-[10%] left-[15%] w-[40%] h-[20%] bg-white/60 rounded-[50%] transform -rotate-45 blur-[2px]"></div>
-          <div className="absolute -inset-2 bg-[radial-gradient(circle,white_0%,transparent_70%)] opacity-20 group-hover:animate-pulse"></div>
+      {/* Tooltip always above */}
+      <div className={`absolute bottom-[115%] left-1/2 -translate-x-1/2 w-[35vmin] p-3 border-4 shadow-[12px_12px_0px_rgba(0,0,0,0.3)] z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100 origin-bottom rounded-none backdrop-blur-xl ${isDarkMode ? 'bg-slate-950 border-white text-white' : 'bg-white border-sky-900 text-sky-900'}`}>
+        <p className="font-press-start text-[1.4vmin] mb-2 border-b-2 border-current pb-1 uppercase tracking-tighter">{text}</p>
+        <p className={`font-vt323 text-[2.2vmin] leading-tight ${isDarkMode ? 'text-indigo-100' : 'text-gray-700'}`}>{description}</p>
+        <div className={`absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[10px] ${isDarkMode ? 'border-t-white' : 'border-t-sky-900'}`}></div>
       </div>
-      
+
+      <div className={`absolute inset-0 rounded-full backdrop-blur-[4px] border-4 shadow-2xl transition-all duration-500 overflow-hidden bg-gradient-to-br ${TRAIT_COLORS[trait]} opacity-30 group-hover:opacity-60`}>
+        <div className="absolute top-[10%] left-[15%] w-[40%] h-[20%] bg-white/60 rounded-[50%] transform -rotate-45 blur-[2px]"></div>
+        <div className="absolute -inset-2 bg-[radial-gradient(circle,white_0%,transparent_70%)] opacity-20 group-hover:animate-pulse"></div>
+      </div>
+
       <div className="relative z-10 text-[6vmin] drop-shadow-[0_0_10px_rgba(255,255,255,0.5)] group-hover:scale-125 transition-transform duration-300">
         {TRAIT_ICONS[trait]}
       </div>
-
-      {!showBelow ? (
-        <div className={`absolute bottom-[115%] left-1/2 -translate-x-1/2 w-[35vmin] p-3 border-4 shadow-[12px_12px_0px_rgba(0,0,0,0.3)] z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100 origin-bottom rounded-none backdrop-blur-xl ${isDarkMode ? 'bg-slate-950 border-white text-white' : 'bg-white border-sky-900 text-sky-900'}`}>
-           <p className="font-press-start text-[1.4vmin] mb-2 border-b-2 border-current pb-1 uppercase tracking-tighter">{text}</p>
-           <p className={`font-vt323 text-[2.2vmin] leading-tight ${isDarkMode ? 'text-indigo-100' : 'text-gray-700'}`}>{description}</p>
-           <div className={`absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[10px] ${isDarkMode ? 'border-t-white' : 'border-t-sky-900'}`}></div>
-        </div>
-      ) : (
-        <div className={`absolute top-[115%] left-1/2 -translate-x-1/2 w-[35vmin] p-3 border-4 shadow-[12px_12px_0px_rgba(0,0,0,0.3)] z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100 origin-top rounded-none backdrop-blur-xl ${isDarkMode ? 'bg-slate-950 border-white text-white' : 'bg-white border-sky-900 text-sky-900'}`}>
-           <p className="font-press-start text-[1.4vmin] mb-2 border-b-2 border-current pb-1 uppercase tracking-tighter">{text}</p>
-           <p className={`font-vt323 text-[2.2vmin] leading-tight ${isDarkMode ? 'text-indigo-100' : 'text-gray-700'}`}>{description}</p>
-           <div className={`absolute bottom-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[10px] ${isDarkMode ? 'border-b-white' : 'border-b-sky-900'}`}></div>
-        </div>
-      )}
     </button>
   );
 };

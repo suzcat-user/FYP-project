@@ -10,17 +10,25 @@ export interface LeaderboardEntry {
 
 export const leaderboardService = {
   /**
-   * Fetch top ranked users from the backend by querying all users and sorting
-   * @param limit - Number of top players to fetch (default: 10)
-   * @returns Array of ranked users
+   * Fetch all users ranked by score (highest first)
+   * @param limit - Optional limit on number of results
+   * @returns Array of ranked users sorted by score
    */
-  async getTopPlayers(limit: number = 10): Promise<LeaderboardEntry[]> {
+  async getTopPlayers(limit?: number): Promise<LeaderboardEntry[]> {
     try {
-      // For now, return empty leaderboard - can be populated by user profile data
-      return [];
+      const url = limit 
+        ? `/api/users/leaderboard/top?limit=${limit}`
+        : '/api/users/leaderboard/top';
+      
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch leaderboard: ${response.statusText}`);
+      }
+      const data = await response.json();
+      return data || [];
     } catch (error) {
       console.error('Error fetching leaderboard:', error);
-      throw error;
+      return [];
     }
   },
 
@@ -37,9 +45,13 @@ export const leaderboardService = {
       }
       const userData = await response.json();
       
+      // Fetch full leaderboard to determine rank
+      const leaderboard = await this.getTopPlayers();
+      const userRank = leaderboard.findIndex(entry => entry.user_id === userId) + 1;
+      
       return {
-        rank: 0, // Will be calculated when leaderboard endpoint is fixed
-        score: userData.score,
+        rank: userRank || 0,
+        score: userData.score || 0,
       };
     } catch (error) {
       console.error('Error fetching user rank:', error);

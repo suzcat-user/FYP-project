@@ -266,25 +266,12 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, ho
                       </div>
                     </>
                   ) : (
-                    <>
-                      <div className="flex items-center p-4 bg-pink-600/20 animate-pulse border-y-4 border-pink-500/50">
-                        <div className="w-[15%] text-center font-press-start text-[2vmin]">👤</div>
-                        <div className="w-[40%] flex items-center gap-4">
-                          <span className="opacity-40">[YOU]</span>
-                          <span className="text-yellow-400 font-bold uppercase tracking-wider">YOUR SCORE</span>
-                        </div>
-                        <div className="w-[20%] text-center font-press-start text-[1vmin]">RANK #1</div>
-                        <div className="w-[25%] text-right font-press-start text-[1.5vmin] text-white">
-                          <AnimatedScore finalValue={userScore} />
-                        </div>
+                    <div className="flex items-center justify-center h-full">
+                      <div className="text-center">
+                        <span className="font-press-start text-[1.2vmin] opacity-70 block">NO LEADERBOARD DATA</span>
+                        <span className="font-press-start text-[1vmin] opacity-50 block mt-2">Join events to appear!</span>
                       </div>
-                      <div className="flex items-center justify-center h-full">
-                        <div className="text-center">
-                          <span className="font-press-start text-[1.2vmin] opacity-70 block">LEADERBOARD DATA</span>
-                          <span className="font-press-start text-[1vmin] opacity-50 block mt-2">Coming Soon</span>
-                        </div>
-                      </div>
-                    </>
+                    </div>
                   )}
               </div>
           </div>

@@ -147,12 +147,20 @@ module.exports = (db) => {
   });
 
   // Get leaderboard - top users ranked by score
-  router.get('/leaderboard/top', (req, res) => {
+  router.get('/leaderboard/top', async (req, res) => {
     try {
-      // Return a test response  
-      const leaderboard = [
-        { user_id: 3, username: 'Shiva', score: 64, rank: 1, emblem: '🏆' },
-      ];
+      // Fetch all users sorted by score (highest first)
+      const [users] = await db.query('SELECT user_id, username, score FROM users ORDER BY score DESC');
+      
+      // Add rank and emblem to each user
+      const leaderboard = users.map((user, index) => ({
+        user_id: user.user_id,
+        username: user.username,
+        score: user.score,
+        rank: index + 1,
+        emblem: index === 0 ? '🏆' : index === 1 ? '🥈' : index === 2 ? '🥉' : '✨',
+      }));
+
       res.json(leaderboard);
     } catch (err) {
       console.error('Leaderboard endpoint error:', err);

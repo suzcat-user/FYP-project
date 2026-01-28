@@ -72,37 +72,37 @@ const Stake: React.FC<{
     <button
       onClick={onClick}
       disabled={isThrown}
-      className="relative w-[12vmin] h-[25vmin] flex flex-col items-center justify-end group focus:outline-none"
+      className="relative w-[clamp(70px,12vmin,140px)] h-[clamp(170px,25vmin,320px)] flex flex-col items-center justify-end group focus:outline-none"
     >
       <div 
-        className={`absolute w-[10vmin] h-[4vmin] z-0 pointer-events-none transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]
+        className={`absolute w-[clamp(52px,10vmin,120px)] h-[clamp(18px,4vmin,60px)] z-0 pointer-events-none transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]
             ${isSelected 
                 ? 'top-[22vmin] scale-100 rotate-[5deg]' 
                 : '-top-[30vmin] scale-[2] rotate-[45deg] opacity-0 group-hover:opacity-60 group-hover:-top-[15vmin]' 
             }`}
       >
-         <div className={`w-full h-full rounded-full border-[1.2vmin] bg-transparent shadow-[0_4px_4px_rgba(0,0,0,0.4)] ${isDarkMode ? 'border-pink-500 shadow-pink-900/40' : 'border-[#e2e8f0]'}`}></div>
+        <div className={`w-full h-full rounded-full border-[clamp(6px,1.2vmin,14px)] bg-transparent shadow-[0_4px_4px_rgba(0,0,0,0.4)] ${isDarkMode ? 'border-pink-500 shadow-pink-900/40' : 'border-[#e2e8f0]'}`}></div>
       </div>
 
-      <div className={`w-[2vmin] h-[20vmin] ${colorClass} rounded-t-full relative z-10 shadow-[-2px_0_2px_rgba(0,0,0,0.3)_inset] border-l border-white/20 transition-transform duration-300 group-hover:-translate-y-2`}>
+      <div className={`w-[clamp(10px,2vmin,22px)] h-[clamp(140px,20vmin,260px)] ${colorClass} rounded-t-full relative z-10 shadow-[-2px_0_2px_rgba(0,0,0,0.3)_inset] border-l border-white/20 transition-transform duration-300 group-hover:-translate-y-2`}>
          <div className="absolute top-2 right-1/4 h-[90%] w-[20%] bg-white/30 rounded-full blur-[1px]"></div>
-         <div className={`absolute bottom-[105%] left-1/2 -translate-x-1/2 p-6 border-4 shadow-[8px_8px_0px_rgba(0,0,0,0.2)] z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-200 min-w-[55vmin] max-w-[65vmin] rounded-none scale-90 group-hover:scale-100 origin-bottom ${isDarkMode ? 'bg-slate-900 border-indigo-500' : 'bg-white border-sky-900'}`}>
+        <div className={`absolute bottom-[105%] left-1/2 -translate-x-1/2 p-4 sm:p-6 border-4 shadow-[8px_8px_0px_rgba(0,0,0,0.2)] z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-200 min-w-[min(55vmin,90vw)] max-w-[min(65vmin,92vw)] rounded-none scale-90 group-hover:scale-100 origin-bottom ${isDarkMode ? 'bg-slate-900 border-indigo-500' : 'bg-white border-sky-900'}`}>
              <div className="flex items-center justify-center">
-               <div className={`font-vt323 text-xl md:text-2xl lg:text-3xl font-bold leading-tight text-center ${isDarkMode ? 'text-pink-400' : 'text-sky-900'}`}>{label}</div>
+            <div className={`font-vt323 text-[clamp(18px,3vw,32px)] font-bold leading-tight text-center ${isDarkMode ? 'text-pink-400' : 'text-sky-900'}`}>{label}</div>
              </div>
              <div className={`absolute top-full left-1/2 -translate-x-1/2 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[10px] ${isDarkMode ? 'border-t-indigo-500' : 'border-t-sky-900'}`}></div>
          </div>
       </div>
 
       <div 
-        className={`absolute w-[10vmin] h-[4vmin] z-20 pointer-events-none transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]
+        className={`absolute w-[clamp(52px,10vmin,120px)] h-[clamp(18px,4vmin,60px)] z-20 pointer-events-none transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]
             ${isSelected 
                 ? 'top-[22vmin] scale-100 rotate-[5deg]' 
                 : '-top-[30vmin] scale-[2] rotate-[45deg] opacity-0 group-hover:opacity-60 group-hover:-top-[15vmin]' 
             }`}
         style={{ clipPath: 'polygon(0% 50%, 100% 50%, 100% 100%, 0% 100%)' }}
       >
-        <div className={`w-full h-full rounded-full border-[1.2vmin] bg-transparent shadow-[0_4px_4px_rgba(0,0,0,0.4)] relative ${isDarkMode ? 'border-pink-500 shadow-pink-900/40' : 'border-[#e2e8f0]'}`}>
+        <div className={`w-full h-full rounded-full border-[clamp(6px,1.2vmin,14px)] bg-transparent shadow-[0_4px_4px_rgba(0,0,0,0.4)] relative ${isDarkMode ? 'border-pink-500 shadow-pink-900/40' : 'border-[#e2e8f0]'}`}>
              <div className="absolute inset-0 rounded-full shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]"></div>
         </div>
       </div>
@@ -259,7 +259,7 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
       {loadError && (
         <div className="w-full text-center text-sm text-red-500 mb-2">{loadError}</div>
       )}
-      <div className={`flex-1 w-full h-full relative overflow-hidden transition-colors duration-500 border-4 shadow-inner rounded-lg 
+        <div className={`flex-1 w-full min-h-[60vh] sm:min-h-0 relative overflow-hidden transition-colors duration-500 border-4 shadow-inner rounded-lg 
           ${isDarkMode ? 'bg-gradient-to-b from-indigo-950 via-slate-900 to-indigo-950 border-indigo-900' : 'bg-gradient-to-b from-cyan-400 via-emerald-400 to-cyan-500 border-sky-900'}`}>
           
           <div className="absolute inset-0 opacity-10 pointer-events-none" 
@@ -288,12 +288,12 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
             />
           ))}
 
-            <div className="absolute inset-0 flex items-end justify-center pb-[12vmin] z-10" style={{ perspective: '100vmin' }}>
-            <div className="relative w-full h-[60vmin] flex justify-center items-end" style={{ transformStyle: 'preserve-3d' }}>
+            <div className="absolute inset-0 flex items-end justify-center pb-[10vmin] sm:pb-[12vmin] z-10" style={{ perspective: 'min(100vmin,900px)' }}>
+            <div className="relative w-full h-[min(70vmin,520px)] sm:h-[60vmin] flex justify-center items-end scale-90 sm:scale-100" style={{ transformStyle: 'preserve-3d' }}>
               {currentQuestion?.answers?.slice(0, 6).map((answer, index) => {
                     const pos = POSITIONS[index % POSITIONS.length];
                     return (
-                        <div key={index} className="absolute bottom-0 transition-transform duration-500 left-1/2" style={{ transform: `translateX(-50%) translateX(${pos.x}vmin) translateY(${pos.y}vmin) scale(${pos.z})`, zIndex: Math.floor(pos.z * 100) }}>
+                  <div key={index} className="absolute bottom-0 transition-transform duration-500 left-1/2" style={{ transform: `translateX(-50%) translateX(${pos.x}vmin) translateY(${pos.y}vmin) scale(${pos.z})`, zIndex: Math.floor(pos.z * 100) }}>
                   <Stake onClick={() => handleThrow(answer, index)} isThrown={isThrown} isSelected={selectedAnswer === index} colorClass={STAKE_COLORS[index % STAKE_COLORS.length]} label={answer.text} isDarkMode={isDarkMode} />
                         </div>
                     );
@@ -301,12 +301,12 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
             </div>
           </div>
       </div>
-       <div className={`mt-2 flex items-center justify-between px-6 py-1 transition-colors duration-500 ${isDarkMode ? 'bg-slate-900' : 'bg-white/50'}`}>
-           <span className={`font-press-start text-[1.2vmin] ${isDarkMode ? 'text-pink-400' : 'text-sky-900'}`}>ROUND: {round + 1}/5</span>
-           <p className={`text-[1.5vmin] animate-pulse font-press-start transition-colors duration-500 ${isDarkMode ? 'text-indigo-400' : 'text-sky-900'}`}>SCROLL FOR MANUAL</p>
+           <div className={`mt-2 flex flex-col sm:flex-row items-center justify-between gap-2 px-4 sm:px-6 py-2 transition-colors duration-500 ${isDarkMode ? 'bg-slate-900' : 'bg-white/50'}`}>
+             <span className={`font-press-start text-[clamp(10px,1.4vmin,14px)] ${isDarkMode ? 'text-pink-400' : 'text-sky-900'}`}>ROUND: {round + 1}/5</span>
+             <p className={`text-[clamp(10px,1.6vmin,16px)] animate-pulse font-press-start transition-colors duration-500 ${isDarkMode ? 'text-indigo-400' : 'text-sky-900'}`}>SCROLL FOR MANUAL</p>
            <div className="flex gap-1">
                {[...Array(5)].map((_, i) => (
-                   <div key={i} className={`w-3 h-3 border-2 transition-colors ${i <= round ? (isDarkMode ? 'bg-pink-500 border-pink-300 shadow-[0_0_5px_#f472b6]' : 'bg-yellow-400 border-sky-900') : 'bg-transparent border-gray-400'}`}></div>
+                 <div key={i} className={`w-2.5 h-2.5 sm:w-3 sm:h-3 border-2 transition-colors ${i <= round ? (isDarkMode ? 'bg-pink-500 border-pink-300 shadow-[0_0_5px_#f472b6]' : 'bg-yellow-400 border-sky-900') : 'bg-transparent border-gray-400'}`}></div>
                ))}
            </div>
        </div>

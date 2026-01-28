@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import ArcadeButton from './ui/ArcadeButton';
 
 interface WelcomeScreenProps {
@@ -63,7 +62,6 @@ const ListOfUsernames = [
 ]
 
 const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, isDarkMode = false }) => {
-  const navigate = useNavigate();
   const [selectedHobby, setSelectedHobby] = useState('HOBBY ARCADE');
   const [selectedUsername, setSelectedUsername] = useState(ListOfUsernames[Math.floor(Math.random() * ListOfUsernames.length)]);
   const [typedText, setTypedText] = useState('');
@@ -193,19 +191,6 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, isDarkMode = fal
 
       {/* HEADER SECTION */}
       <section className="min-h-screen w-full flex flex-col items-center justify-center p-6 relative z-10">
-          {/* Left Side Leaderboard Button */}
-          <button
-            onClick={() => navigate('/community')}
-            className={`absolute left-6 top-24 px-4 py-3 border-4 font-press-start text-[1vmin] transition-all hover:scale-110 active:scale-95 ${
-              isDarkMode
-                ? 'bg-indigo-700 border-indigo-900 text-indigo-100 hover:bg-indigo-600'
-                : 'bg-indigo-600 border-indigo-800 text-white hover:bg-indigo-700'
-            }`}
-            title="View Leaderboard"
-          >
-            🏆 LEADERBOARD
-          </button>
-
           <div className="absolute top-10 flex flex-col items-center gap-2">
              <div className={`flex gap-2 font-press-start text-[0.8vmin] ${isDarkMode ? 'text-slate-400/60' : 'text-sky-400/60'} uppercase`}>
                 <span>TERMINAL: 09</span>

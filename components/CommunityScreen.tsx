@@ -230,7 +230,7 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, ho
                     </div>
                   ) : leaderboard && leaderboard.length > 0 ? (
                     <>
-                      {leaderboard.map((player) => (
+                      {leaderboard.slice(3, 10).map((player) => (
                         <div key={player.rank} className="flex items-center p-4 hover:bg-white/10 transition-colors group">
                           <div className={`w-[15%] text-center font-press-start text-[2vmin]`}>
                             {player.emblem}

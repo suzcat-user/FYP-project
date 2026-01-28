@@ -82,6 +82,24 @@ CREATE TABLE IF NOT EXISTS post_media (
     INDEX idx_post_media_post_id (post_id)
 );
 
+-- Emoji catalog (available emojis)
+CREATE TABLE IF NOT EXISTS emoji_catalog (
+    emoji_id INT AUTO_INCREMENT PRIMARY KEY,
+    emoji VARCHAR(16) NOT NULL UNIQUE
+);
+
+-- GIF catalog (available GIF URLs)
+CREATE TABLE IF NOT EXISTS gif_catalog (
+    gif_id INT AUTO_INCREMENT PRIMARY KEY,
+    url VARCHAR(512) NOT NULL UNIQUE
+);
+
+-- Media catalog (JSON arrays)
+CREATE TABLE IF NOT EXISTS media_catalog (
+    catalog_type VARCHAR(16) PRIMARY KEY,
+    items JSON NOT NULL
+);
+
 -- Seed: Would You Rather game questions
 INSERT INTO game_question_sets (game_name, questions)
 VALUES (

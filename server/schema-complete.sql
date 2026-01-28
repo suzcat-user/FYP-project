@@ -8,6 +8,9 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS comments;
 DROP TABLE IF EXISTS post_images;
 DROP TABLE IF EXISTS post_media;
+DROP TABLE IF EXISTS emoji_catalog;
+DROP TABLE IF EXISTS gif_catalog;
+DROP TABLE IF EXISTS media_catalog;
 DROP TABLE IF EXISTS user_answers;
 DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS quiz_sessions;
@@ -44,6 +47,24 @@ CREATE TABLE posts (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     INDEX idx_posts_user_id (user_id),
     INDEX idx_posts_created_at (created_at)
+);
+
+-- Emoji catalog (available emojis)
+CREATE TABLE emoji_catalog (
+    emoji_id INT AUTO_INCREMENT PRIMARY KEY,
+    emoji VARCHAR(16) NOT NULL UNIQUE
+);
+
+-- GIF catalog (available GIF URLs)
+CREATE TABLE gif_catalog (
+    gif_id INT AUTO_INCREMENT PRIMARY KEY,
+    url VARCHAR(512) NOT NULL UNIQUE
+);
+
+-- Media catalog (JSON arrays)
+CREATE TABLE media_catalog (
+    catalog_type VARCHAR(16) PRIMARY KEY,
+    items JSON NOT NULL
 );
 
 -- Post media (stored in DB)

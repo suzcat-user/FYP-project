@@ -9,11 +9,12 @@ interface PostPageProps {
   userId?: number;
 }
 
+const API_BASE_URL = 'http://localhost:3001';
 
 const DEFAULT_EMOJIS = [
   '😀','😃','😄','😁','😆','😅','😂','🤣','😊','😇','🙂','😉',
   '😍','😘','😜','🤪','😎','🥳','🤩','😴','🤔','🫡','😤','😭',
-  '😮','😱','😬','😷','🤒','🤕','🥶','🥵','🤗','🙃','😵‍💫',
+  '😮','😱','😬','😷','🤒','🤕','🥶','🥵','🤗','🙃','😵‍💫', '😡',
   '🙌','👏','🫶','🙏','🤝','👍','👎','💪','✌️','🤘','👌','🤙',
   '🔥','✨','💥','💫','🌟','🌈','⚡','☀️','🌙','🌧️','❄️','🌊',
   '❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💖','💘','💯',
@@ -21,7 +22,7 @@ const DEFAULT_EMOJIS = [
   '📌','📣','📢','📷','📸','🧠','💡','📚','✏️','📝','🧩','🛠️',
   '🚀','🛸','🏝️','🗺️','🍀','🌸','🌻','🍕','🍔','🍟','🍣','☕',
   '🍩','🍪','🍰','🍫','🍿','🥤','🧋','🍹','🍺','🥂','🍎','🍉',
-  '🍓','🍒','🍇','🍍','🥑','🥦','🥕','🌽','🍔','🌮','🌯','🥗',
+  '🍓','🍒','🍇','🍍','🥑','🥦','🥕','🌽','🌮','🌯','🥗',
   '🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐸',
   '🐵','🐥','🐧','🐦','🦄','🐢','🐠','🐬','🦋','🐝','🌼','🌺',
   '🏀','⚽','🏈','⚾','🎾','🏐','🏓','🎳','🛼','🚴','🏃','🧘',
@@ -113,10 +114,11 @@ const AttachmentCarousel: React.FC<{ urls: string[]; className?: string }> = ({ 
   );
 };
 
-const CommentInput: React.FC<{ onAdd: (content: string, gifs?: string[]) => void; isDarkMode: boolean }> = ({ onAdd, isDarkMode }) => {
+const CommentInput: React.FC<{ onAdd: (content: string, gifs?: string[]) => void; isDarkMode: boolean; emojis: string[]; gifs: string[] }> = ({ onAdd, isDarkMode, emojis, gifs }) => {
   const [text, setText] = useState('');
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [showGifs, setShowGifs] = useState(false);
+  const [showMediaPicker, setShowMediaPicker] = useState(false);
+  const [activeTab, setActiveTab] = useState<'emoji' | 'gif'>('emoji');
+  const [mediaSearch, setMediaSearch] = useState('');
   const [selectedGifs, setSelectedGifs] = useState<string[]>([]);
 
   const handleAddEmoji = (emoji: string) => {
@@ -141,60 +143,77 @@ const CommentInput: React.FC<{ onAdd: (content: string, gifs?: string[]) => void
         placeholder="Write a comment..."
       />
       <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="relative inline-block">
-            <button
-              onClick={() => setShowGifs(!showGifs)}
-              className={`font-press-start text-[1vmin] px-3 py-2 border-2 ${isDarkMode ? 'bg-indigo-950 border-indigo-800 text-indigo-100' : 'bg-gray-100 border-gray-300 text-gray-800'}`}
-            >
-              GIF ({selectedGifs.length})
-            </button>
-            {showGifs && (
-              <div className={`absolute z-20 mt-3 p-3 border-2 w-72 max-h-52 overflow-y-auto shadow-lg ${isDarkMode ? 'bg-[#0f111a] border-indigo-900' : 'bg-white border-gray-300'}`}>
-                <div className="grid grid-cols-2 gap-2">
-                  {PIXEL_GIFS.map((gif) => (
-                    <button
-                      key={gif}
-                      onClick={() => toggleGif(gif)}
-                      className={`border-2 ${selectedGifs.includes(gif) ? 'border-green-400' : 'border-transparent'} rounded`}
-                    >
-                      <img src={gif} alt="gif" className="w-full h-20 object-cover" />
-                    </button>
-                  ))}
+        <div className="relative inline-block">
+          <button
+            onClick={() => setShowMediaPicker(!showMediaPicker)}
+            className={`font-press-start text-[1vmin] px-3 py-2 border-2 ${isDarkMode ? 'bg-indigo-950 border-indigo-800 text-indigo-100' : 'bg-gray-100 border-gray-300 text-gray-800'}`}
+          >
+            MEDIA ({selectedGifs.length})
+          </button>
+          {showMediaPicker && (
+            <div className={`absolute z-20 mt-3 p-3 border-2 w-80 max-h-64 overflow-y-auto shadow-lg ${isDarkMode ? 'bg-[#0f111a] border-indigo-900' : 'bg-white border-gray-300'}`}>
+              <div className="flex items-center gap-2 mb-3">
+                <button
+                  onClick={() => setActiveTab('emoji')}
+                  className={`px-3 py-1 border-2 text-xs ${activeTab === 'emoji' ? 'bg-green-500 text-white border-green-700' : isDarkMode ? 'bg-slate-900 border-indigo-800 text-indigo-100' : 'bg-gray-100 border-gray-300 text-gray-800'}`}
+                >
+                  Emoji
+                </button>
+                <button
+                  onClick={() => setActiveTab('gif')}
+                  className={`px-3 py-1 border-2 text-xs ${activeTab === 'gif' ? 'bg-green-500 text-white border-green-700' : isDarkMode ? 'bg-slate-900 border-indigo-800 text-indigo-100' : 'bg-gray-100 border-gray-300 text-gray-800'}`}
+                >
+                  GIFs
+                </button>
+                <input
+                  value={mediaSearch}
+                  onChange={(e) => setMediaSearch(e.target.value)}
+                  placeholder="Search"
+                  className={`ml-auto px-2 py-1 text-xs border-2 w-32 ${isDarkMode ? 'bg-slate-900 border-indigo-900 text-white' : 'bg-gray-50 border-gray-300'}`}
+                />
+              </div>
+
+              {activeTab === 'emoji' ? (
+                <div className="grid grid-cols-5 gap-2">
+                  {emojis
+                    .filter((emoji) => !mediaSearch || emoji.includes(mediaSearch))
+                    .map((emoji) => (
+                      <button
+                        key={emoji}
+                        onClick={() => handleAddEmoji(emoji)}
+                        className="text-2xl hover:scale-110 transition"
+                        aria-label={`Insert ${emoji}`}
+                      >
+                        {emoji}
+                      </button>
+                    ))}
                 </div>
-              </div>
-            )}
-          </div>
-          <div className="relative inline-block">
-            <button
-              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-              className={`font-press-start text-[1vmin] px-3 py-2 border-2 ${isDarkMode ? 'bg-indigo-950 border-indigo-800 text-indigo-100' : 'bg-gray-100 border-gray-300 text-gray-800'}`}
-            >
-              EMOJI
-            </button>
-            {showEmojiPicker && (
-              <div className={`absolute z-20 mt-3 p-3 border-2 grid grid-cols-5 gap-2 w-64 max-h-48 overflow-y-auto shadow-lg ${isDarkMode ? 'bg-[#0f111a] border-indigo-900' : 'bg-white border-gray-300'}`}>
-                {DEFAULT_EMOJIS.map((emoji) => (
-                  <button
-                    key={emoji}
-                    onClick={() => handleAddEmoji(emoji)}
-                    className="text-2xl hover:scale-110 transition"
-                    aria-label={`Insert ${emoji}`}
-                  >
-                    {emoji}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-2">
+                  {gifs
+                    .filter((gif) => !mediaSearch || gif.toLowerCase().includes(mediaSearch.toLowerCase()))
+                    .map((gif) => (
+                      <button
+                        key={gif}
+                        onClick={() => toggleGif(gif)}
+                        className={`border-2 ${selectedGifs.includes(gif) ? 'border-green-400' : 'border-transparent'} rounded`}
+                      >
+                        <img src={gif} alt="gif" className="w-full h-20 object-cover" />
+                      </button>
+                    ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
         <button
           onClick={() => {
             if (text.trim()) {
               onAdd(text.trim(), selectedGifs);
               setText('');
-              setShowEmojiPicker(false);
-              setShowGifs(false);
+              setShowMediaPicker(false);
+              setMediaSearch('');
+              setActiveTab('emoji');
               setSelectedGifs([]);
             }
           }}
@@ -213,6 +232,8 @@ const PostPage: React.FC<PostPageProps> = ({ isDarkMode = false, currentUser = '
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [error, setError] = useState<string>('');
+  const [emojiOptions, setEmojiOptions] = useState<string[]>(DEFAULT_EMOJIS);
+  const [gifOptions, setGifOptions] = useState<string[]>(PIXEL_GIFS);
   const [resolvedUserId, setResolvedUserId] = useState<number | undefined>(userId);
   const [resolvedUsername, setResolvedUsername] = useState<string>(currentUser || 'USER_1');
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
@@ -245,6 +266,35 @@ const PostPage: React.FC<PostPageProps> = ({ isDarkMode = false, currentUser = '
       setResolvedUsername(currentUser);
     }
   }, [userId, currentUser, resolvedUsername]);
+
+  useEffect(() => {
+    const loadMediaCatalogs = async () => {
+      try {
+        const [emojiRes, gifRes] = await Promise.all([
+          fetch(`${API_BASE_URL}/api/media/emojis`),
+          fetch(`${API_BASE_URL}/api/media/gifs`)
+        ]);
+
+        if (emojiRes.ok) {
+          const emojiData = await emojiRes.json();
+          if (Array.isArray(emojiData?.emojis) && emojiData.emojis.length) {
+            setEmojiOptions(emojiData.emojis);
+          }
+        }
+
+        if (gifRes.ok) {
+          const gifData = await gifRes.json();
+          if (Array.isArray(gifData?.gifs) && gifData.gifs.length) {
+            setGifOptions(gifData.gifs);
+          }
+        }
+      } catch (err) {
+        // keep defaults
+      }
+    };
+
+    loadMediaCatalogs();
+  }, []);
 
   useEffect(() => {
     const loadPost = async () => {
@@ -554,7 +604,7 @@ const PostPage: React.FC<PostPageProps> = ({ isDarkMode = false, currentUser = '
 
           <div className={`border-2 p-4 ${isDarkMode ? 'bg-[#1a1c27] border-indigo-950' : 'bg-white border-gray-300'}`}>
             <h3 className="font-press-start text-[1.2vmin] border-b-2 mb-4">COMMENTS</h3>
-            <CommentInput onAdd={handleAddComment} isDarkMode={isDarkMode} />
+            <CommentInput onAdd={handleAddComment} isDarkMode={isDarkMode} emojis={emojiOptions} gifs={gifOptions} />
             <div className="flex flex-col gap-6 mt-8">
               {comments.map((c) => (
                 <div key={c.id} className="flex gap-4 border-l-4 pl-4 border-gray-400">
@@ -599,7 +649,7 @@ const PostPage: React.FC<PostPageProps> = ({ isDarkMode = false, currentUser = '
                           {showEditGifs && (
                             <div className={`absolute z-20 mt-3 p-3 border-2 w-72 max-h-52 overflow-y-auto shadow-lg ${isDarkMode ? 'bg-[#0f111a] border-indigo-900' : 'bg-white border-gray-300'}`}>
                               <div className="grid grid-cols-2 gap-2">
-                                {PIXEL_GIFS.map((gif) => (
+                                {gifOptions.map((gif) => (
                                   <button
                                     key={gif}
                                     onClick={() => setEditingCommentGifs(prev => prev.includes(gif) ? prev.filter(g => g !== gif) : [...prev, gif])}

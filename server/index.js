@@ -42,6 +42,7 @@ async function start() {
     const uploadsRoutes = require('./routes/uploads');
     const hobbiesRoutes = require('./routes/hobbies');
     const eventsRoutes = require('./routes/events');
+    const mediaRoutes = require('./routes/media');
 
     // Mount routes with promise pool
     app.use('/api/users', userRoutes(db));
@@ -53,6 +54,7 @@ async function start() {
     app.use('/api/uploads', uploadsRoutes(db));
     app.use('/api/hobbies', hobbiesRoutes(db));
     app.use('/api/events', eventsRoutes(db));
+    app.use('/api/media', mediaRoutes(db));
 
     // Test route
     app.get('/api/test', (req, res) => {

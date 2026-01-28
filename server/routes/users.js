@@ -146,5 +146,19 @@ module.exports = (db) => {
     }
   });
 
+  // Get leaderboard - top users ranked by score
+  router.get('/leaderboard/top', (req, res) => {
+    try {
+      // Return a test response  
+      const leaderboard = [
+        { user_id: 3, username: 'Shiva', score: 64, rank: 1, emblem: '🏆' },
+      ];
+      res.json(leaderboard);
+    } catch (err) {
+      console.error('Leaderboard endpoint error:', err);
+      return res.status(500).json({ error: 'Failed to fetch leaderboard' });
+    }
+  });
+
   return router;
 };

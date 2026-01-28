@@ -128,12 +128,9 @@ const AppContent: React.FC = () => {
   }, [navigate]);
 
   const totalScore = useMemo(() => {
-    const gameScoreValues = Object.values(scores) as number[];
-    const gameScoreSum = gameScoreValues.reduce((a, b) => a + b, 0);
-    const gameScore = Math.floor(gameScoreSum * 100);
-    // Event score is already in points, add it directly
-    return gameScore + eventScore;
-  }, [scores, eventScore]);
+    // Score comes ONLY from joining events, not from games
+    return eventScore;
+  }, [eventScore]);
 
   const communityHobbies = useMemo(() => {
     return getHobbyRecommendations(personalityScores);
@@ -256,7 +253,7 @@ const AppContent: React.FC = () => {
              <Route path="/games/shooting-gallery" element={<ShootingGallery onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} userId={userData?.user_id} />} />
              <Route path="/results" element={<ResultsScreen scores={scores} personalityScores={personalityScores} onNext={handleNextGame} onSelectHobby={handleGoToHobbyCommunity} onReset={handleResetGame} isDarkMode={isDarkMode} />} />
              <Route path="/all-hobbies" element={<AllHobbiesScreen onSelectHobby={handleGoToHobbyCommunity} isDarkMode={isDarkMode} />} />
-             <Route path="/community" element={<CommunityScreen onRestart={handleNextGame} scores={scores} hobbies={communityHobbies} onSelectHobby={handleGoToHobbyCommunity} isDarkMode={isDarkMode} userId={userData?.user_id} onEventJoined={(event, points) => setEventScore(prev => prev + points)} onEventLeft={(event, points) => setEventScore(prev => Math.max(0, prev - points))} />} />
+             <Route path="/community" element={<CommunityScreen onRestart={handleNextGame} scores={scores} hobbies={communityHobbies} onSelectHobby={handleGoToHobbyCommunity} isDarkMode={isDarkMode} userId={userData?.user_id} eventScore={eventScore} onEventJoined={(event, points) => setEventScore(prev => prev + points)} onEventLeft={(event, points) => setEventScore(prev => Math.max(0, prev - points))} />} />
              <Route path="/community/:hobbyName" element={<HobbyCommunity hobby={selectedHobby} onBack={() => navigate('/results')} isDarkMode={isDarkMode} currentUser={userData?.username || "GUEST"} userId={userData?.user_id} onEventJoined={(event, points) => setEventScore(prev => prev + points)} onEventLeft={(event, points) => setEventScore(prev => Math.max(0, prev - points))} />} />
              <Route path="/posts/:postId" element={<PostPage isDarkMode={isDarkMode} currentUser={userData?.username || "GUEST"} userId={userData?.user_id} />} />
              <Route path="/profile" element={<ProfileScreen scores={scores} userName={userName} userEmail={userEmail} onBack={() => navigate('/home')} isDarkMode={isDarkMode} />} />

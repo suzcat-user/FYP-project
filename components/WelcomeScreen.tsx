@@ -73,30 +73,36 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, isDarkMode = fal
   
   // Load chatbot scripts only on home page
   useEffect(() => {
-    const cleanup = loadChatbotScripts();
-    return cleanup;
+    // Temporarily disabled chatbot to prevent crashes
+    // const cleanup = loadChatbotScripts();
+    // return cleanup;
   }, []);
   
   // Fetch hobbies from database on component mount
   useEffect(() => {
     const fetchHobbies = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/hobbies');
+        const response = await fetch('http://localhost:3001/api/hobbies', { signal: AbortSignal.timeout(5000) });
         if (response.ok) {
           const data = await response.json();
           // Extract all hobby names from all personalities
           const allHobbies = data.flatMap((personality: any) => 
             personality.hobbies.map((hobby: any) => hobby.name)
           );
-          setHobbies(allHobbies);
-          if (allHobbies.length > 0) {
+          if (allHobbies && allHobbies.length > 0) {
+            setHobbies(allHobbies);
             setSelectedHobby(allHobbies[Math.floor(Math.random() * allHobbies.length)].toUpperCase());
+          } else {
+            setHobbies(['Gaming', 'Art', 'Music', 'Sports', 'Reading', 'Coding']);
           }
+        } else {
+          setHobbies(['Gaming', 'Art', 'Music', 'Sports', 'Reading', 'Coding']);
         }
       } catch (err) {
         console.error('Error fetching hobbies:', err);
-        // Fallback to default if API fails
-        setHobbies(['Hobby Arcade']);
+        // Fallback to defaults if API fails
+        setHobbies(['Gaming', 'Art', 'Music', 'Sports', 'Reading', 'Coding']);
+        setSelectedHobby('GAMING');
       }
     };
     fetchHobbies();

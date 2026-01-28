@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Scores, Trait, Hobby } from '../types';
 import EventsComponent from './EventsComponent';
+import { leaderboardService, LeaderboardEntry } from '../services/leaderboardService';
 
 interface CommunityScreenProps {
   onRestart: () => void;
@@ -15,15 +16,8 @@ interface CommunityScreenProps {
   onScoreUpdate?: (newScore: number) => void;
   onEventJoined?: (event: any, points: number) => void;
   onEventLeft?: (event: any, points: number) => void;
+  eventScore?: number;
 }
-
-const LEADERBOARD_DATA = [
-    { rank: 1, name: "ARCADE_WIZ", type: "THE MAKER", score: 9850, country: "JP", emblem: "🏆" },
-    { rank: 2, name: "PIXEL_KAT", type: "THE SCOUT", score: 9420, country: "US", emblem: "🥈" },
-    { rank: 3, name: "NEON_RYU", type: "THE BRAIN", score: 8900, country: "KR", emblem: "🥉" },
-    { rank: 4, name: "VAPOR_WAVE", type: "THE BARD", score: 8550, country: "UK", emblem: "✨" },
-    { rank: 5, name: "BIT_HERO", type: "THE DYNAMO", score: 8200, country: "CA", emblem: "🔥" },
-];
 
 const HOBBY_PORTAL_ICON = "🧩";
 
@@ -102,14 +96,40 @@ const ShootingStar: React.FC = () => {
   );
 };
 
-const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, hobbies, onSelectHobby, isDarkMode = false, userId, communityId, onScoreUpdate, onEventJoined, onEventLeft }) => {
+const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, hobbies, onSelectHobby, isDarkMode = false, userId, communityId, onScoreUpdate, onEventJoined, onEventLeft, eventScore = 0 }) => {
   const navigate = useNavigate();
   const traits = Object.keys(scores) as Trait[];
   const topTrait = traits.reduce((a, b) => scores[a] > scores[b] ? a : b);
   
-  const totalScore = (Object.values(scores) as number[]).reduce((a, b) => a + b, 0);
-  const [userScore, setUserScore] = useState(totalScore * 100);
+  // Score comes ONLY from event joins, not from game scores
+  const [userScore, setUserScore] = useState(eventScore);
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [isLoadingLeaderboard, setIsLoadingLeaderboard] = useState(true);
   const [showEvents, setShowEvents] = useState(false);
+
+  // Fetch leaderboard data on component mount
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        setIsLoadingLeaderboard(true);
+        const topPlayers = await leaderboardService.getTopPlayers(10);
+        setLeaderboard(topPlayers);
+      } catch (error) {
+        console.error('Failed to fetch leaderboard:', error);
+        // Fallback to empty state
+        setLeaderboard([]);
+      } finally {
+        setIsLoadingLeaderboard(false);
+      }
+    };
+
+    fetchLeaderboard();
+  }, []);
+
+  // Update user score whenever eventScore changes
+  useEffect(() => {
+    setUserScore(eventScore);
+  }, [eventScore]);
 
   const handleEventJoined = (event: any, pointsEarned: number) => {
     // Call the parent callback to update the global event score
@@ -209,35 +229,63 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, ho
               </div>
 
               <div className="flex-1 overflow-y-auto font-vt323 text-[3vmin] divide-y-4 divide-white/5">
-                  {LEADERBOARD_DATA.map((player) => (
-                      <div key={player.rank} className="flex items-center p-4 hover:bg-white/10 transition-colors group">
+                  {isLoadingLeaderboard ? (
+                    <div className="flex items-center justify-center h-full">
+                      <span className="font-press-start text-[1.5vmin] opacity-70">LOADING LEADERBOARD...</span>
+                    </div>
+                  ) : leaderboard && leaderboard.length > 0 ? (
+                    <>
+                      {leaderboard.map((player) => (
+                        <div key={player.rank} className="flex items-center p-4 hover:bg-white/10 transition-colors group">
                           <div className={`w-[15%] text-center font-press-start text-[2vmin]`}>
-                              {player.emblem}
+                            {player.emblem}
                           </div>
                           <div className="w-[40%] flex items-center gap-4">
-                              <span className="opacity-40">[{player.country}]</span>
-                              <span className="group-hover:text-pink-400 transition-colors uppercase tracking-wider">{player.name}</span>
+                            <span className="opacity-40">[USER]</span>
+                            <span className="group-hover:text-pink-400 transition-colors uppercase tracking-wider">{player.username}</span>
                           </div>
                           <div className={`w-[20%] text-center font-press-start text-[1vmin] opacity-70`}>
-                              {player.type}
+                            PLAYER_{player.rank}
                           </div>
                           <div className="w-[25%] text-right font-press-start text-[1.5vmin] text-cyan-400">
-                              <AnimatedScore finalValue={player.score} />
+                            <AnimatedScore finalValue={player.score} />
                           </div>
-                      </div>
-                  ))}
+                        </div>
+                      ))}
 
-                  <div className="flex items-center p-4 bg-pink-600/20 animate-pulse border-y-4 border-pink-500/50">
-                      <div className="w-[15%] text-center font-press-start text-[2vmin]">👤</div>
-                      <div className="w-[40%] flex items-center gap-4">
+                      <div className="flex items-center p-4 bg-pink-600/20 animate-pulse border-y-4 border-pink-500/50">
+                        <div className="w-[15%] text-center font-press-start text-[2vmin]">👤</div>
+                        <div className="w-[40%] flex items-center gap-4">
                           <span className="opacity-40">[LOC]</span>
                           <span className="text-yellow-400 font-bold uppercase tracking-wider">YOU (P1)</span>
-                      </div>
-                      <div className="w-[20%] text-center font-press-start text-[1vmin]">PLAYER_1</div>
-                      <div className="w-[25%] text-right font-press-start text-[1.5vmin] text-white">
+                        </div>
+                        <div className="w-[20%] text-center font-press-start text-[1vmin]">PLAYER_1</div>
+                        <div className="w-[25%] text-right font-press-start text-[1.5vmin] text-white">
                           <AnimatedScore finalValue={userScore} />
+                        </div>
                       </div>
-                  </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center p-4 bg-pink-600/20 animate-pulse border-y-4 border-pink-500/50">
+                        <div className="w-[15%] text-center font-press-start text-[2vmin]">👤</div>
+                        <div className="w-[40%] flex items-center gap-4">
+                          <span className="opacity-40">[YOU]</span>
+                          <span className="text-yellow-400 font-bold uppercase tracking-wider">YOUR SCORE</span>
+                        </div>
+                        <div className="w-[20%] text-center font-press-start text-[1vmin]">RANK #1</div>
+                        <div className="w-[25%] text-right font-press-start text-[1.5vmin] text-white">
+                          <AnimatedScore finalValue={userScore} />
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-center h-full">
+                        <div className="text-center">
+                          <span className="font-press-start text-[1.2vmin] opacity-70 block">LEADERBOARD DATA</span>
+                          <span className="font-press-start text-[1vmin] opacity-50 block mt-2">Coming Soon</span>
+                        </div>
+                      </div>
+                    </>
+                  )}
               </div>
           </div>
       </div>

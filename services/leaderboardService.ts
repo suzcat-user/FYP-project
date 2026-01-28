@@ -16,18 +16,24 @@ export const leaderboardService = {
    */
   async getTopPlayers(limit?: number): Promise<LeaderboardEntry[]> {
     try {
+      const baseUrl = process.env.NODE_ENV === 'production' 
+        ? '/api'
+        : 'http://localhost:3001/api';
       const url = limit 
-        ? `/api/users/leaderboard/top?limit=${limit}`
-        : '/api/users/leaderboard/top';
+        ? `${baseUrl}/users/leaderboard/top?limit=${limit}`
+        : `${baseUrl}/users/leaderboard/top`;
       
+      console.log('🎮 [Leaderboard] Fetching from:', url);
       const response = await fetch(url);
+      console.log('🎮 [Leaderboard] Response status:', response.status);
       if (!response.ok) {
         throw new Error(`Failed to fetch leaderboard: ${response.statusText}`);
       }
       const data = await response.json();
+      console.log('🎮 [Leaderboard] Got', data.length, 'players');
       return data || [];
     } catch (error) {
-      console.error('Error fetching leaderboard:', error);
+      console.error('🎮 [Leaderboard] Error:', error);
       return [];
     }
   },

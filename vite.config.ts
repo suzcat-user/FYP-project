@@ -10,6 +10,14 @@ export default defineConfig(({ mode }) => {
         host: '0.0.0.0',
         // Enable client-side routing fallback
         historyApiFallback: true,
+        // Proxy API calls to backend
+        proxy: {
+          '/api': {
+            target: 'http://localhost:3001',
+            changeOrigin: true,
+            rewrite: (path) => path,
+          }
+        }
       },
       plugins: [react()],
       define: {

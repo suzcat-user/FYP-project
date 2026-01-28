@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Proxy Test</title>
+</head>
+<body>
+    <h1>API Proxy Test</h1>
+    <p id="result">Testing...</p>
+    
+    <script>
+        (async () => {
+            try {
+                console.log('Fetching /api/test...');
+                const response = await fetch('http://localhost:3001/api/test');
+                const data = await response.json();
+                document.getElementById('result').innerHTML = `
+                    <h2>✅ Backend Working!</h2>
+                    <p>Response: ${JSON.stringify(data)}</p>
+                `;
+            } catch (error) {
+                console.error('Backend test failed:', error);
+                document.getElementById('result').innerHTML = `
+                    <h2>❌ Backend Failed</h2>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        })();
+    </script>
+</body>
+</html>

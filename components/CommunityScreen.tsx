@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Scores, Trait, Hobby } from '../types';
 import { leaderboardService, LeaderboardEntry } from '../services/leaderboardService';
 
@@ -95,6 +96,7 @@ const ShootingStar: React.FC = () => {
 };
 
 const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, hobbies, onSelectHobby, isDarkMode = false, userId, communityId, onScoreUpdate, onEventJoined, onEventLeft, eventScore = 0 }) => {
+  const navigate = useNavigate();
   const traits = Object.keys(scores) as Trait[];
   const topTrait = traits.reduce((a, b) => scores[a] > scores[b] ? a : b);
   

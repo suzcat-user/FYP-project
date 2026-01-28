@@ -189,13 +189,13 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
       howToPlay="The Duel splits your screen into two distinct futures. Read both scenarios carefully and click the path that resonates with your soul. There are no wrong answers—only branches in your timeline."
       scoringRules="Choosing a path instantly awards a +1.0 trait bonus. Each consecutive round builds your 'Decision Streak,' increasing the weight of your choices as you approach the final level."
     >
-      <div className="flex flex-col sm:flex-row w-full h-full bg-slate-950 relative overflow-hidden group">
+      <div className="flex w-full h-full bg-slate-950 relative overflow-hidden group">
         
         {/* OPTION A: LEFT (CYBER PINK) */}
         <button 
           onClick={() => handleChoice(0)}
           disabled={animating !== null || !currentOptions[0]}
-          className={`flex-1 min-h-[38vh] sm:min-h-0 relative transition-all duration-700 flex flex-col items-center justify-center p-6 sm:p-8 overflow-hidden group/left
+          className={`flex-1 h-full relative transition-all duration-700 flex flex-col items-center justify-center p-8 overflow-hidden group/left
             ${animating === 'left' ? 'flex-[20] z-20' : animating === 'right' ? 'flex-0 opacity-0' : 'flex-1'}
             hover:bg-rose-950/20 disabled:cursor-not-allowed
           `}
@@ -209,21 +209,21 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
           <div className="absolute inset-0 bg-gradient-to-r from-rose-600/40 via-transparent to-transparent opacity-60 group-hover/left:opacity-100 transition-opacity"></div>
           
           <div className="relative z-10 text-center transform group-hover/left:scale-105 transition-transform duration-300">
-            <span className="font-press-start text-[clamp(10px,1.6vw,18px)] text-rose-300 mb-3 sm:mb-4 block animate-pulse">PATH_01</span>
-            <h2 className="font-vt323 text-[clamp(22px,6vw,70px)] text-white leading-tight sm:leading-none mb-4 sm:mb-6 drop-shadow-[0_0_15px_#f43f5e] chromatic">
+            <span className="font-press-start text-[1.5vmin] text-rose-300 mb-4 block animate-pulse">PATH_01</span>
+            <h2 className="font-vt323 text-[7.5vmin] text-white leading-none mb-6 drop-shadow-[0_0_15px_#f43f5e] chromatic">
               {currentOptions[0]?.text || 'N/A'}
             </h2>
-            <div className="w-16 sm:w-24 h-1 sm:h-1.5 bg-rose-500 mx-auto shadow-[0_0_15px_#f43f5e]"></div>
+            <div className="w-24 h-1.5 bg-rose-500 mx-auto shadow-[0_0_15px_#f43f5e]"></div>
           </div>
         </button>
 
         {/* VS CENTER SPLIT */}
         {!animating && (
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none">
-              <div className="relative w-[18vmin] h-[18vmin] sm:w-[15vmin] sm:h-[15vmin] flex items-center justify-center">
+              <div className="relative w-[15vmin] h-[15vmin] flex items-center justify-center">
                     <div className="absolute inset-0 rounded-full border-4 border-rose-500/30 animate-[ping_2s_infinite]"></div>
                     <div className="absolute inset-0 rounded-full border-2 border-cyan-500/30 animate-[ping_3s_infinite]"></div>
-                <div className="w-[14vmin] h-[14vmin] sm:w-[12vmin] sm:h-[12vmin] bg-slate-900 text-white font-press-start text-[4.5vmin] sm:text-[4vmin] flex items-center justify-center rounded-xl border-4 border-white shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+                <div className="w-[12vmin] h-[12vmin] bg-slate-900 text-white font-press-start text-[4vmin] flex items-center justify-center rounded-xl border-4 border-white shadow-[0_0_30px_rgba(255,255,255,0.2)]">
                        <span className="neon-text-blue">VS</span>
                     </div>
                 </div>
@@ -234,7 +234,7 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
         <button 
           onClick={() => handleChoice(1)}
           disabled={animating !== null || !currentOptions[1]}
-          className={`flex-1 min-h-[38vh] sm:min-h-0 relative transition-all duration-700 flex flex-col items-center justify-center p-6 sm:p-8 overflow-hidden group/right
+          className={`flex-1 h-full relative transition-all duration-700 flex flex-col items-center justify-center p-8 overflow-hidden group/right
             ${animating === 'right' ? 'flex-[20] z-20' : animating === 'left' ? 'flex-0 opacity-0' : 'flex-1'}
             hover:bg-cyan-950/20 disabled:cursor-not-allowed
           `}
@@ -247,20 +247,20 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
           }}></div>
           <div className="absolute inset-0 bg-gradient-to-l from-cyan-600/40 via-transparent to-transparent opacity-60 group-hover/right:opacity-100 transition-opacity"></div>
           <div className="relative z-10 text-center transform group-hover/right:scale-105 transition-transform duration-300">
-            <span className="font-press-start text-[clamp(10px,1.6vw,18px)] text-cyan-300 mb-3 sm:mb-4 block animate-pulse">PATH_02</span>
-            <h2 className="font-vt323 text-[clamp(22px,6vw,70px)] text-white leading-tight sm:leading-none mb-4 sm:mb-6 drop-shadow-[0_0_15px_#06b6d4] chromatic">
+            <span className="font-press-start text-[1.5vmin] text-cyan-300 mb-4 block animate-pulse">PATH_02</span>
+            <h2 className="font-vt323 text-[7.5vmin] text-white leading-none mb-6 drop-shadow-[0_0_15px_#06b6d4] chromatic">
               {currentOptions[1]?.text || 'N/A'}
             </h2>
-            <div className="w-16 sm:w-24 h-1 sm:h-1.5 bg-cyan-500 mx-auto shadow-[0_0_15px_#06b6d4]"></div>
+            <div className="w-24 h-1.5 bg-cyan-500 mx-auto shadow-[0_0_15px_#06b6d4]"></div>
           </div>
         </button>
 
         <div className={`absolute inset-0 pointer-events-none z-50 transition-all duration-300 ${animating ? 'opacity-100 bg-white' : 'opacity-0'}`}></div>
       </div>
 
-      <div className={`min-h-[56px] sm:h-20 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-0 px-4 sm:px-10 font-press-start text-[clamp(10px,1.2vw,14px)] border-t-8 transition-colors duration-500 ${isDarkMode ? 'bg-slate-950 border-rose-900/40' : 'bg-slate-900 border-cyan-900/40'}`}>
+      <div className={`h-20 flex items-center justify-between px-10 font-press-start text-[1.2vmin] border-t-8 transition-colors duration-500 ${isDarkMode ? 'bg-slate-950 border-rose-900/40' : 'bg-slate-900 border-cyan-900/40'}`}>
           <div className="flex flex-col items-center">
-            <div className="animate-blink text-yellow-400 mb-1 text-[clamp(10px,1.2vw,14px)]">SCROLL DOWN FOR MANUAL</div>
+        <div className="animate-blink text-yellow-400 mb-1">SCROLL DOWN FOR MANUAL</div>
           </div>
       </div>
     </GameContainer>

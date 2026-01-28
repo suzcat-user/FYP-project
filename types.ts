@@ -56,6 +56,23 @@ export interface Hobby {
   communityId?: number;
 }
 
+export interface Event {
+  event_id: number;
+  community_id: number;
+  community_name?: string;
+  title: string;
+  description?: string;
+  event_date: string;
+  event_time?: string;
+  location?: string;
+  points_reward: number;
+  max_participants?: number;
+  participant_count?: number;
+  created_by?: number;
+  created_at?: string;
+  joined_at?: string;
+}
+
 export interface Comment {
   id: string;
   author: string;

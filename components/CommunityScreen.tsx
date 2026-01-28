@@ -204,6 +204,16 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, ho
             >
               🎉 {showEvents ? 'HIDE EVENTS' : 'SHOW EVENTS'}
             </button>
+            <button
+              onClick={() => navigate('/events-joined')}
+              className={`font-press-start text-[1.2vmin] px-4 py-2 border-4 border-b-4 active:border-b-2 active:translate-y-0.5 transition-all ${
+                isDarkMode 
+                  ? 'bg-yellow-600 border-yellow-800 text-yellow-100 hover:bg-yellow-700' 
+                  : 'bg-yellow-500 border-yellow-700 text-white hover:bg-yellow-600'
+              }`}
+            >
+              🎮 MY EVENTS
+            </button>
           </div>
 
           {/* Events Section */}

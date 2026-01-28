@@ -13,6 +13,7 @@ import HobbyCommunity from './components/HobbyCommunity';
 import AuthScreen from './components/AuthScreen';
 import ProfileScreen from './components/ProfileScreen';
 import PostPage from './components/PostPage';
+import EventsJoinedScreen from './components/EventsJoinedScreen';
 
 const AppContent: React.FC = () => {
   const navigate = useNavigate();
@@ -40,12 +41,12 @@ const AppContent: React.FC = () => {
     [PersonalityCode.L]: 0
   });
 
-  const handleLogin = useCallback((username: string, email: string, user_id: number) => {
-    const payload = { user_id, username, score: 0, email, eventScore: 0 };
+  const handleLogin = useCallback((username: string, email: string, user_id: number, score: number = 0) => {
+    const payload = { user_id, username, score: score, email, eventScore: score };
     setUserName(username);
     setUserEmail(email);
     setUserData(payload);
-    setEventScore(0);
+    setEventScore(score);
     localStorage.setItem('hobbyArcadeUser', JSON.stringify(payload));
     navigate('/home');
   }, [navigate]);
@@ -59,7 +60,7 @@ const AppContent: React.FC = () => {
           setUserData(parsed);
           setUserName(parsed.username);
           setUserEmail(parsed.email || '');
-          setEventScore(parsed.eventScore || 0);
+          setEventScore(parsed.score || 0);
         }
       } catch (err) {
         console.warn('Failed to restore cached user', err);
@@ -257,6 +258,7 @@ const AppContent: React.FC = () => {
              <Route path="/community/:hobbyName" element={<HobbyCommunity hobby={selectedHobby} onBack={() => navigate('/results')} isDarkMode={isDarkMode} currentUser={userData?.username || "GUEST"} userId={userData?.user_id} onEventJoined={(event, points) => setEventScore(prev => prev + points)} onEventLeft={(event, points) => setEventScore(prev => Math.max(0, prev - points))} />} />
              <Route path="/posts/:postId" element={<PostPage isDarkMode={isDarkMode} currentUser={userData?.username || "GUEST"} userId={userData?.user_id} />} />
              <Route path="/profile" element={<ProfileScreen scores={scores} userName={userName} userEmail={userEmail} onBack={() => navigate('/home')} isDarkMode={isDarkMode} />} />
+             <Route path="/events-joined" element={<EventsJoinedScreen userId={userData?.user_id} isDarkMode={isDarkMode} onBack={() => navigate('/community')} />} />
            </Routes>
         </div>
       </div>

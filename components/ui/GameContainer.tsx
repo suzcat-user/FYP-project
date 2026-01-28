@@ -28,6 +28,30 @@ const GameContainer: React.FC<GameContainerProps> = ({
   return (
     <div className={`w-full h-full flex flex-col overflow-y-auto overflow-x-hidden relative transition-colors duration-500 ${transparent ? '' : isDarkMode ? 'bg-slate-950' : 'bg-[#e0f2fe]'}`}>
       
+      {/* Progress Bar - Top Sticky */}
+      {progress > 0 && (
+          <div className={`w-full shrink-0 z-50 px-4 py-2 sticky top-0 transition-colors duration-500 ${isDarkMode ? 'bg-slate-900 border-b-2 border-sky-500' : 'bg-white border-b-2 border-sky-400'}`}>
+              <div className="max-w-full flex flex-col items-center gap-1">
+                  <div className="flex w-full justify-between items-center font-press-start text-[0.75vmin]">
+                      <span className={isDarkMode ? 'text-indigo-400' : 'text-sky-800'}>QUEST PROGRESS</span>
+                      <span className={isDarkMode ? 'text-pink-500' : 'text-sky-950'}>LEVEL {progress}/3</span>
+                  </div>
+                  <div className={`w-full h-2 flex gap-1 p-[2px] border-2 ${isDarkMode ? 'bg-slate-950 border-indigo-900' : 'bg-gray-100 border-sky-900'}`}>
+                      {[1, 2, 3].map(step => (
+                          <div 
+                              key={step} 
+                              className={`flex-1 transition-all duration-500 ${
+                                  step <= progress 
+                                  ? (isDarkMode ? 'bg-cyan-500 shadow-[0_0_8px_rgba(34,211,238,0.8)]' : 'bg-cyan-400 shadow-[0_0_5px_#22d3ee]')
+                                  : 'bg-transparent'
+                              }`}
+                          ></div>
+                      ))}
+                  </div>
+              </div>
+          </div>
+      )}
+      
       {/* Header Area (Sticky) */}
       <div className={`text-center py-4 shrink-0 z-40 sticky top-0 transition-colors duration-500 ${transparent ? (isDarkMode ? 'bg-indigo-950/90' : 'bg-sky-900/80') + ' backdrop-blur-md border-b-4 border-white/20' : isDarkMode ? 'bg-slate-900 border-b-4 border-indigo-900' : 'bg-white border-b-4 border-sky-900'}`}>
 
@@ -65,31 +89,9 @@ const GameContainer: React.FC<GameContainerProps> = ({
       </div>
 
       {/* Game Content Area */}
-      <div className="shrink-0 w-full h-[65vh] flex flex-col justify-center relative z-0 p-4 md:p-6">        
+      <div className="shrink-0 w-full h-[65vh] flex flex-col justify-center relative z-0 p-4 md:p-6">
         <div className={`w-full h-full flex flex-col justify-center relative rounded-xl overflow-hidden border-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] transition-colors duration-500 ${isDarkMode ? 'bg-slate-900 border-indigo-900 shadow-indigo-950' : 'bg-white border-sky-900'}`}>
             {children}
-        </div>
-        
-        {/* Progress Bar - Above right side of game box */}
-        <div className={`absolute -top-20 right-4 md:right-6 w-80 px-3 py-2 z-50 transition-colors duration-500 ${isDarkMode ? 'bg-slate-900 border-2 border-sky-500' : 'bg-white border-2 border-sky-400'}`}>
-            <div className="flex flex-col items-center gap-1">
-                <div className="flex w-full justify-between items-center font-press-start text-[0.7vmin]">
-                    <span className={isDarkMode ? 'text-indigo-400' : 'text-sky-800'}>QUEST</span>
-                    <span className={isDarkMode ? 'text-pink-500' : 'text-sky-950'}>LEVEL {progress}/3</span>
-                </div>
-                <div className={`w-full h-2 flex gap-1 p-[2px] border-2 ${isDarkMode ? 'bg-slate-950 border-indigo-900' : 'bg-gray-100 border-sky-900'}`}>
-                    {[1, 2, 3].map(step => (
-                        <div 
-                            key={step} 
-                            className={`flex-1 transition-all duration-500 ${
-                                step <= progress 
-                                ? (isDarkMode ? 'bg-cyan-500 shadow-[0_0_8px_rgba(34,211,238,0.8)]' : 'bg-cyan-400 shadow-[0_0_5px_#22d3ee]')
-                                : 'bg-transparent'
-                            }`}
-                        ></div>
-                    ))}
-                </div>
-            </div>
         </div>
       </div>
 

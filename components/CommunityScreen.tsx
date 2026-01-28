@@ -101,8 +101,8 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, ho
   const traits = Object.keys(scores) as Trait[];
   const topTrait = traits.reduce((a, b) => scores[a] > scores[b] ? a : b);
   
-  const totalScore = (Object.values(scores) as number[]).reduce((a, b) => a + b, 0);
-  const [userScore, setUserScore] = useState(totalScore * 100 + eventScore);
+  // Score comes ONLY from event joins, not from game scores
+  const [userScore, setUserScore] = useState(eventScore);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [isLoadingLeaderboard, setIsLoadingLeaderboard] = useState(true);
   const [showEvents, setShowEvents] = useState(false);
@@ -126,10 +126,10 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, ho
     fetchLeaderboard();
   }, []);
 
-  // Update user score whenever eventScore or game scores change
+  // Update user score whenever eventScore changes
   useEffect(() => {
-    setUserScore(totalScore * 100 + eventScore);
-  }, [totalScore, eventScore]);
+    setUserScore(eventScore);
+  }, [eventScore]);
 
   const handleEventJoined = (event: any, pointsEarned: number) => {
     // Call the parent callback to update the global event score

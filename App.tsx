@@ -128,12 +128,9 @@ const AppContent: React.FC = () => {
   }, [navigate]);
 
   const totalScore = useMemo(() => {
-    const gameScoreValues = Object.values(scores) as number[];
-    const gameScoreSum = gameScoreValues.reduce((a, b) => a + b, 0);
-    const gameScore = Math.floor(gameScoreSum * 100);
-    // Event score is already in points, add it directly
-    return gameScore + eventScore;
-  }, [scores, eventScore]);
+    // Score comes ONLY from joining events, not from games
+    return eventScore;
+  }, [eventScore]);
 
   const communityHobbies = useMemo(() => {
     return getHobbyRecommendations(personalityScores);

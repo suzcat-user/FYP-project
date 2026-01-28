@@ -149,8 +149,10 @@ module.exports = (db) => {
   // Get leaderboard - top users ranked by score
   router.get('/leaderboard/top', async (req, res) => {
     try {
+      console.log('📊 Leaderboard endpoint called');
       // Fetch all users sorted by score (highest first)
       const [users] = await db.query('SELECT user_id, username, score FROM users ORDER BY score DESC');
+      console.log('🔍 Found', users.length, 'users in database');
       
       // Add rank and emblem to each user
       const leaderboard = users.map((user, index) => ({
@@ -161,9 +163,10 @@ module.exports = (db) => {
         emblem: index === 0 ? '🏆' : index === 1 ? '🥈' : index === 2 ? '🥉' : '✨',
       }));
 
+      console.log('✅ Returning leaderboard with', leaderboard.length, 'entries');
       res.json(leaderboard);
     } catch (err) {
-      console.error('Leaderboard endpoint error:', err);
+      console.error('❌ Leaderboard endpoint error:', err);
       return res.status(500).json({ error: 'Failed to fetch leaderboard' });
     }
   });

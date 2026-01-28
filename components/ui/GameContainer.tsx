@@ -33,24 +33,29 @@ const GameContainer: React.FC<GameContainerProps> = ({
         
                 {/* Progress Bar - Top Right */}
                 {progress > 0 && (
-                    <div className="absolute left-8 top-4 z-50 flex flex-col items-start w-[340px] max-w-[90vw]"
+                    <div className="absolute left-6 top-16 z-50 flex flex-col items-start w-[260px] max-w-[90vw]"
                              style={{ pointerEvents: 'none' }}
                     >
-                        <div className="flex w-full justify-between items-center mb-1 font-press-start text-[0.8vmin]" style={{ pointerEvents: 'auto' }}>
-                            <span className={isDarkMode ? 'text-indigo-400' : 'text-sky-800'}>QUEST PROGRESS</span>
-                            <span className={isDarkMode ? 'text-pink-500' : 'text-sky-950'}>LEVEL {progress}/3</span>
+                        <div className="flex w-full justify-between items-center mb-1 font-press-start text-[1.1vmin] tracking-widest" style={{ pointerEvents: 'auto' }}>
+                            <span className={isDarkMode ? 'text-indigo-300' : 'text-sky-800'}>QUEST PROGRESS</span>
+                            <span className={isDarkMode ? 'text-pink-400' : 'text-sky-950'}>LEVEL {progress}/3</span>
                         </div>
-                        <div className={`w-full h-3 flex gap-1 p-[2px] border-2 ${isDarkMode ? 'bg-slate-950 border-indigo-900' : 'bg-gray-100 border-sky-900'}`} style={{ pointerEvents: 'auto' }}>
-                            {[1, 2, 3].map(step => (
-                                <div 
-                                    key={step} 
-                                    className={`flex-1 transition-all duration-500 ${
-                                        step <= progress 
-                                        ? (isDarkMode ? 'bg-pink-500 shadow-[0_0_8px_rgba(236,72,153,0.8)]' : 'bg-sky-500 shadow-[0_0_5px_#0ea5e9]')
-                                        : 'bg-transparent'
-                                    }`}
-                                ></div>
-                            ))}
+                        <div 
+                            className={`relative w-full h-4 border-2 overflow-hidden font-press-start ${isDarkMode ? 'bg-slate-900 border-indigo-700' : 'bg-white border-sky-700'}`}
+                            style={{ pointerEvents: 'auto', borderRadius: '6px' }}
+                        >
+                            <div
+                                className="absolute left-0 top-0 h-full transition-all duration-500"
+                                style={{
+                                    width: `${(progress / 3) * 100}%`,
+                                    background: isDarkMode ? '#f472b6' : '#38bdf8',
+                                    borderRadius: '4px',
+                                    boxShadow: isDarkMode
+                                        ? '0 0 0 1px #818cf8' : '0 0 0 1px #fbbf24',
+                                }}
+                            ></div>
+                            {/* Pixel-style border highlight */}
+                            <div className="absolute inset-0 border border-white/20 pointer-events-none rounded-[4px]"></div>
                         </div>
                     </div>
                 )}

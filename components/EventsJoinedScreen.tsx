@@ -84,8 +84,7 @@ const EventsJoinedScreen: React.FC<EventsJoinedScreenProps> = ({ userId, isDarkM
       overflow: 'auto',
       backgroundImage: `linear-gradient(45deg, ${isDarkMode ? '#1a1a2e' : '#f0f0f0'} 25%, transparent 25%, transparent 75%, ${isDarkMode ? '#1a1a2e' : '#f0f0f0'} 75%, ${isDarkMode ? '#1a1a2e' : '#f0f0f0'}), linear-gradient(45deg, ${isDarkMode ? '#1a1a2e' : '#f0f0f0'} 25%, transparent 25%, transparent 75%, ${isDarkMode ? '#1a1a2e' : '#f0f0f0'} 75%, ${isDarkMode ? '#1a1a2e' : '#f0f0f0'})`,
       backgroundSize: '40px 40px',
-      backgroundPosition: '0 0, 20px 20px',
-      backgroundColor: bgColor
+      backgroundPosition: '0 0, 20px 20px'
     }}>
       <div style={{
         maxWidth: '900px',
@@ -278,11 +277,9 @@ const EventsJoinedScreen: React.FC<EventsJoinedScreenProps> = ({ userId, isDarkM
 
         {/* Back Button */}
         <div style={{ marginTop: '30px', textAlign: 'center' }}>
-          <ArcadeButton 
-            onClick={onBack}
-            label="Back"
-            isDarkMode={isDarkMode}
-          />
+          <ArcadeButton onClick={onBack}>
+            Back
+          </ArcadeButton>
         </div>
       </div>
     </div>

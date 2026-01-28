@@ -13,6 +13,7 @@ import HobbyCommunity from './components/HobbyCommunity';
 import AuthScreen from './components/AuthScreen';
 import ProfileScreen from './components/ProfileScreen';
 import PostPage from './components/PostPage';
+import EventsJoinedScreen from './components/EventsJoinedScreen';
 
 const AppContent: React.FC = () => {
   const navigate = useNavigate();
@@ -40,12 +41,12 @@ const AppContent: React.FC = () => {
     [PersonalityCode.L]: 0
   });
 
-  const handleLogin = useCallback((username: string, email: string, user_id: number) => {
-    const payload = { user_id, username, score: 0, email, eventScore: 0 };
+  const handleLogin = useCallback((username: string, email: string, user_id: number, score: number = 0) => {
+    const payload = { user_id, username, score: score, email, eventScore: score };
     setUserName(username);
     setUserEmail(email);
     setUserData(payload);
-    setEventScore(0);
+    setEventScore(score);
     localStorage.setItem('hobbyArcadeUser', JSON.stringify(payload));
     navigate('/home');
   }, [navigate]);
@@ -59,7 +60,7 @@ const AppContent: React.FC = () => {
           setUserData(parsed);
           setUserName(parsed.username);
           setUserEmail(parsed.email || '');
-          setEventScore(parsed.eventScore || 0);
+          setEventScore(parsed.score || 0);
         }
       } catch (err) {
         console.warn('Failed to restore cached user', err);
@@ -158,9 +159,17 @@ const AppContent: React.FC = () => {
         <div className="absolute inset-0 border-[4px] border-white/5 pointer-events-none z-50 rounded-2xl"></div>
 
         {/* HUD Top Bar */}
-        <div className={`text-white flex flex-wrap items-center justify-between gap-2 sm:gap-3 lg:gap-6 font-press-start text-[9px] xs:text-[10px] sm:text-[11px] md:text-[1.3vmin] lg:text-[1.6vmin] z-50 relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 min-h-14 md:min-h-16 lg:min-h-20 border-b-8 shadow-2xl transition-colors duration-500 ${isDarkMode ? 'bg-[#1e1b4b] border-indigo-500/30' : 'bg-sky-950 border-sky-400/30'}`}>
+        <div className={`text-white flex items-center justify-center gap-2 sm:gap-3 lg:gap-6 font-press-start text-[9px] xs:text-[10px] sm:text-[11px] md:text-[1.3vmin] lg:text-[1.6vmin] z-50 relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 min-h-14 md:min-h-16 lg:min-h-20 border-b-8 shadow-2xl transition-colors duration-500 ${isDarkMode ? 'bg-[#1e1b4b] border-indigo-500/30' : 'bg-sky-950 border-sky-400/30'}`}>
+             {/* Center - HOBBY ARCADE Logo */}
+             <div className="flex flex-col items-center">
+                <div className="text-yellow-400 chromatic tracking-wide lg:tracking-widest uppercase mb-1 text-[11px] sm:text-[13px] md:text-[2vmin]">HOBBY ARCADE</div>
+                <div className="h-0.5 sm:h-1 w-24 sm:w-32 bg-sky-500/20 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 h-full w-1/2 bg-sky-400 animate-[marquee_2s_linear_infinite]"></div>
+                </div>
+             </div>
+
              {/* Left Section - Logo, User ID, Score */}
-             <div className="flex gap-2 sm:gap-3 lg:gap-6 items-center flex-shrink-0">
+             <div className="absolute left-3 sm:left-4 lg:left-6 flex gap-2 sm:gap-3 lg:gap-6 items-center flex-shrink-0">
                  {/* Logo - Clickable Home Button (disabled on Auth screen) */}
                  <button
                     onClick={() => !isAuthPage && navigate('/home')}
@@ -186,14 +195,8 @@ const AppContent: React.FC = () => {
                  </div>
              </div>
 
-             <div className="flex flex-col items-center order-3 lg:order-2 flex-1 w-full lg:w-auto min-w-0">
-                <div className="text-yellow-400 chromatic tracking-wide lg:tracking-widest uppercase mb-1 text-[11px] sm:text-[13px] md:text-[2vmin]">HOBBY ARCADE</div>
-                <div className="h-0.5 sm:h-1 w-24 sm:w-32 bg-sky-500/20 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 h-full w-1/2 bg-sky-400 animate-[marquee_2s_linear_infinite]"></div>
-                </div>
-             </div>
-
-             <div className="flex gap-2 sm:gap-3 lg:gap-8 items-center order-2 lg:order-3 flex-shrink-0">
+             {/* Right Section - Buttons */}
+             <div className="absolute right-3 sm:right-4 lg:right-6 flex gap-2 sm:gap-3 lg:gap-8 items-center flex-shrink-0">
                  {/* See All Communities Button - Hidden on Auth screen */}
                  {!isAuthPage && (
                    <button 
@@ -235,10 +238,16 @@ const AppContent: React.FC = () => {
                    </button>
                   )}
 
-                 <div className="hidden md:flex flex-col items-end text-right">
-                     <span className="text-sky-500/50 text-[8px] sm:text-[9px] md:text-[1vmin]">CREDITS</span>
-                     <span className="text-white neon-glow-blue text-[10px] sm:text-[11px] md:text-[1.2vmin]">FREE PLAY</span>
-                 </div>
+                 {/* Leaderboard Button - Right side - Hidden on Auth screen */}
+                 {!isAuthPage && (
+                   <button 
+                     onClick={() => navigate('/community')}
+                     className={`px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 border-2 text-[9px] sm:text-[10px] md:text-[1.2vmin] transition-all hover:scale-105 active:scale-95 flex items-center gap-1 sm:gap-2 ${isDarkMode ? 'border-yellow-500 bg-yellow-500/20 text-yellow-300' : 'border-yellow-500 bg-yellow-500/20 text-yellow-400'}`}
+                     title="View Leaderboard"
+                   >
+                     <span className="text-2xl sm:text-3xl">🏆</span>
+                   </button>
+                 )}
              </div>
         </div>
 
@@ -257,6 +266,7 @@ const AppContent: React.FC = () => {
              <Route path="/community/:hobbyName" element={<HobbyCommunity hobby={selectedHobby} onBack={() => navigate('/results')} isDarkMode={isDarkMode} currentUser={userData?.username || "GUEST"} userId={userData?.user_id} onEventJoined={(event, points) => setEventScore(prev => prev + points)} onEventLeft={(event, points) => setEventScore(prev => Math.max(0, prev - points))} />} />
              <Route path="/posts/:postId" element={<PostPage isDarkMode={isDarkMode} currentUser={userData?.username || "GUEST"} userId={userData?.user_id} />} />
              <Route path="/profile" element={<ProfileScreen scores={scores} userName={userName} userEmail={userEmail} onBack={() => navigate('/home')} isDarkMode={isDarkMode} />} />
+             <Route path="/events-joined" element={<EventsJoinedScreen userId={userData?.user_id} isDarkMode={isDarkMode} onBack={() => navigate('/community')} />} />
            </Routes>
         </div>
       </div>

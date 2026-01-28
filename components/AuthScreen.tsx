@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import ArcadeButton from './ui/ArcadeButton';
 
 interface AuthScreenProps {
-  onLogin: (username: string, email: string, user_id: number) => void;
+  onLogin: (username: string, email: string, user_id: number, score?: number) => void;
   isDarkMode?: boolean;
 }
 
@@ -41,7 +41,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, isDarkMode = false }) 
         const data = await response.json();
 
         if (data.success && data.user) {
-          onLogin(data.user.username, data.user.email || email, data.user.user_id);
+          onLogin(data.user.username, data.user.email || email, data.user.user_id, data.user.score);
         } else {
           setError(data.error || 'Login failed. Please try again.');
         }
@@ -68,7 +68,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, isDarkMode = false }) 
         if (data.success && data.user) {
           setError('');
           // Auto-login after signup
-          onLogin(data.user.username, data.user.email, data.user.user_id);
+          onLogin(data.user.username, data.user.email, data.user.user_id, data.user.score);
         } else {
           setError(data.error || 'Signup failed. Please try again.');
         }

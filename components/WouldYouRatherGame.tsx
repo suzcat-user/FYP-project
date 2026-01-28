@@ -106,7 +106,7 @@ const WouldYouRatherGame: React.FC<WouldYouRatherGameProps> = ({ onComplete }) =
           <p className="text-center font-bold text-2xl mb-8">Loading questions...</p>
         ) : currentQuestion ? (
           <>
-            <p className="text-center font-bold text-2xl mb-8">{currentQuestion.question}</p>
+            <p className="text-center font-bold text-5xl mb-8">{currentQuestion.question}</p>
             {loadError && (
               <p className="text-center text-sm text-gray-500 mb-4">{loadError}</p>
             )}

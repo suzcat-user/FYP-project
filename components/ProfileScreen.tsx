@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Scores, Trait } from '../types';
 
 interface ProfileScreenProps {
@@ -13,6 +14,7 @@ interface ProfileScreenProps {
 const AVATARS = ["🕹️", "👾", "🤖", "🚀", "🐱", "🐲", "💎", "🛹"];
 
 const ProfileScreen: React.FC<ProfileScreenProps> = ({ scores, userName, userEmail, onBack, isDarkMode = false }) => {
+  const navigate = useNavigate();
   const [selectedAvatar, setSelectedAvatar] = useState(AVATARS[0]);
   
   const traits = Object.keys(scores) as Trait[];
@@ -112,6 +114,12 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ scores, userName, userEma
                 className={`font-press-start text-xs md:text-sm px-6 py-3 border-b-8 border-r-8 active:border-0 active:translate-y-2 active:translate-x-2 transition-all ${isDarkMode ? 'bg-pink-700 border-indigo-950 hover:bg-pink-600' : 'bg-red-600 border-red-800 text-white'}`}
             >
                 EXIT TERMINAL
+            </button>
+            <button
+              onClick={() => navigate('/events-joined')}
+              className={`font-press-start text-xs md:text-sm px-6 py-3 border-b-8 border-r-8 transition-all ${isDarkMode ? 'bg-yellow-600 border-yellow-800 text-yellow-100 hover:bg-yellow-700' : 'bg-yellow-500 border-yellow-700 text-white hover:bg-yellow-600'}`}
+            >
+              🎮 MY EVENTS
             </button>
             <button 
                 className={`font-press-start text-xs md:text-sm px-6 py-3 border-b-8 border-r-8 opacity-50 cursor-not-allowed ${isDarkMode ? 'bg-slate-700 border-slate-900' : 'bg-sky-600 border-sky-800 text-white'}`}

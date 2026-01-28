@@ -60,7 +60,8 @@ const BubbleTarget: React.FC<{
   onClick: () => void;
   isDarkMode: boolean;
   isPopped: boolean;
-}> = ({ text, description, trait, onClick, isDarkMode, isPopped }) => {
+  tooltipBelow?: boolean;
+}> = ({ text, description, trait, onClick, isDarkMode, isPopped, tooltipBelow }) => {
   return (
     <button
       onClick={onClick}
@@ -68,10 +69,10 @@ const BubbleTarget: React.FC<{
         ${isPopped ? 'scale-150 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}`}
     >
       {/* Tooltip always above */}
-      <div className={`absolute bottom-[115%] left-1/2 -translate-x-1/2 w-[35vmin] p-3 border-4 shadow-[12px_12px_0px_rgba(0,0,0,0.3)] z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100 origin-bottom rounded-none backdrop-blur-xl ${isDarkMode ? 'bg-slate-950 border-white text-white' : 'bg-white border-sky-900 text-sky-900'}`}>
+      <div className={`absolute ${tooltipBelow ? 'top-[115%] origin-top' : 'bottom-[115%] origin-bottom'} left-1/2 -translate-x-1/2 w-[35vmin] p-3 border-4 shadow-[12px_12px_0px_rgba(0,0,0,0.3)] z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100 rounded-none backdrop-blur-xl ${isDarkMode ? 'bg-slate-950 border-white text-white' : 'bg-white border-sky-900 text-sky-900'}`}>
         <p className="font-press-start text-[1.4vmin] mb-2 border-b-2 border-current pb-1 uppercase tracking-tighter">{text}</p>
         <p className={`font-vt323 text-[2.2vmin] leading-tight ${isDarkMode ? 'text-indigo-100' : 'text-gray-700'}`}>{description}</p>
-        <div className={`absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[10px] ${isDarkMode ? 'border-t-white' : 'border-t-sky-900'}`}></div>
+        <div className={`absolute ${tooltipBelow ? 'bottom-full rotate-180' : 'top-full'} left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[10px] ${isDarkMode ? 'border-t-white' : 'border-t-sky-900'}`}></div>
       </div>
 
       <div className={`absolute inset-0 rounded-full backdrop-blur-[4px] border-4 shadow-2xl transition-all duration-500 overflow-hidden bg-gradient-to-br ${TRAIT_COLORS[trait]} opacity-30 group-hover:opacity-60`}>
@@ -142,17 +143,28 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
     }
   };
 
-  const bubbleConfigs = useMemo(() => (currentQuestion?.answers || []).map(() => {
-    return {
-      top: 15 + Math.random() * 50,
-      left: 10 + Math.random() * 70,
-      delay: Math.random() * 8, 
-      duration: 5 + Math.random() * 6,
-      // Random drift vectors for movement
-      moveX: Math.random() * 100 - 50,
-      moveY: Math.random() * 80 - 40
-    };
-  }), [currentQuestionIndex, questions.length]);
+  const bubbleConfigs = useMemo(() => {
+    const positions = [
+      { top: 18, left: 18 },
+      { top: 18, left: 55 },
+      { top: 18, left: 78 },
+      { top: 48, left: 22 },
+      { top: 52, left: 52 },
+      { top: 48, left: 78 }
+    ];
+
+    const shuffled = [...positions].sort(() => Math.random() - 0.5);
+    return (currentQuestion?.answers || []).map((_, idx) => {
+      const pos = shuffled[idx % shuffled.length];
+      return {
+        top: pos.top,
+        left: pos.left,
+        delay: Math.random() * 4,
+        duration: 6 + Math.random() * 4,
+        pathIndex: idx % 6
+      };
+    });
+  }, [currentQuestionIndex, questions.length]);
 
   const handleShot = (trait: Trait, personalityCodes: PersonalityCode[] | undefined, index: number) => {
     if (isShot) return;
@@ -239,10 +251,8 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
                       style={{ 
                         top: `${config.top}%`, 
                         left: `${config.left}%`, 
-                        animation: `float-around ${config.duration}s ease-in-out infinite alternate`, 
-                        animationDelay: `-${config.delay}s`,
-                        zIndex: isShot ? 10 : 30,
-                        transform: `translate(${config.moveX}px, ${config.moveY}px)`
+                        animation: `bubble-float-${config.pathIndex} ${config.duration}s ease-in-out ${config.delay}s infinite alternate`, 
+                        zIndex: isShot ? 10 : 30
                       }}
                     >
                         <BubbleTarget 
@@ -251,6 +261,7 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
                           trait={derivedTrait}
                           isDarkMode={isDarkMode} 
                           isPopped={poppedId === index}
+                          tooltipBelow={config.top <= 24}
                           onClick={() => handleShot(derivedTrait, answer.personalityCodes as PersonalityCode[] | undefined, index)} 
                         />
                     </div>
@@ -281,6 +292,14 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
            <p className="text-[1.5vmin] animate-blink font-press-start text-green-400 tracking-tighter uppercase">Scroll for manual</p>
            <div className="font-press-start text-[1vmin] text-white/40 uppercase">Sensors: Active</div>
       </div>
+      <style>{`
+        @keyframes bubble-float-0 { 0% { transform: translate(0px, 0px); } 50% { transform: translate(38px, -30px); } 100% { transform: translate(-32px, 26px); } }
+        @keyframes bubble-float-1 { 0% { transform: translate(0px, 0px); } 50% { transform: translate(-40px, 32px); } 100% { transform: translate(30px, -24px); } }
+        @keyframes bubble-float-2 { 0% { transform: translate(0px, 0px); } 50% { transform: translate(32px, 38px); } 100% { transform: translate(-26px, -32px); } }
+        @keyframes bubble-float-3 { 0% { transform: translate(0px, 0px); } 50% { transform: translate(-32px, -38px); } 100% { transform: translate(34px, 26px); } }
+        @keyframes bubble-float-4 { 0% { transform: translate(0px, 0px); } 50% { transform: translate(28px, -40px); } 100% { transform: translate(-34px, 30px); } }
+        @keyframes bubble-float-5 { 0% { transform: translate(0px, 0px); } 50% { transform: translate(-28px, 40px); } 100% { transform: translate(32px, -34px); } }
+      `}</style>
     </GameContainer>
   );
 };

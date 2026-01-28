@@ -202,7 +202,7 @@ const AppContent: React.FC = () => {
                      className={`px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 border-2 text-[9px] sm:text-[10px] md:text-[1.2vmin] transition-all hover:scale-105 active:scale-95 flex items-center gap-1 sm:gap-2 ${isDarkMode ? 'border-yellow-500 bg-yellow-500/20 text-yellow-300' : 'border-yellow-500 bg-yellow-500/20 text-yellow-400'}`}
                      title="View Leaderboard"
                    >
-                     <span className="text-lg">🏆</span>
+                     <span className="text-2xl sm:text-3xl">🏆</span>
                    </button>
                  )}
 

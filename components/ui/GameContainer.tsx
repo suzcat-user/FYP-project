@@ -33,16 +33,16 @@ const GameContainer: React.FC<GameContainerProps> = ({
         
                 {/* Progress Bar - Top Right */}
                 {progress > 0 && (
-                    <div className="absolute left-6 top-16 z-50 flex flex-col items-start w-[260px] max-w-[90vw]"
+                    <div className="absolute left-6 top-1/3 -translate-y-1/2 z-50 flex flex-col items-start w-64 gap-1"
                              style={{ pointerEvents: 'none' }}
                     >
-                        <div className="flex w-full justify-between items-center mb-1 font-press-start text-[1.1vmin] tracking-widest" style={{ pointerEvents: 'auto' }}>
+                        <div className="flex w-full justify-between items-center font-press-start text-[0.9vmin] tracking-widest" style={{ pointerEvents: 'auto' }}>
                             <span className={isDarkMode ? 'text-indigo-300' : 'text-sky-800'}>QUEST PROGRESS</span>
                             <span className={isDarkMode ? 'text-pink-400' : 'text-sky-950'}>LEVEL {progress}/3</span>
                         </div>
                         <div 
-                            className={`relative w-full h-4 border-2 overflow-hidden font-press-start ${isDarkMode ? 'bg-slate-900 border-indigo-700' : 'bg-white border-sky-700'}`}
-                            style={{ pointerEvents: 'auto', borderRadius: '6px' }}
+                            className={`relative w-full h-3 border-2 overflow-hidden font-press-start ${isDarkMode ? 'bg-slate-900 border-indigo-700' : 'bg-white border-sky-700'}`}
+                            style={{ pointerEvents: 'auto', borderRadius: '4px' }}
                         >
                             <div
                                 className="absolute left-0 top-0 h-full transition-all duration-500"
@@ -86,7 +86,7 @@ const GameContainer: React.FC<GameContainerProps> = ({
         {onSkip && (
              <button 
                 onClick={onSkip}
-                className={`absolute right-6 top-1/2 -translate-y-1/2 font-press-start text-[1.2vmin] px-4 py-2 border-b-4 border-r-4 active:border-b-0 active:border-r-0 active:translate-y-1 active:translate-x-1 transition-all flex items-center gap-2 ${isDarkMode ? 'bg-pink-600 text-white border-pink-900 shadow-md shadow-pink-900/40' : 'bg-yellow-400 text-sky-900 border-sky-900'}`}
+                className={`absolute right-6 top-1/3 -translate-y-1/2 font-press-start text-[1.2vmin] px-4 py-2 border-b-4 border-r-4 active:border-b-0 active:border-r-0 active:translate-y-1 active:translate-x-1 transition-all flex items-center gap-2 ${isDarkMode ? 'bg-pink-600 text-white border-pink-900 shadow-md shadow-pink-900/40' : 'bg-yellow-400 text-sky-900 border-sky-900'}`}
              >
                 SKIP <span className="text-[1.5vmin]">»</span>
              </button>

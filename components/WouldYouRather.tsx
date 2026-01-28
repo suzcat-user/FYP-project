@@ -208,10 +208,6 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
           }}></div>
           <div className="absolute inset-0 bg-gradient-to-r from-rose-600/40 via-transparent to-transparent opacity-60 group-hover/left:opacity-100 transition-opacity"></div>
           
-          <div className="absolute top-0 left-0 w-full h-10 sm:h-12 bg-rose-500/10 border-b-2 border-rose-500/30 font-press-start text-[clamp(10px,1.2vw,14px)] flex items-center px-3 sm:px-4 text-rose-400 drop-shadow-[0_0_5px_#f43f5e]">
-             PLAYER_1 :: PULSE_ALPHA
-          </div>
-          
           <div className="relative z-10 text-center transform group-hover/left:scale-105 transition-transform duration-300">
             <span className="font-press-start text-[clamp(10px,1.6vw,18px)] text-rose-300 mb-3 sm:mb-4 block animate-pulse">PATH_01</span>
             <h2 className="font-vt323 text-[clamp(22px,6vw,70px)] text-white leading-tight sm:leading-none mb-4 sm:mb-6 drop-shadow-[0_0_15px_#f43f5e] chromatic">
@@ -250,9 +246,6 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
             animation: 'grid-move 15s linear infinite reverse'
           }}></div>
           <div className="absolute inset-0 bg-gradient-to-l from-cyan-600/40 via-transparent to-transparent opacity-60 group-hover/right:opacity-100 transition-opacity"></div>
-          <div className="absolute top-0 right-0 w-full h-10 sm:h-12 bg-cyan-500/10 border-b-2 border-cyan-500/30 font-press-start text-[clamp(10px,1.2vw,14px)] flex items-center justify-end px-3 sm:px-4 text-cyan-400 drop-shadow-[0_0_5px_#06b6d4]">
-             PLAYER_2 :: CORE_BETA
-          </div>
           <div className="relative z-10 text-center transform group-hover/right:scale-105 transition-transform duration-300">
             <span className="font-press-start text-[clamp(10px,1.6vw,18px)] text-cyan-300 mb-3 sm:mb-4 block animate-pulse">PATH_02</span>
             <h2 className="font-vt323 text-[clamp(22px,6vw,70px)] text-white leading-tight sm:leading-none mb-4 sm:mb-6 drop-shadow-[0_0_15px_#06b6d4] chromatic">
@@ -265,18 +258,9 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
         <div className={`absolute inset-0 pointer-events-none z-50 transition-all duration-300 ${animating ? 'opacity-100 bg-white' : 'opacity-0'}`}></div>
       </div>
 
-      <div className={`min-h-[56px] sm:h-20 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0 px-4 sm:px-10 font-press-start text-[clamp(10px,1.2vw,14px)] border-t-8 transition-colors duration-500 ${isDarkMode ? 'bg-slate-950 border-rose-900/40' : 'bg-slate-900 border-cyan-900/40'}`}>
-          <div className="flex gap-6 items-center">
-            <div className="flex flex-col">
-                <span className="text-rose-500/60 mb-1 uppercase">Streak</span>
-                <span className="text-white text-[clamp(12px,2vw,20px)]">X{round + 1}</span>
-            </div>
-          </div>
+      <div className={`min-h-[56px] sm:h-20 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-0 px-4 sm:px-10 font-press-start text-[clamp(10px,1.2vw,14px)] border-t-8 transition-colors duration-500 ${isDarkMode ? 'bg-slate-950 border-rose-900/40' : 'bg-slate-900 border-cyan-900/40'}`}>
           <div className="flex flex-col items-center">
             <div className="animate-blink text-yellow-400 mb-1 text-[clamp(10px,1.2vw,14px)]">SCROLL DOWN FOR MANUAL</div>
-          </div>
-          <div className="flex flex-col items-end">
-             <span className="text-cyan-400 text-[clamp(10px,1.2vw,14px)]">CREDITS: 99,999</span>
           </div>
       </div>
     </GameContainer>

@@ -6,6 +6,11 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 -- Drop all existing tables to start fresh
 DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS post_images;
+DROP TABLE IF EXISTS post_media;
+DROP TABLE IF EXISTS emoji_catalog;
+DROP TABLE IF EXISTS gif_catalog;
+DROP TABLE IF EXISTS media_catalog;
 DROP TABLE IF EXISTS user_answers;
 DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS quiz_sessions;
@@ -44,15 +49,33 @@ CREATE TABLE posts (
     INDEX idx_posts_created_at (created_at)
 );
 
--- Post images (stored in DB)
-CREATE TABLE post_images (
-    image_id INT AUTO_INCREMENT PRIMARY KEY,
+-- Emoji catalog (available emojis)
+CREATE TABLE emoji_catalog (
+    emoji_id INT AUTO_INCREMENT PRIMARY KEY,
+    emoji VARCHAR(16) NOT NULL UNIQUE
+);
+
+-- GIF catalog (available GIF URLs)
+CREATE TABLE gif_catalog (
+    gif_id INT AUTO_INCREMENT PRIMARY KEY,
+    url VARCHAR(512) NOT NULL UNIQUE
+);
+
+-- Media catalog (JSON arrays)
+CREATE TABLE media_catalog (
+    catalog_type VARCHAR(16) PRIMARY KEY,
+    items JSON NOT NULL
+);
+
+-- Post media (stored in DB)
+CREATE TABLE post_media (
+    media_id INT AUTO_INCREMENT PRIMARY KEY,
     post_id INT NOT NULL,
     mime_type VARCHAR(100) NOT NULL,
-    image_data LONGBLOB NOT NULL,
+    media_data LONGBLOB NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
-    INDEX idx_post_images_post_id (post_id)
+    INDEX idx_post_media_post_id (post_id)
 );
 
 -- Comments table
@@ -61,6 +84,7 @@ CREATE TABLE comments (
     user_id INT NOT NULL,
     post_id INT NOT NULL,
     content TEXT NOT NULL,
+    gifs JSON NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,

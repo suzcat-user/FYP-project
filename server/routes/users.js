@@ -48,7 +48,7 @@ module.exports = (db) => {
 
       // Create new user
       const [result] = await db.execute(
-        'INSERT INTO users (username, email, password_hash, score) VALUES (?, ?, ?, 0)',
+        'INSERT INTO users (username, email, password_hash, score, created_at, updated_at) VALUES (?, ?, ?, 0, CONVERT_TZ(UTC_TIMESTAMP(), "+00:00", "+08:00"), CONVERT_TZ(UTC_TIMESTAMP(), "+00:00", "+08:00"))',
         [trimmedUsername, email, passwordHash]
       );
 
@@ -92,6 +92,11 @@ module.exports = (db) => {
       if (!passwordMatch) {
         return res.status(401).json({ error: 'Invalid username or password' });
       }
+
+      await db.execute(
+        'UPDATE users SET updated_at = CONVERT_TZ(UTC_TIMESTAMP(), "+00:00", "+08:00") WHERE user_id = ?',
+        [user.user_id]
+      );
 
       // Login successful
       return res.json({

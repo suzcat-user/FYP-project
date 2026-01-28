@@ -51,10 +51,12 @@ async function populateHobbies() {
 
     console.log('✅ Tables created successfully');
 
-    // Clear existing data
+    // Clear existing data (disable foreign key checks temporarily)
+    await db.query('SET FOREIGN_KEY_CHECKS = 0');
     await db.query('DELETE FROM hobbies');
     await db.query('DELETE FROM personality_communities');
     await db.query('DELETE FROM personality_types');
+    await db.query('SET FOREIGN_KEY_CHECKS = 1');
     console.log('🧹 Cleared existing data');
 
     // Insert personality types
@@ -124,12 +126,19 @@ async function populateHobbies() {
       ['N', 'Nature photography', 'Capturing landscapes, plants, and outdoor moments to preserve beauty and detail. It encourages you to slow down, notice light, and appreciate small scenes.', 19],
       ['N', 'Hiking', 'Exploring trails for exercise and fresh air while discovering quiet, scenic places. Each route offers a new experience and a refreshing break from screens.', 20],
       ['N', 'Beach clean-ups', 'Community efforts to protect coastlines and habitats through hands-on action. It is meaningful, social, and leaves a visible positive impact on nature.', 21],
+      ['N', 'Birdwatching', 'Observing and identifying birds in their natural habitat for quiet focus and discovery. It sharpens attention to detail and deepens your connection with local wildlife.', 32],
+      ['N', 'Camping', 'Outdoor overnight trips that immerse you in nature away from daily routines. It builds self-reliance, creates memorable experiences, and offers complete digital detox.', 33],
+      ['N', 'Foraging', 'Learning to identify and gather edible plants, mushrooms, and herbs from the wild. It combines education with adventure while fostering respect for natural ecosystems.', 34],
       
       // Social (S)
       ['S', 'Badminton matches', 'Friendly rallies that keep you active together while boosting coordination. It is fast-paced, easy to learn, and perfect for social play.', 22],
       ['S', 'Group cooking', 'Sharing recipes and preparing meals as a team to bond and learn. It turns everyday food into a fun event and encourages creative collaboration.', 23],
       ['S', 'Multiplayer games', 'Co-op or competitive play with friends that builds teamwork and friendly rivalry. It is a great way to stay connected and share memorable moments.', 24],
       ['S', 'Board games', 'Tabletop sessions that spark conversation, laughter, and strategy. From party games to deep tactics, there is always something new to try together.', 25],
+      ['S', 'Team sports', 'Joining recreational leagues for soccer, volleyball, or basketball to build camaraderie. Regular games create routine social connection while keeping you fit and engaged.', 35],
+      ['S', 'Karaoke nights', 'Singing with friends in a supportive environment that encourages fun and self-expression. It breaks the ice, creates shared memories, and celebrates everyone\'s unique style.', 36],
+      ['S', 'Potluck dinners', 'Gathering with friends where everyone brings a dish to share stories and flavors. It fosters community, celebrates diversity, and makes hosting easy and inclusive.', 37],
+      ['S', 'Escape rooms', 'Collaborative puzzle-solving adventures that test communication and quick thinking. Working together under time pressure creates excitement and strengthens team bonds.', 38],
       
       // Lifestyle (L)
       ['L', 'Cooking', 'Trying recipes and building everyday kitchen skills you can rely on. It brings comfort through routine while giving space to experiment with flavors.', 26],
@@ -137,7 +146,9 @@ async function populateHobbies() {
       ['L', 'Journaling', 'Reflective writing for clarity and routine, helping you track goals and feelings. It is a peaceful habit that supports self-awareness over time.', 28],
       ['L', 'DIY decor', 'Personalizing your space with simple crafts that make home feel special. Small projects add warmth and let your personality show through details.', 29],
       ['L', 'Playing instruments', 'Practicing music to unwind and improve focus with steady progress. It builds patience and gives you a creative outlet whenever you need a reset.', 30],
-      ['L', 'Making playlists', 'Curating music to match moods and moments for study, relaxation, or workouts. It is a simple ritual that can boost energy or bring calm.', 31]
+      ['L', 'Making playlists', 'Curating music to match moods and moments for study, relaxation, or workouts. It is a simple ritual that can boost energy or bring calm.', 31],
+      ['L', 'Reading', 'Diving into books for relaxation, knowledge, or escapism as part of your wind-down routine. It expands perspective, reduces stress, and creates a comforting daily ritual.', 39],
+      ['L', 'Meditation', 'Daily mindfulness practice to center yourself and manage stress through breathing and awareness. Even short sessions improve focus, calm, and emotional balance over time.', 40]
     ];
 
     for (const [code, name, description, communityId] of hobbies) {

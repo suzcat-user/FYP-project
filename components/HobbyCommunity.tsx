@@ -2,6 +2,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Hobby, Post, Comment } from '../types';
 import { getHobbyByName } from '../services/hobbyRecommendations';
+import EventsComponent from './EventsComponent';
 import ArcadeButton from './ui/ArcadeButton';
 
 interface HobbyCommunityProps {
@@ -10,7 +11,11 @@ interface HobbyCommunityProps {
   isDarkMode?: boolean;
   currentUser?: string;
   userId?: number;
+  onEventJoined?: (event: any, points: number) => void;
+  onEventLeft?: (event: any, points: number) => void;
 }
+
+const API_BASE_URL = 'http://localhost:3001';
 
 const PIXEL_GIFS = [
   "https://media1.tenor.com/m/ULDjjjbmgt4AAAAd/yeyeskies-cynthia-erivo.gif",
@@ -25,6 +30,26 @@ const PIXEL_GIFS = [
   "https://media1.tenor.com/m/O-MmXat9u54AAAAC/benson-boone-coachella.gif",
   "https://media1.tenor.com/m/MuL00oOUHpAAAAAC/wicked-glinda-wicked-for-good.gif",
   "https://media1.tenor.com/m/rxjtdE-oKtMAAAAC/little-mermaid-laughing.gif"
+];
+
+const DEFAULT_EMOJIS = [
+  '😀','😃','😄','😁','😆','😅','😂','🤣','😊','😇','🙂','😉',
+  '😍','😘','😜','🤪','😎','🥳','🤩','😴','🤔','🫡','😤','😭',
+  '😮','😱','😬','😷','🤒','🤕','🥶','🥵','🤗','🙃','😵‍💫',
+  '🙌','👏','🫶','🙏','🤝','👍','👎','💪','✌️','🤘','👌','🤙',
+  '🔥','✨','💥','💫','🌟','🌈','⚡','☀️','🌙','🌧️','❄️','🌊',
+  '❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💖','💘','💯',
+  '🎉','🎊','🎈','🎁','🎂','🎯','🏆','🏅','🎮','🎨','🎵','🎬',
+  '📌','📣','📢','📷','📸','🧠','💡','📚','✏️','📝','🧩','🛠️',
+  '🚀','🛸','🏝️','🗺️','🍀','🌸','🌻','🍕','🍔','🍟','🍣','☕',
+  '🍩','🍪','🍰','🍫','🍿','🥤','🧋','🍹','🍺','🥂','🍎','🍉',
+  '🍓','🍒','🍇','🍍','🥑','🥦','🥕','🌽','🌮','🌯','🥗',
+  '🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐸',
+  '🐵','🐥','🐧','🐦','🦄','🐢','🐠','🐬','🦋','🐝','🌼','🌺',
+  '🏀','⚽','🏈','⚾','🎾','🏐','🏓','🎳','🛼','🚴','🏃','🧘',
+  '⌛','⏰','📍','🧭','🧳','🎒','🛍️','🎧','📱','💻','🖥️','🖱️',
+  '🔮','🧿','💎','🪄','🧸','🪅','🪩','🎀','🧵','🧶','🧷','🪡',
+  '✅','❌','⚠️','❗','❓','➕','➖','➗','✖️','🔔','🔒','🔑'
 ];
 
 
@@ -96,7 +121,7 @@ const AttachmentCarousel: React.FC<{ urls: string[]; className?: string }> = ({ 
   );
 };
 
-const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMode = false, currentUser = 'USER_1', userId }) => {
+const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMode = false, currentUser = 'USER_1', userId, onEventJoined, onEventLeft }) => {
   const { hobbyName: hobbySlug } = useParams();
   const [joined, setJoined] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -104,6 +129,9 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
   const [newPostContent, setNewPostContent] = useState('');
   const [newPostTitle, setNewPostTitle] = useState('');
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [emojiOptions, setEmojiOptions] = useState<string[]>(DEFAULT_EMOJIS);
+  const [gifOptions, setGifOptions] = useState<string[]>(PIXEL_GIFS);
   const [resolvedUserId, setResolvedUserId] = useState<number | undefined>(userId);
   const [resolvedUsername, setResolvedUsername] = useState<string>(currentUser || 'USER_1');
 
@@ -124,6 +152,10 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
 
   const removeAttachment = (index: number) => {
     setAttachments(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleAddEmoji = (emoji: string) => {
+    setNewPostContent(prev => `${prev}${emoji}`);
   };
 
   const [posts, setPosts] = useState<Post[]>([]);
@@ -152,6 +184,35 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
       setResolvedUsername(currentUser);
     }
   }, [userId, currentUser, resolvedUsername]);
+
+  useEffect(() => {
+    const loadMediaCatalogs = async () => {
+      try {
+        const [emojiRes, gifRes] = await Promise.all([
+          fetch(`${API_BASE_URL}/api/media/emojis`),
+          fetch(`${API_BASE_URL}/api/media/gifs`)
+        ]);
+
+        if (emojiRes.ok) {
+          const emojiData = await emojiRes.json();
+          if (Array.isArray(emojiData?.emojis) && emojiData.emojis.length) {
+            setEmojiOptions(emojiData.emojis);
+          }
+        }
+
+        if (gifRes.ok) {
+          const gifData = await gifRes.json();
+          if (Array.isArray(gifData?.gifs) && gifData.gifs.length) {
+            setGifOptions(gifData.gifs);
+          }
+        }
+      } catch (err) {
+        // keep defaults
+      }
+    };
+
+    loadMediaCatalogs();
+  }, []);
 
   const resolvedHobby = hobby || (hobbySlug ? getHobbyByName(hobbySlug.replace(/-/g, ' ')) : undefined);
   const communityId = resolvedHobby?.communityId;
@@ -381,6 +442,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
     setNewPostContent('');
     setAttachments([]);
     setEditingPostId(null);
+    setShowEmojiPicker(false);
   };
 
   if (!resolvedHobby && !hobbySlug) return <div className="p-10 text-center font-press-start">SELECT A HOBBY FIRST</div>;
@@ -455,11 +517,27 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
 
               {/* Sidebar */}
               <div className="w-full md:w-[300px] flex flex-col gap-4">
+                  {/* About Community */}
                   <div className={`border-2 p-4 ${isDarkMode ? 'bg-[#1a1c27] border-indigo-950' : 'bg-white border-gray-300'}`}>
                       <h3 className="font-press-start text-[1.2vmin] border-b-2 mb-4">ABOUT COMMUNITY</h3>
                       <p className="font-vt323 text-lg leading-tight mb-4">{resolvedHobby?.description || 'Explore posts and conversations in this hobby community.'}</p>
                       <ArcadeButton onClick={() => setShowCreateModal(true)} className="w-full">CREATE POST</ArcadeButton>
                   </div>
+
+                  {/* Events Section */}
+                  {userId && communityId && (
+                    <div className={`border-2 p-4 ${isDarkMode ? 'bg-[#1a1c27] border-purple-950' : 'bg-white border-purple-300'}`}>
+                      <h3 className="font-press-start text-[1.2vmin] border-b-2 mb-4 text-purple-500">🎉 EVENTS</h3>
+                      <EventsComponent 
+                        userId={userId}
+                        communityId={communityId}
+                        isDarkMode={isDarkMode}
+                        compact={true}
+                        onEventJoined={onEventJoined}
+                        onEventLeft={onEventLeft}
+                      />
+                    </div>
+                  )}
               </div>
           </div>
       </div>
@@ -488,6 +566,29 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
                     onChange={e => setNewPostContent(e.target.value)}
                     className={`p-3 font-vt323 text-2xl border-4 ${isDarkMode ? 'bg-slate-900 border-indigo-900' : 'bg-gray-50 border-gray-300'}`}
                   ></textarea>
+
+                  <div className="relative inline-block">
+                    <button
+                      onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                      className={`font-press-start text-[1vmin] px-4 py-2 border-2 ${isDarkMode ? 'bg-indigo-950 border-indigo-800' : 'bg-gray-100 border-gray-300'}`}
+                    >
+                      EMOJI
+                    </button>
+                    {showEmojiPicker && (
+                      <div className={`absolute z-20 mt-3 p-3 border-2 grid grid-cols-5 gap-2 w-64 max-h-48 overflow-y-auto shadow-lg ${isDarkMode ? 'bg-[#0f111a] border-indigo-900' : 'bg-white border-gray-300'}`}>
+                        {emojiOptions.map((emoji) => (
+                          <button
+                            key={emoji}
+                            onClick={() => handleAddEmoji(emoji)}
+                            className="text-2xl hover:scale-110 transition"
+                            aria-label={`Insert ${emoji}`}
+                          >
+                            {emoji}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                   
                   {!editingPostId && (
                     <div className="flex items-center gap-4">
@@ -527,52 +628,6 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
       )}
     </div>
   );
-};
-
-const CommentInput: React.FC<{ onAdd: (content: string, gifs?: string[]) => void; isDarkMode: boolean }> = ({ onAdd, isDarkMode }) => {
-    const [text, setText] = useState('');
-    const [showGifs, setShowGifs] = useState(false);
-    const [selectedGifs, setSelectedGifs] = useState<string[]>([]);
-
-    const toggleGif = (gif: string) => {
-        setSelectedGifs(prev => 
-            prev.includes(gif) 
-                ? prev.filter(g => g !== gif) 
-                : [...prev, gif]
-        );
-    };
-
-    return (
-        <div className="flex flex-col gap-2">
-            <textarea 
-                value={text}
-                onChange={e => setText(e.target.value)}
-                placeholder="What are your thoughts?"
-                className={`w-full p-4 font-vt323 text-xl border-4 ${isDarkMode ? 'bg-slate-900 border-indigo-950 text-white' : 'bg-gray-50 border-gray-300'}`}
-            ></textarea>
-            <div className="flex justify-between items-center relative">
-                <button 
-                    onClick={() => setShowGifs(!showGifs)}
-                    className={`font-press-start text-[1vmin] px-4 py-2 border-2 ${isDarkMode ? 'bg-indigo-950 border-indigo-800' : 'bg-gray-100 border-gray-300'}`}
-                >
-                    GIF ({selectedGifs.length})
-                </button>
-                {showGifs && (
-                    <div className={`absolute bottom-full left-0 mb-2 p-2 grid grid-cols-4 gap-2 border-4 z-50 ${isDarkMode ? 'bg-slate-950 border-indigo-900' : 'bg-white border-gray-400'}`}>
-                        {PIXEL_GIFS.map(g => (
-                            <img 
-                                key={g} 
-                                src={g} 
-                                className={`w-16 h-16 cursor-pointer hover:scale-110 ${selectedGifs.includes(g) ? 'border-4 border-green-500' : 'border-2'}`} 
-                                onClick={() => toggleGif(g)}
-                            />
-                        ))}
-                    </div>
-                )}
-                <ArcadeButton onClick={() => { onAdd(text, selectedGifs.length > 0 ? selectedGifs : undefined); setText(''); setSelectedGifs([]); setShowGifs(false); }}>COMMENT</ArcadeButton>
-            </div>
-        </div>
-    );
 };
 
 export default HobbyCommunity;

@@ -6,16 +6,21 @@ module.exports = (db) => {
   // Create a comment on a post
   router.post('/', async (req, res) => {
     try {
-      const { user_id, post_id, content } = req.body;
+      const { user_id, post_id, content, gifs } = req.body;
 
       if (!user_id || !post_id || !content) {
         return res.status(400).json({ error: 'user_id, post_id, and content are required' });
       }
 
-      const [result] = await db.execute('INSERT INTO comments (user_id, post_id, content) VALUES (?, ?, ?)', [
+      const normalizedGifs = Array.isArray(gifs) && gifs.length
+        ? JSON.stringify(gifs)
+        : null;
+
+      const [result] = await db.execute('INSERT INTO comments (user_id, post_id, content, gifs) VALUES (?, ?, ?, ?)', [
         user_id,
         post_id,
         content,
+        normalizedGifs,
       ]);
 
       res.json({
@@ -27,6 +32,7 @@ module.exports = (db) => {
           user_id,
           post_id,
           content,
+          gifs: normalizedGifs,
           created_at: new Date().toISOString(),
         },
       });
@@ -55,10 +61,15 @@ module.exports = (db) => {
   router.put('/:comment_id', async (req, res) => {
     try {
       const { comment_id } = req.params;
-      const { user_id, content } = req.body;
+      const { user_id, content, gifs } = req.body;
 
-      const [result] = await db.execute('UPDATE comments SET content = ? WHERE comment_id = ? AND user_id = ?', [
+      const normalizedGifs = Array.isArray(gifs) && gifs.length
+        ? JSON.stringify(gifs)
+        : null;
+
+      const [result] = await db.execute('UPDATE comments SET content = ?, gifs = ? WHERE comment_id = ? AND user_id = ?', [
         content,
+        normalizedGifs,
         comment_id,
         user_id,
       ]);

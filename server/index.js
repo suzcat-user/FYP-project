@@ -1,7 +1,6 @@
 const express = require('express');
 const mysql = require('mysql2/promise');
 const cors = require('cors');
-const path = require('path');
 
 const app = express();
 const PORT = 3001;
@@ -9,7 +8,6 @@ const PORT = 3001;
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Initialize MySQL pool (promise API)
 async function start() {
@@ -26,6 +24,11 @@ async function start() {
       queueLimit: 0,
     });
 
+    db.on('connection', (connection) => {
+      connection.query('SET time_zone = "+08:00"');
+    });
+
+    await db.query('SET time_zone = "+08:00"');
     await db.query('SELECT 1');
     console.log('✅ Connected to MySQL database: fypdatabase');
 
@@ -38,6 +41,8 @@ async function start() {
     const gameQuestionsRoutes = require('./routes/game-questions');
     const uploadsRoutes = require('./routes/uploads');
     const hobbiesRoutes = require('./routes/hobbies');
+    const eventsRoutes = require('./routes/events');
+    const mediaRoutes = require('./routes/media');
 
     // Mount routes with promise pool
     app.use('/api/users', userRoutes(db));
@@ -48,6 +53,8 @@ async function start() {
     app.use('/api/game-questions', gameQuestionsRoutes(db));
     app.use('/api/uploads', uploadsRoutes(db));
     app.use('/api/hobbies', hobbiesRoutes(db));
+    app.use('/api/events', eventsRoutes(db));
+    app.use('/api/media', mediaRoutes(db));
 
     // Test route
     app.get('/api/test', (req, res) => {

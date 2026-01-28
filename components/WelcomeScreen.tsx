@@ -44,13 +44,6 @@ const TRAITS = [
     { name: "Social", icon: "🤝", color: "text-indigo-400", desc: "The soul of the party.", stat: "CHARISMA", gear: "Mega Mic" },
     { name: "Explorer", icon: "🧭", color: "text-sky-500", desc: "Seeking new horizons.", stat: "VOYAGER", gear: "Star Lens" },
 ];
-const ListOfHobbies = [ 
-    "Woodworking", "Photography", "Gardening", "Cooking", "Hiking", 
-    "Painting", "Cycling", "Writing", "Dancing", "Knitting", 
-    "Fishing", "Yoga", "Bird Watching", "Pottery", "Coding",
-    "Traveling", "Collecting", "Brewing", "Sculpting", "Calligraphy",
-    "Origami", "Rock Climbing", "Meditation", "Astronomy", "Magic Tricks"
-]
 
 const ListOfUsernames = [
   "CYBER_PHANTOM_92",
@@ -67,26 +60,49 @@ const ListOfUsernames = [
  "QUANTUM_RAIDER_37",
  "SYNTH_WARRIOR_21",
 ]
+
 const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, isDarkMode = false }) => {
-  const [selectedHobby, setSelectedHobby] = useState(ListOfHobbies[Math.floor(Math.random() * ListOfHobbies.length)].toUpperCase());
+  const [selectedHobby, setSelectedHobby] = useState('HOBBY ARCADE');
   const [selectedUsername, setSelectedUsername] = useState(ListOfUsernames[Math.floor(Math.random() * ListOfUsernames.length)]);
   const [typedText, setTypedText] = useState('');
+  const [hobbies, setHobbies] = useState<string[]>([]);
   const fullText = '"Find the spark that starts the flame." Discover your ultimate hobby through three precision-tuned arcade tests.';
 
-  // Load chatbot scripts only on home page
+  // Fetch hobbies from database on component mount
   useEffect(() => {
-    const cleanup = loadChatbotScripts();
-    return cleanup;
+    const fetchHobbies = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/hobbies');
+        if (response.ok) {
+          const data = await response.json();
+          // Extract all hobby names from all personalities
+          const allHobbies = data.flatMap((personality: any) => 
+            personality.hobbies.map((hobby: any) => hobby.name)
+          );
+          setHobbies(allHobbies);
+          if (allHobbies.length > 0) {
+            setSelectedHobby(allHobbies[Math.floor(Math.random() * allHobbies.length)].toUpperCase());
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching hobbies:', err);
+        // Fallback to default if API fails
+        setHobbies(['Hobby Arcade']);
+      }
+    };
+    fetchHobbies();
   }, []);
 
   useEffect(() => {
+    if (hobbies.length === 0) return;
+    
     const interval = setInterval(() => {
-      setSelectedHobby(ListOfHobbies[Math.floor(Math.random() * ListOfHobbies.length)].toUpperCase());
+      setSelectedHobby(hobbies[Math.floor(Math.random() * hobbies.length)].toUpperCase());
       setSelectedUsername(ListOfUsernames[Math.floor(Math.random() * ListOfUsernames.length)]);
     }, 20000); // 20 seconds
 
     return () => clearInterval(interval);
-  }, []);
+  }, [hobbies]);
 
   useEffect(() => {
     const startDelay = 2500; // Wait for logo animation

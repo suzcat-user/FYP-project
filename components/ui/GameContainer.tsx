@@ -58,7 +58,7 @@ const GameContainer: React.FC<GameContainerProps> = ({
              <h1 className={`font-press-start text-[3vmin] md:text-[4vmin] tracking-widest uppercase transition-colors duration-500 ${isDarkMode ? 'text-pink-500 drop-shadow-[2px_2px_0px_#1e1b4b]' : 'text-sky-600 drop-shadow-[2px_2px_0px_#bae6fd]'}`}>{title}</h1>
              
              <div className="flex items-center justify-center gap-4 mt-1">
-                 <p className={`font-vt323 text-[3vmin] leading-none transition-colors duration-500 ${transparent ? 'text-white drop-shadow-md' : isDarkMode ? 'text-indigo-200' : 'text-gray-600'}`}>
+                 <p className={`font-vt323 text-[5vmin] leading-none transition-colors duration-500 ${transparent ? 'text-white drop-shadow-md' : isDarkMode ? 'text-indigo-200' : 'text-gray-600'}`}>
                     {instruction}
                  </p>
                  {onRegenerate && (

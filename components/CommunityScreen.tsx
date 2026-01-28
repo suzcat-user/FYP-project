@@ -1,8 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Scores, Trait, Hobby } from '../types';
-import EventsComponent from './EventsComponent';
 import { leaderboardService, LeaderboardEntry } from '../services/leaderboardService';
 
 interface CommunityScreenProps {
@@ -97,7 +95,6 @@ const ShootingStar: React.FC = () => {
 };
 
 const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, hobbies, onSelectHobby, isDarkMode = false, userId, communityId, onScoreUpdate, onEventJoined, onEventLeft, eventScore = 0 }) => {
-  const navigate = useNavigate();
   const traits = Object.keys(scores) as Trait[];
   const topTrait = traits.reduce((a, b) => scores[a] > scores[b] ? a : b);
   
@@ -105,7 +102,6 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, ho
   const [userScore, setUserScore] = useState(eventScore);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [isLoadingLeaderboard, setIsLoadingLeaderboard] = useState(true);
-  const [showEvents, setShowEvents] = useState(false);
 
   // Fetch leaderboard data on component mount
   useEffect(() => {
@@ -192,43 +188,6 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, ho
       </div>
 
       <div className="flex-1 overflow-hidden px-[4vmin] py-[4vmin] flex flex-col max-w-[1000px] mx-auto w-full z-10">
-          {/* Events Button */}
-          <div className="mb-4 flex justify-end gap-3">
-            <button
-              onClick={() => setShowEvents(!showEvents)}
-              className={`font-press-start text-[1.2vmin] px-4 py-2 border-4 border-b-4 active:border-b-2 active:translate-y-0.5 transition-all ${
-                isDarkMode 
-                  ? 'bg-purple-600 border-purple-800 text-purple-100 hover:bg-purple-700' 
-                  : 'bg-purple-500 border-purple-700 text-white hover:bg-purple-600'
-              }`}
-            >
-              🎉 {showEvents ? 'HIDE EVENTS' : 'SHOW EVENTS'}
-            </button>
-            <button
-              onClick={() => navigate('/events-joined')}
-              className={`font-press-start text-[1.2vmin] px-4 py-2 border-4 border-b-4 active:border-b-2 active:translate-y-0.5 transition-all ${
-                isDarkMode 
-                  ? 'bg-yellow-600 border-yellow-800 text-yellow-100 hover:bg-yellow-700' 
-                  : 'bg-yellow-500 border-yellow-700 text-white hover:bg-yellow-600'
-              }`}
-            >
-              🎮 MY EVENTS
-            </button>
-          </div>
-
-          {/* Events Section */}
-          {showEvents && userId && (
-            <div className={`mb-4 border-4 p-4 transition-colors duration-500 ${isDarkMode ? 'bg-slate-900 border-purple-700' : 'bg-slate-800 border-purple-600'}`}>
-              <EventsComponent 
-                userId={userId}
-                communityId={communityId}
-                isDarkMode={isDarkMode}
-                onEventJoined={handleEventJoined}
-                onEventLeft={handleEventLeft}
-              />
-            </div>
-          )}
-
           <div className={`border-8 flex-1 flex flex-col transition-colors duration-500 ${isDarkMode ? 'border-indigo-900 bg-black/80 shadow-[0_0_40px_rgba(168,85,247,0.2)]' : 'border-sky-800 bg-sky-950/90'}`}>
               
               <div className="flex p-4 font-press-start text-[1.5vmin] border-b-8 border-current bg-white/5">

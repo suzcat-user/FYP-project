@@ -125,8 +125,16 @@ const API_BASE_URL = 'http://localhost:3001';
 
 type RingTossAnswer = {
   text: string;
-  trait: Trait | string;
+  trait?: Trait | string;
   personalityCodes?: Array<PersonalityCode | string>;
+};
+
+const personalityCodeToTrait: Record<string, Trait> = {
+  F: Trait.ACTIVE,
+  C: Trait.CREATIVE,
+  N: Trait.CALM,
+  S: Trait.SOCIAL,
+  L: Trait.STRATEGIC
 };
 
 type RingTossQuestion = {
@@ -212,9 +220,14 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
 
   const handleThrow = (answer: RingTossAnswer, index: number) => {
     if (isThrown) return;
+    const derivedTrait = answer.trait
+      ? (answer.trait as Trait)
+      : (answer.personalityCodes && answer.personalityCodes.length > 0
+          ? personalityCodeToTrait[String(answer.personalityCodes[0])] || Trait.STRATEGIC
+          : Trait.STRATEGIC);
     setSelectedAnswer(index);
     setIsThrown(true);
-    onAnswer([answer.trait as Trait], answer.personalityCodes as PersonalityCode[] | undefined);
+    onAnswer([derivedTrait], answer.personalityCodes as PersonalityCode[] | undefined);
     
     setTimeout(() => {
       if (round < TOTAL_ROUNDS - 1 && questions.length) {

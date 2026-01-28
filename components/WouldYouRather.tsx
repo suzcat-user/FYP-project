@@ -15,7 +15,7 @@ const DEFAULT_TOTAL_ROUNDS = 5;
 
 type WouldYouRatherOption = {
   text: string;
-  trait: Trait | string;
+  trait?: Trait | string;
   personalityCodes?: Array<PersonalityCode | string>;
 };
 
@@ -26,6 +26,14 @@ type WouldYouRatherQuestion = {
 };
 
 const API_BASE_URL = 'http://localhost:3001';
+
+const personalityCodeToTrait: Record<string, Trait> = {
+  F: Trait.ACTIVE,
+  C: Trait.CREATIVE,
+  N: Trait.CALM,
+  S: Trait.SOCIAL,
+  L: Trait.STRATEGIC
+};
 
 const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, onSkip, isDarkMode = false, progress, userId }) => {
   const [round, setRound] = useState(0);
@@ -131,9 +139,15 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
 
     const option = currentOptions[index];
     if (!option) return;
+
+    const derivedTrait = option.trait
+      ? (option.trait as Trait)
+      : (option.personalityCodes && option.personalityCodes.length > 0
+          ? personalityCodeToTrait[String(option.personalityCodes[0])] || Trait.STRATEGIC
+          : Trait.STRATEGIC);
     
     saveAnswer(option);
-    onAnswer([option.trait as Trait], option.personalityCodes as PersonalityCode[] | undefined);
+    onAnswer([derivedTrait], option.personalityCodes as PersonalityCode[] | undefined);
     setAnimating(index === 0 ? 'left' : 'right');
 
     setTimeout(() => {

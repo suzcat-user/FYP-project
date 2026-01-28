@@ -32,7 +32,7 @@ const TRAIT_COLORS: Record<Trait, string> = {
 type ShootingGalleryAnswer = {
   text: string;
   description?: string;
-  trait: Trait | string;
+  trait?: Trait | string;
   personalityCodes?: Array<PersonalityCode | string>;
 };
 
@@ -43,6 +43,14 @@ type ShootingGalleryQuestion = {
 };
 
 const API_BASE_URL = 'http://localhost:3001';
+
+const personalityCodeToTrait: Record<string, Trait> = {
+  F: Trait.ACTIVE,
+  C: Trait.CREATIVE,
+  N: Trait.CALM,
+  S: Trait.SOCIAL,
+  L: Trait.STRATEGIC
+};
 
 
 const BubbleTarget: React.FC<{
@@ -219,6 +227,11 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
             {(currentQuestion?.answers || []).map((answer, index) => {
                 const config = bubbleConfigs[index];
                 if (!config) return null;
+                const derivedTrait = answer.trait
+                  ? (answer.trait as Trait)
+                  : (answer.personalityCodes && answer.personalityCodes.length > 0
+                      ? personalityCodeToTrait[String(answer.personalityCodes[0])] || Trait.STRATEGIC
+                      : Trait.STRATEGIC);
                 return (
                     <div 
                       key={`${currentQuestionIndex}-${index}`} 
@@ -235,10 +248,10 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
                         <BubbleTarget 
                           text={answer.text} 
                           description={answer.description} 
-                          trait={answer.trait as Trait}
+                          trait={derivedTrait}
                           isDarkMode={isDarkMode} 
                           isPopped={poppedId === index}
-                          onClick={() => handleShot(answer.trait as Trait, answer.personalityCodes as PersonalityCode[] | undefined, index)} 
+                          onClick={() => handleShot(derivedTrait, answer.personalityCodes as PersonalityCode[] | undefined, index)} 
                         />
                     </div>
                 );

@@ -80,7 +80,7 @@ const BubbleTarget: React.FC<{
       </div>
 
       <div className="relative z-10 text-[6vmin] drop-shadow-[0_0_10px_rgba(255,255,255,0.5)] group-hover:scale-125 transition-transform duration-300">
-        {TRAIT_ICONS[trait]}
+        {description || TRAIT_ICONS[trait]}
       </div>
     </button>
   );

@@ -64,8 +64,8 @@ const GameContainer: React.FC<GameContainerProps> = ({
         <div className="w-full relative px-4 max-w-4xl mx-auto flex flex-col items-center">
              <h1 className={`font-press-start text-[3vmin] md:text-[4vmin] tracking-widest uppercase transition-colors duration-500 ${isDarkMode ? 'text-pink-500 drop-shadow-[2px_2px_0px_#1e1b4b]' : 'text-sky-600 drop-shadow-[2px_2px_0px_#bae6fd]'}`}>{title}</h1>
              
-             <div className="flex items-center justify-center gap-4 mt-1">
-                 <p className={`font-vt323 text-[5vmin] leading-none transition-colors duration-500 ${transparent ? 'text-white drop-shadow-md' : isDarkMode ? 'text-indigo-200' : 'text-gray-600'}`}>
+             <div className="flex items-center justify-center gap-4 mt-1 overflow-x-auto">
+                 <p className={`font-vt323 text-[5vmin] leading-none transition-colors duration-500 whitespace-nowrap ${transparent ? 'text-white drop-shadow-md' : isDarkMode ? 'text-indigo-200' : 'text-gray-600'}`}>
                     {instruction}
                  </p>
                  {onRegenerate && (

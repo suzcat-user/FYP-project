@@ -159,17 +159,17 @@ const AppContent: React.FC = () => {
         <div className="absolute inset-0 border-[4px] border-white/5 pointer-events-none z-50 rounded-2xl"></div>
 
         {/* HUD Top Bar */}
-        <div className={`text-white flex items-center justify-center gap-2 sm:gap-3 lg:gap-6 font-press-start text-[9px] xs:text-[10px] sm:text-[11px] md:text-[1.3vmin] lg:text-[1.6vmin] z-50 relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 min-h-14 md:min-h-16 lg:min-h-20 border-b-8 shadow-2xl transition-colors duration-500 ${isDarkMode ? 'bg-[#1e1b4b] border-indigo-500/30' : 'bg-sky-950 border-sky-400/30'}`}>
+        <div className={`text-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 lg:gap-6 font-press-start text-[9px] xs:text-[10px] sm:text-[11px] md:text-[1.3vmin] lg:text-[1.6vmin] z-50 relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 min-h-14 md:min-h-16 lg:min-h-20 border-b-8 shadow-2xl transition-colors duration-500 ${isDarkMode ? 'bg-[#1e1b4b] border-indigo-500/30' : 'bg-sky-950 border-sky-400/30'}`}>
              {/* Center - HOBBY ARCADE Logo */}
-             <div className="flex flex-col items-center">
-                <div className="text-yellow-400 chromatic tracking-wide lg:tracking-widest uppercase mb-1 text-[11px] sm:text-[13px] md:text-[2vmin]">HOBBY ARCADE</div>
-                <div className="h-0.5 sm:h-1 w-24 sm:w-32 bg-sky-500/20 relative overflow-hidden">
+             <div className="flex flex-col items-center flex-shrink-0 sm:order-2">
+               <div className="text-yellow-400 chromatic uppercase mb-1 text-[clamp(10px,1.6vw,20px)] tracking-[0.12em]">HOBBY ARCADE</div>
+               <div className="h-[3px] w-[clamp(80px,14vw,140px)] bg-sky-500/20 relative overflow-hidden">
                     <div className="absolute top-0 left-0 h-full w-1/2 bg-sky-400 animate-[marquee_2s_linear_infinite]"></div>
                 </div>
              </div>
 
              {/* Left Section - Logo, User ID, Score */}
-             <div className="absolute left-3 sm:left-4 lg:left-6 flex gap-2 sm:gap-3 lg:gap-6 items-center flex-shrink-0">
+             <div className="flex flex-wrap items-center gap-2 sm:gap-3 lg:gap-6 flex-shrink-0 sm:order-1">
                  {/* Logo - Clickable Home Button (disabled on Auth screen) */}
                  <button
                     onClick={() => !isAuthPage && navigate('/home')}
@@ -196,7 +196,7 @@ const AppContent: React.FC = () => {
              </div>
 
              {/* Right Section - Buttons */}
-             <div className="absolute right-3 sm:right-4 lg:right-6 flex gap-2 sm:gap-3 lg:gap-8 items-center flex-shrink-0">
+             <div className="flex flex-wrap items-center gap-2 sm:gap-3 lg:gap-8 flex-shrink-0 sm:order-3">
                  {/* See All Communities Button - Hidden on Auth screen */}
                  {!isAuthPage && (
                    <button 
@@ -210,14 +210,13 @@ const AppContent: React.FC = () => {
                    </button>
                  )}
 
-                 <button 
+                  <button 
                     onClick={() => setIsDarkMode(!isDarkMode)}
                     className={`px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 border-2 text-[9px] sm:text-[10px] md:text-[1.2vmin] transition-all hover:scale-105 active:scale-95 flex items-center gap-1 sm:gap-2 ${isDarkMode ? 'border-purple-500 bg-purple-500/20 text-purple-400' : 'border-sky-400 bg-sky-400/20 text-sky-300'}`}
-                 >
+                  >
                     <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full animate-pulse ${isDarkMode ? 'bg-purple-400' : 'bg-sky-400'}`}></div>
-                    <span className="hidden sm:inline">{isDarkMode ? 'POWER: DARK' : 'POWER: LIGHT'}</span>
-                    <span className="sm:hidden">{isDarkMode ? 'DARK' : 'LIGHT'}</span>
-                 </button>
+                    <span>{isDarkMode ? 'DARK' : 'LIGHT'}</span>
+                  </button>
 
                  {/* Log Out Button - Hidden on Auth screen */}
                   {!isAuthPage && (

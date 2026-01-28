@@ -150,12 +150,18 @@ module.exports = (db) => {
   router.get('/leaderboard/top', async (req, res) => {
     try {
       console.log('📊 Leaderboard endpoint called');
+      const limit = req.query.limit ? parseInt(req.query.limit, 10) : null;
+      console.log('🎯 Limit requested:', limit || 'none (all users)');
+      
       // Fetch all users sorted by score (highest first)
       const [users] = await db.query('SELECT user_id, username, score FROM users ORDER BY score DESC');
       console.log('🔍 Found', users.length, 'users in database');
       
+      // Apply limit if specified
+      const limitedUsers = limit ? users.slice(0, limit) : users;
+      
       // Add rank and emblem to each user
-      const leaderboard = users.map((user, index) => ({
+      const leaderboard = limitedUsers.map((user, index) => ({
         user_id: user.user_id,
         username: user.username,
         score: user.score,

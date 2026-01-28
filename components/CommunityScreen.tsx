@@ -144,7 +144,7 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, ho
   };
 
   return (
-    <div className={`h-full flex flex-col relative overflow-hidden transition-colors duration-500 ${isDarkMode ? 'bg-[#0a0a0f] text-indigo-100' : 'bg-[#0f172a] text-white'}`}>
+    <div className={`h-full flex flex-col relative overflow-y-auto overflow-x-hidden transition-colors duration-500 ${isDarkMode ? 'bg-[#0a0a0f] text-indigo-100' : 'bg-[#0f172a] text-white'}`}>
       {/* Shooting Stars Background */}
       <style>{`
         @keyframes shootingStar {
@@ -175,7 +175,7 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, ho
           </h1>
       </div>
 
-      <div className="flex-1 overflow-hidden px-[4vmin] py-[4vmin] flex flex-col max-w-[1000px] mx-auto w-full z-10">
+      <div className="flex-1 overflow-y-auto px-[4vmin] py-[4vmin] flex flex-col max-w-[1000px] mx-auto w-full z-10">
           <div className={`border-8 flex-1 flex flex-col transition-colors duration-500 ${isDarkMode ? 'border-indigo-900 bg-black/80 shadow-[0_0_40px_rgba(168,85,247,0.2)]' : 'border-sky-800 bg-sky-950/90'}`}>
               
               <div className="flex p-4 font-press-start text-[1.5vmin] border-b-8 border-current bg-white/5">

@@ -28,32 +28,30 @@ const GameContainer: React.FC<GameContainerProps> = ({
   return (
     <div className={`w-full h-full flex flex-col overflow-y-auto overflow-x-hidden relative transition-colors duration-500 ${transparent ? '' : isDarkMode ? 'bg-slate-950' : 'bg-[#e0f2fe]'}`}>
       
-      {/* Progress Bar - Full Width at Top */}
-      {progress > 0 && (
-          <div className={`w-full shrink-0 z-50 transition-colors duration-500 ${isDarkMode ? 'bg-slate-900 border-b-4 border-red-500' : 'bg-white border-b-4 border-red-500'}`}>
-              <div className="w-full px-4 py-2 flex flex-col items-center">
-                  <div className="flex w-full justify-center gap-8 font-press-start text-[0.8vmin]">
-                      <span className={isDarkMode ? 'text-indigo-400' : 'text-sky-800'}>QUEST PROGRESS</span>
-                      <span className={isDarkMode ? 'text-pink-500' : 'text-sky-950'}>LEVEL {progress}/3</span>
-                  </div>
-                  <div className={`w-full max-w-2xl h-2 flex gap-1 p-1 border-2 mt-1 ${isDarkMode ? 'bg-slate-950 border-indigo-900' : 'bg-gray-100 border-sky-900'}`}>
-                      {[1, 2, 3].map(step => (
-                          <div 
-                              key={step} 
-                              className={`flex-1 transition-all duration-500 ${
-                                  step <= progress 
-                                  ? (isDarkMode ? 'bg-pink-500 shadow-[0_0_8px_rgba(236,72,153,0.8)]' : 'bg-sky-500 shadow-[0_0_5px_#0ea5e9]')
-                                  : 'bg-transparent'
-                              }`}
-                          ></div>
-                      ))}
-                  </div>
-              </div>
-          </div>
-      )}
-      
       {/* Header Area (Sticky) */}
       <div className={`text-center py-4 shrink-0 z-40 sticky top-0 transition-colors duration-500 ${transparent ? (isDarkMode ? 'bg-indigo-950/90' : 'bg-sky-900/80') + ' backdrop-blur-md border-b-4 border-white/20' : isDarkMode ? 'bg-slate-900 border-b-4 border-indigo-900' : 'bg-white border-b-4 border-sky-900'}`}>
+        
+        {/* Progress Bar */}
+        {progress > 0 && (
+            <div className="w-full max-w-md px-4 mb-2 mx-auto flex flex-col items-center">
+                <div className="flex w-full justify-between items-center mb-1 font-press-start text-[0.8vmin]">
+                    <span className={isDarkMode ? 'text-indigo-400' : 'text-sky-800'}>QUEST PROGRESS</span>
+                    <span className={isDarkMode ? 'text-pink-500' : 'text-sky-950'}>LEVEL {progress}/3</span>
+                </div>
+                <div className={`w-full h-3 flex gap-1 p-[2px] border-2 ${isDarkMode ? 'bg-slate-950 border-indigo-900' : 'bg-gray-100 border-sky-900'}`}>
+                    {[1, 2, 3].map(step => (
+                        <div 
+                            key={step} 
+                            className={`flex-1 transition-all duration-500 ${
+                                step <= progress 
+                                ? (isDarkMode ? 'bg-pink-500 shadow-[0_0_8px_rgba(236,72,153,0.8)]' : 'bg-sky-500 shadow-[0_0_5px_#0ea5e9]')
+                                : 'bg-transparent'
+                            }`}
+                        ></div>
+                    ))}
+                </div>
+            </div>
+        )}
 
         {/* Main Centered Content */}
         <div className="w-full relative px-4 max-w-4xl mx-auto flex flex-col items-center">

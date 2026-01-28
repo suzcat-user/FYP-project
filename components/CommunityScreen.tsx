@@ -183,34 +183,37 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, ho
                 {/* 2nd Place */}
                 {leaderboard[1] && (
                   <div className="flex flex-col items-center">
-                    <div className="bg-gray-400/80 rounded-t-lg rounded-b-sm w-36 h-56 flex flex-col justify-end items-center shadow-2xl border-b-8 border-gray-500">
-                      <span className="text-7xl mb-4">🥈</span>
-                      <span className="font-press-start text-[2.2vmin] text-white mb-2">{leaderboard[1].username}</span>
-                      <span className="font-press-start text-[2vmin] text-cyan-200 mb-6">{leaderboard[1].score} XP</span>
+                    <div className="relative w-36 h-56 flex flex-col justify-end items-center rounded-t-xl rounded-b-md border-b-8 border-cyan-400 bg-gradient-to-t from-cyan-900 via-cyan-700 to-cyan-400 shadow-[0_0_40px_10px_rgba(34,211,238,0.5)]">
+                      <div className="absolute inset-0 rounded-t-xl rounded-b-md pointer-events-none" style={{boxShadow:'0 0 40px 10px rgba(34,211,238,0.6), 0 0 80px 20px rgba(34,211,238,0.2)'}}></div>
+                      <span className="text-7xl mb-4 drop-shadow-[0_0_20px_cyan]">🥈</span>
+                      <span className="font-press-start text-[2.2vmin] text-white mb-2 drop-shadow-[0_0_8px_cyan]">{leaderboard[1].username}</span>
+                      <span className="font-press-start text-[2vmin] text-cyan-200 mb-6 drop-shadow-[0_0_8px_cyan]">{leaderboard[1].score} XP</span>
                     </div>
-                    <span className="mt-4 font-press-start text-[1.5vmin] text-gray-300">2nd</span>
+                    <span className="mt-4 font-press-start text-[1.5vmin] text-cyan-200 drop-shadow-[0_0_8px_cyan]">2nd</span>
                   </div>
                 )}
                 {/* 1st Place */}
                 {leaderboard[0] && (
                   <div className="flex flex-col items-center">
-                    <div className="bg-yellow-400/90 rounded-t-lg rounded-b-sm w-44 h-72 flex flex-col justify-end items-center shadow-2xl border-b-[14px] border-yellow-600">
-                      <span className="text-8xl mb-4">🥇</span>
-                      <span className="font-press-start text-[2.7vmin] text-black mb-2">{leaderboard[0].username}</span>
-                      <span className="font-press-start text-[2.2vmin] text-sky-900 mb-6">{leaderboard[0].score} XP</span>
+                    <div className="relative w-44 h-72 flex flex-col justify-end items-center rounded-t-xl rounded-b-md border-b-[14px] border-pink-400 bg-gradient-to-t from-pink-900 via-pink-600 to-yellow-300 shadow-[0_0_60px_20px_rgba(236,72,153,0.7)]">
+                      <div className="absolute inset-0 rounded-t-xl rounded-b-md pointer-events-none" style={{boxShadow:'0 0 60px 20px rgba(236,72,153,0.7), 0 0 120px 40px rgba(251,191,36,0.2)'}}></div>
+                      <span className="text-8xl mb-4 drop-shadow-[0_0_30px_gold]">🥇</span>
+                      <span className="font-press-start text-[2.7vmin] text-yellow-100 mb-2 drop-shadow-[0_0_12px_gold]">{leaderboard[0].username}</span>
+                      <span className="font-press-start text-[2.2vmin] text-yellow-200 mb-6 drop-shadow-[0_0_12px_gold]">{leaderboard[0].score} XP</span>
                     </div>
-                    <span className="mt-4 font-press-start text-[2vmin] text-yellow-300">1st</span>
+                    <span className="mt-4 font-press-start text-[2vmin] text-yellow-200 drop-shadow-[0_0_12px_gold]">1st</span>
                   </div>
                 )}
                 {/* 3rd Place */}
                 {leaderboard[2] && (
                   <div className="flex flex-col items-center">
-                    <div className="bg-orange-400/80 rounded-t-lg rounded-b-sm w-36 h-48 flex flex-col justify-end items-center shadow-2xl border-b-8 border-orange-600">
-                      <span className="text-7xl mb-4">🥉</span>
-                      <span className="font-press-start text-[2.2vmin] text-white mb-2">{leaderboard[2].username}</span>
-                      <span className="font-press-start text-[2vmin] text-cyan-200 mb-6">{leaderboard[2].score} XP</span>
+                    <div className="relative w-36 h-48 flex flex-col justify-end items-center rounded-t-xl rounded-b-md border-b-8 border-orange-400 bg-gradient-to-t from-orange-900 via-orange-600 to-orange-300 shadow-[0_0_40px_10px_rgba(251,191,36,0.4)]">
+                      <div className="absolute inset-0 rounded-t-xl rounded-b-md pointer-events-none" style={{boxShadow:'0 0 40px 10px rgba(251,191,36,0.4), 0 0 80px 20px rgba(251,191,36,0.15)'}}></div>
+                      <span className="text-7xl mb-4 drop-shadow-[0_0_20px_orange]">🥉</span>
+                      <span className="font-press-start text-[2.2vmin] text-white mb-2 drop-shadow-[0_0_8px_orange]">{leaderboard[2].username}</span>
+                      <span className="font-press-start text-[2vmin] text-orange-100 mb-6 drop-shadow-[0_0_8px_orange]">{leaderboard[2].score} XP</span>
                     </div>
-                    <span className="mt-4 font-press-start text-[1.5vmin] text-orange-200">3rd</span>
+                    <span className="mt-4 font-press-start text-[1.5vmin] text-orange-200 drop-shadow-[0_0_8px_orange]">3rd</span>
                   </div>
                 )}
               </div>

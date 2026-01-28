@@ -183,8 +183,8 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, ho
                 {/* 2nd Place */}
                 {leaderboard[1] && (
                   <div className="flex flex-col items-center">
-                    <div className="relative w-36 h-56 flex flex-col justify-end items-center rounded-t-xl rounded-b-md border-b-8 border-cyan-400 bg-gradient-to-t from-cyan-900 via-cyan-700 to-cyan-400 shadow-[0_0_40px_10px_rgba(34,211,238,0.5)]">
-                      <div className="absolute inset-0 rounded-t-xl rounded-b-md pointer-events-none" style={{boxShadow:'0 0 40px 10px rgba(34,211,238,0.6), 0 0 80px 20px rgba(34,211,238,0.2)'}}></div>
+                    <div className="relative w-36 h-56 flex flex-col justify-end items-center rounded-t-xl rounded-b-md border-4 border-cyan-300 border-b-8 border-cyan-400 bg-gradient-to-t from-cyan-900 via-cyan-700 to-cyan-400 shadow-[0_0_24px_6px_rgba(34,211,238,0.25)]">
+                      <div className="absolute inset-0 rounded-t-xl rounded-b-md pointer-events-none" style={{boxShadow:'0 0 24px 6px rgba(34,211,238,0.25), 0 0 40px 10px rgba(34,211,238,0.08)'}}></div>
                       <span className="text-7xl mb-4 drop-shadow-[0_0_20px_cyan]">🥈</span>
                       <span className="font-press-start text-[2.2vmin] text-white mb-2 drop-shadow-[0_0_8px_cyan]">{leaderboard[1].username}</span>
                       <span className="font-press-start text-[2vmin] text-cyan-200 mb-6 drop-shadow-[0_0_8px_cyan]">{leaderboard[1].score} XP</span>
@@ -195,8 +195,8 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, ho
                 {/* 1st Place */}
                 {leaderboard[0] && (
                   <div className="flex flex-col items-center">
-                    <div className="relative w-44 h-72 flex flex-col justify-end items-center rounded-t-xl rounded-b-md border-b-[14px] border-pink-400 bg-gradient-to-t from-pink-900 via-pink-600 to-yellow-300 shadow-[0_0_60px_20px_rgba(236,72,153,0.7)]">
-                      <div className="absolute inset-0 rounded-t-xl rounded-b-md pointer-events-none" style={{boxShadow:'0 0 60px 20px rgba(236,72,153,0.7), 0 0 120px 40px rgba(251,191,36,0.2)'}}></div>
+                    <div className="relative w-44 h-72 flex flex-col justify-end items-center rounded-t-xl rounded-b-md border-4 border-pink-200 border-b-[14px] border-pink-400 bg-gradient-to-t from-pink-900 via-pink-600 to-yellow-300 shadow-[0_0_36px_12px_rgba(236,72,153,0.3)]">
+                      <div className="absolute inset-0 rounded-t-xl rounded-b-md pointer-events-none" style={{boxShadow:'0 0 36px 12px rgba(236,72,153,0.3), 0 0 60px 20px rgba(251,191,36,0.08)'}}></div>
                       <span className="text-8xl mb-4 drop-shadow-[0_0_30px_gold]">🥇</span>
                       <span className="font-press-start text-[2.7vmin] text-yellow-100 mb-2 drop-shadow-[0_0_12px_gold]">{leaderboard[0].username}</span>
                       <span className="font-press-start text-[2.2vmin] text-yellow-200 mb-6 drop-shadow-[0_0_12px_gold]">{leaderboard[0].score} XP</span>
@@ -207,8 +207,8 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, ho
                 {/* 3rd Place */}
                 {leaderboard[2] && (
                   <div className="flex flex-col items-center">
-                    <div className="relative w-36 h-48 flex flex-col justify-end items-center rounded-t-xl rounded-b-md border-b-8 border-orange-400 bg-gradient-to-t from-orange-900 via-orange-600 to-orange-300 shadow-[0_0_40px_10px_rgba(251,191,36,0.4)]">
-                      <div className="absolute inset-0 rounded-t-xl rounded-b-md pointer-events-none" style={{boxShadow:'0 0 40px 10px rgba(251,191,36,0.4), 0 0 80px 20px rgba(251,191,36,0.15)'}}></div>
+                    <div className="relative w-36 h-48 flex flex-col justify-end items-center rounded-t-xl rounded-b-md border-4 border-orange-200 border-b-8 border-orange-400 bg-gradient-to-t from-orange-900 via-orange-600 to-orange-300 shadow-[0_0_24px_6px_rgba(251,191,36,0.18)]">
+                      <div className="absolute inset-0 rounded-t-xl rounded-b-md pointer-events-none" style={{boxShadow:'0 0 24px 6px rgba(251,191,36,0.18), 0 0 40px 10px rgba(251,191,36,0.05)'}}></div>
                       <span className="text-7xl mb-4 drop-shadow-[0_0_20px_orange]">🥉</span>
                       <span className="font-press-start text-[2.2vmin] text-white mb-2 drop-shadow-[0_0_8px_orange]">{leaderboard[2].username}</span>
                       <span className="font-press-start text-[2vmin] text-orange-100 mb-6 drop-shadow-[0_0_8px_orange]">{leaderboard[2].score} XP</span>

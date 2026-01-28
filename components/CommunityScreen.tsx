@@ -171,20 +171,6 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, ho
           <h1 className={`font-press-start text-[4vmin] drop-shadow-[0_0_15px_rgba(236,72,153,0.8)] ${isDarkMode ? 'text-pink-500' : 'text-yellow-400'}`}>
               HALL OF FAME
           </h1>
-          <div className="flex justify-center gap-8 mt-6">
-            {hobbies.map((hobby) => (
-              <button
-              key={hobby.name}
-              onClick={() => onSelectHobby(hobby)}
-              className="flex flex-col items-center group cursor-pointer"
-              >
-                <div className={`w-16 h-16 flex items-center justify-center text-3xl border-4 transition-all group-hover:scale-110 ${isDarkMode ? 'bg-indigo-900 border-indigo-700' : 'bg-sky-800 border-sky-600'}`}>
-                  {HOBBY_PORTAL_ICON}
-                </div>
-                <span className={`font-press-start text-[1vmin] mt-2 ${isDarkMode ? 'text-indigo-200' : 'text-sky-200'}`}>{hobby.name}</span>
-              </button>
-            ))}
-          </div>
       </div>
 
       <div className="flex-1 overflow-hidden px-[4vmin] py-[4vmin] flex flex-col max-w-[1000px] mx-auto w-full z-10">

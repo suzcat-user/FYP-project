@@ -48,7 +48,7 @@ module.exports = (db) => {
 
       // Create new user
       const [result] = await db.execute(
-        'INSERT INTO users (username, email, password_hash, score, created_at, updated_at) VALUES (?, ?, ?, 0, CONVERT_TZ(UTC_TIMESTAMP(), "+00:00", "+08:00"), CONVERT_TZ(UTC_TIMESTAMP(), "+00:00", "+08:00"))',
+        'INSERT INTO users (username, email, password_hash, score, created_at, updated_at) VALUES (?, ?, ?, 0, CONVERT_TZ(UTC_TIMESTAMP(), \'+00:00\', \'Asia/Singapore\'), CONVERT_TZ(UTC_TIMESTAMP(), \'+00:00\', \'Asia/Singapore\'))',
         [trimmedUsername, email, passwordHash]
       );
 
@@ -94,7 +94,7 @@ module.exports = (db) => {
       }
 
       await db.execute(
-        'UPDATE users SET updated_at = CONVERT_TZ(UTC_TIMESTAMP(), "+00:00", "+08:00") WHERE user_id = ?',
+        'UPDATE users SET updated_at = CONVERT_TZ(UTC_TIMESTAMP(), \'+00:00\', \'Asia/Singapore\') WHERE user_id = ?',
         [user.user_id]
       );
 

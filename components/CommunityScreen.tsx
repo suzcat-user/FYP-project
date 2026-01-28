@@ -255,7 +255,8 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, ho
                       })}
 
                       {(() => {
-                        const userIndex = leaderboard.findIndex(player => player.userId === userId);
+                        if (userId == null) return null;
+                        const userIndex = leaderboard.findIndex(player => player.user_id === userId);
                         if (userIndex >= 0 && userIndex < 10) {
                           // Determine the displayed rank for the user
                           let displayedRank = userIndex + 1;

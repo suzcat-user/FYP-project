@@ -179,38 +179,38 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, ho
           <div className={`border-8 flex-1 flex flex-col transition-colors duration-500 ${isDarkMode ? 'border-indigo-900 bg-black/80 shadow-[0_0_40px_rgba(168,85,247,0.2)]' : 'border-sky-800 bg-sky-950/90'}`}>
             {/* Podium for Top 3 */}
             {!isLoadingLeaderboard && leaderboard && leaderboard.length > 0 && (
-              <div className="flex justify-center items-end gap-8 py-8">
+              <div className="flex justify-center items-end gap-20 py-12">
                 {/* 2nd Place */}
                 {leaderboard[1] && (
                   <div className="flex flex-col items-center">
-                    <div className="bg-gray-400/80 rounded-t-lg rounded-b-sm w-20 h-32 flex flex-col justify-end items-center shadow-lg border-b-4 border-gray-500">
-                      <span className="text-4xl mb-2">🥈</span>
-                      <span className="font-press-start text-[1.2vmin] text-white mb-2">{leaderboard[1].username}</span>
-                      <span className="font-press-start text-[1.1vmin] text-cyan-200 mb-4">{leaderboard[1].score} XP</span>
+                    <div className="bg-gray-400/80 rounded-t-lg rounded-b-sm w-36 h-56 flex flex-col justify-end items-center shadow-2xl border-b-8 border-gray-500">
+                      <span className="text-7xl mb-4">🥈</span>
+                      <span className="font-press-start text-[2.2vmin] text-white mb-2">{leaderboard[1].username}</span>
+                      <span className="font-press-start text-[2vmin] text-cyan-200 mb-6">{leaderboard[1].score} XP</span>
                     </div>
-                    <span className="mt-2 font-press-start text-[1vmin] text-gray-300">2nd</span>
+                    <span className="mt-4 font-press-start text-[1.5vmin] text-gray-300">2nd</span>
                   </div>
                 )}
                 {/* 1st Place */}
                 {leaderboard[0] && (
                   <div className="flex flex-col items-center">
-                    <div className="bg-yellow-400/90 rounded-t-lg rounded-b-sm w-24 h-40 flex flex-col justify-end items-center shadow-xl border-b-8 border-yellow-600">
-                      <span className="text-5xl mb-2">🥇</span>
-                      <span className="font-press-start text-[1.5vmin] text-black mb-2">{leaderboard[0].username}</span>
-                      <span className="font-press-start text-[1.2vmin] text-sky-900 mb-4">{leaderboard[0].score} XP</span>
+                    <div className="bg-yellow-400/90 rounded-t-lg rounded-b-sm w-44 h-72 flex flex-col justify-end items-center shadow-2xl border-b-[14px] border-yellow-600">
+                      <span className="text-8xl mb-4">🥇</span>
+                      <span className="font-press-start text-[2.7vmin] text-black mb-2">{leaderboard[0].username}</span>
+                      <span className="font-press-start text-[2.2vmin] text-sky-900 mb-6">{leaderboard[0].score} XP</span>
                     </div>
-                    <span className="mt-2 font-press-start text-[1.1vmin] text-yellow-300">1st</span>
+                    <span className="mt-4 font-press-start text-[2vmin] text-yellow-300">1st</span>
                   </div>
                 )}
                 {/* 3rd Place */}
                 {leaderboard[2] && (
                   <div className="flex flex-col items-center">
-                    <div className="bg-orange-400/80 rounded-t-lg rounded-b-sm w-20 h-28 flex flex-col justify-end items-center shadow-lg border-b-4 border-orange-600">
-                      <span className="text-4xl mb-2">🥉</span>
-                      <span className="font-press-start text-[1.2vmin] text-white mb-2">{leaderboard[2].username}</span>
-                      <span className="font-press-start text-[1.1vmin] text-cyan-200 mb-4">{leaderboard[2].score} XP</span>
+                    <div className="bg-orange-400/80 rounded-t-lg rounded-b-sm w-36 h-48 flex flex-col justify-end items-center shadow-2xl border-b-8 border-orange-600">
+                      <span className="text-7xl mb-4">🥉</span>
+                      <span className="font-press-start text-[2.2vmin] text-white mb-2">{leaderboard[2].username}</span>
+                      <span className="font-press-start text-[2vmin] text-cyan-200 mb-6">{leaderboard[2].score} XP</span>
                     </div>
-                    <span className="mt-2 font-press-start text-[1vmin] text-orange-200">3rd</span>
+                    <span className="mt-4 font-press-start text-[1.5vmin] text-orange-200">3rd</span>
                   </div>
                 )}
               </div>

@@ -301,14 +301,14 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, ho
           </div>
       </div>
 
-      <div className={`py-6 flex justify-center border-t-8 transition-colors duration-500 ${isDarkMode ? 'bg-black/80 border-indigo-950' : 'bg-black/60 border-sky-900'}`}>
+        <div className="py-6 flex justify-center bg-transparent">
           <button
-              onClick={() => navigate('/home')}
-              className={`font-press-start text-[2vmin] px-12 py-4 border-b-8 border-r-8 active:border-0 active:translate-y-2 transition-all ${isDarkMode ? 'bg-pink-600 border-pink-900' : 'bg-yellow-400 border-yellow-700 text-sky-950'}`}
+            onClick={() => navigate('/home')}
+            className={`font-press-start text-[2vmin] px-12 py-4 border-b-8 border-r-8 active:border-0 active:translate-y-2 transition-all ${isDarkMode ? 'bg-pink-600 border-pink-900' : 'bg-yellow-400 border-yellow-700 text-sky-950'}`}
           >
-              PLAY AGAIN
+            PLAY AGAIN
           </button>
-      </div>
+        </div>
     </div>
   );
 };

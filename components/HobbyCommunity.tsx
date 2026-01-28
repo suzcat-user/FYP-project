@@ -2,6 +2,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Hobby, Post, Comment } from '../types';
 import { getHobbyByName } from '../services/hobbyRecommendations';
+import EventsComponent from './EventsComponent';
 import ArcadeButton from './ui/ArcadeButton';
 
 interface HobbyCommunityProps {
@@ -481,11 +482,29 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
 
               {/* Sidebar */}
               <div className="w-full md:w-[300px] flex flex-col gap-4">
+                  {/* About Community */}
                   <div className={`border-2 p-4 ${isDarkMode ? 'bg-[#1a1c27] border-indigo-950' : 'bg-white border-gray-300'}`}>
                       <h3 className="font-press-start text-[1.2vmin] border-b-2 mb-4">ABOUT COMMUNITY</h3>
                       <p className="font-vt323 text-lg leading-tight mb-4">{resolvedHobby?.description || 'Explore posts and conversations in this hobby community.'}</p>
                       <ArcadeButton onClick={() => setShowCreateModal(true)} className="w-full">CREATE POST</ArcadeButton>
                   </div>
+
+                  {/* Events Section */}
+                  {userId && communityId && (
+                    <div className={`border-2 p-4 ${isDarkMode ? 'bg-[#1a1c27] border-purple-950' : 'bg-white border-purple-300'}`}>
+                      <h3 className="font-press-start text-[1.2vmin] border-b-2 mb-4 text-purple-500">🎉 EVENTS</h3>
+                      <EventsComponent 
+                        userId={userId}
+                        communityId={communityId}
+                        isDarkMode={isDarkMode}
+                        compact={true}
+                        onEventJoined={(event, pointsEarned) => {
+                          // Optionally handle score updates here
+                          console.log(`Earned ${pointsEarned} points from ${event.title}`);
+                        }}
+                      />
+                    </div>
+                  )}
               </div>
           </div>
       </div>

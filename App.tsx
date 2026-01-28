@@ -160,11 +160,11 @@ const AppContent: React.FC = () => {
 
         {/* HUD Top Bar */}
         <div className={`text-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 lg:gap-6 font-press-start text-[9px] xs:text-[10px] sm:text-[11px] md:text-[1.3vmin] lg:text-[1.6vmin] z-50 relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 min-h-14 md:min-h-16 lg:min-h-20 border-b-8 shadow-2xl transition-colors duration-500 ${isDarkMode ? 'bg-[#1e1b4b] border-indigo-500/30' : 'bg-sky-950 border-sky-400/30'}`}>
-             {/* Center - HOBBY ARCADE Logo */}
-             <div className="flex flex-col items-center flex-shrink-0 sm:order-2">
-               <div className="text-yellow-400 chromatic uppercase mb-1 text-[clamp(10px,1.6vw,20px)] tracking-[0.12em]">HOBBY ARCADE</div>
-               <div className="h-[3px] w-[clamp(80px,14vw,140px)] bg-sky-500/20 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 h-full w-1/2 bg-sky-400 animate-[marquee_2s_linear_infinite]"></div>
+             {/* Center - HOBBY ARCADE Logo (always centered on homepage) */}
+             <div className={`flex flex-col items-center flex-shrink-0 sm:order-2 ${location.pathname === '/home' ? 'absolute left-1/2 top-8 -translate-x-1/2 z-50 w-full' : ''}`}>
+               <div className="text-yellow-400 chromatic uppercase mb-1 text-[clamp(10px,1.6vw,20px)] tracking-[0.12em] text-center">HOBBY ARCADE</div>
+               <div className="h-[3px] w-[clamp(80px,14vw,140px)] bg-sky-500/20 relative overflow-hidden mx-auto">
+                    <div className="absolute top-0 left-0 h-full w-1/2 bg-sky-400 animate-[marquee_2s_linear_infinite] mx-auto"></div>
                 </div>
              </div>
 

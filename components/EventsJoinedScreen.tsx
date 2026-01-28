@@ -76,11 +76,12 @@ const EventsJoinedScreen: React.FC<EventsJoinedScreenProps> = ({ userId, isDarkM
 
   return (
     <div style={{
-      minHeight: '100vh',
+      height: '100%',
       padding: '20px',
       backgroundColor: bgColor,
       color: textColor,
       fontFamily: "'Arcade', monospace",
+      overflow: 'auto',
       backgroundImage: `linear-gradient(45deg, ${isDarkMode ? '#1a1a2e' : '#f0f0f0'} 25%, transparent 25%, transparent 75%, ${isDarkMode ? '#1a1a2e' : '#f0f0f0'} 75%, ${isDarkMode ? '#1a1a2e' : '#f0f0f0'}), linear-gradient(45deg, ${isDarkMode ? '#1a1a2e' : '#f0f0f0'} 25%, transparent 25%, transparent 75%, ${isDarkMode ? '#1a1a2e' : '#f0f0f0'} 75%, ${isDarkMode ? '#1a1a2e' : '#f0f0f0'})`,
       backgroundSize: '40px 40px',
       backgroundPosition: '0 0, 20px 20px',

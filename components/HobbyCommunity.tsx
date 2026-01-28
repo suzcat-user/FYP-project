@@ -11,6 +11,8 @@ interface HobbyCommunityProps {
   isDarkMode?: boolean;
   currentUser?: string;
   userId?: number;
+  onEventJoined?: (event: any, points: number) => void;
+  onEventLeft?: (event: any, points: number) => void;
 }
 
 const PIXEL_GIFS = [
@@ -117,7 +119,7 @@ const AttachmentCarousel: React.FC<{ urls: string[]; className?: string }> = ({ 
   );
 };
 
-const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMode = false, currentUser = 'USER_1', userId }) => {
+const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMode = false, currentUser = 'USER_1', userId, onEventJoined, onEventLeft }) => {
   const { hobbyName: hobbySlug } = useParams();
   const [joined, setJoined] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -498,10 +500,8 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
                         communityId={communityId}
                         isDarkMode={isDarkMode}
                         compact={true}
-                        onEventJoined={(event, pointsEarned) => {
-                          // Optionally handle score updates here
-                          console.log(`Earned ${pointsEarned} points from ${event.title}`);
-                        }}
+                        onEventJoined={onEventJoined}
+                        onEventLeft={onEventLeft}
                       />
                     </div>
                   )}

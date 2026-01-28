@@ -7,6 +7,7 @@ interface EventsComponentProps {
   communityId?: number;
   isDarkMode?: boolean;
   onEventJoined?: (event: Event, pointsEarned: number) => void;
+  onEventLeft?: (event: Event, pointsDeducted: number) => void;
   compact?: boolean;
 }
 
@@ -15,6 +16,7 @@ const EventsComponent: React.FC<EventsComponentProps> = ({
   communityId, 
   isDarkMode = false,
   onEventJoined,
+  onEventLeft,
   compact = false
 }) => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -61,6 +63,11 @@ const EventsComponent: React.FC<EventsComponentProps> = ({
   }, [userId, communityId]);
 
   const handleJoinEvent = async (event: Event) => {
+    if (!userId) {
+      setError('User ID not available. Please log in.');
+      return;
+    }
+
     try {
       const result = await eventService.joinEvent(userId, event.event_id);
       
@@ -85,6 +92,11 @@ const EventsComponent: React.FC<EventsComponentProps> = ({
   };
 
   const handleLeaveEvent = async (event: Event) => {
+    if (!userId) {
+      setError('User ID not available. Please log in.');
+      return;
+    }
+
     try {
       const result = await eventService.leaveEvent(userId, event.event_id);
       
@@ -95,6 +107,11 @@ const EventsComponent: React.FC<EventsComponentProps> = ({
         return newSet;
       });
       setJoinMessage(result.message);
+
+      // Call parent callback to deduct points
+      if (onEventLeft) {
+        onEventLeft(event, result.points_deducted);
+      }
 
       // Clear message after 3 seconds
       setTimeout(() => setJoinMessage(null), 3000);
@@ -253,10 +270,19 @@ const EventsComponent: React.FC<EventsComponentProps> = ({
 
       {/* Celebration Modal */}
       {joinedEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
-          <div className={`w-full max-w-md border-8 p-8 flex flex-col gap-6 text-center animate-bounce ${isDarkMode ? 'bg-[#1a1c27] border-pink-600' : 'bg-white border-sky-800'}`}>
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70"
+          onClick={() => {
+            setJoinedEvent(null);
+            setJoinMessage(null);
+          }}
+        >
+          <div 
+            className={`w-full max-w-md border-8 p-8 flex flex-col gap-6 text-center ${isDarkMode ? 'bg-[#1a1c27] border-pink-600' : 'bg-white border-sky-800'}`}
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Celebration */}
-            <div className="text-6xl animate-pulse">
+            <div className="text-6xl">
               🎉✨🎊
             </div>
 

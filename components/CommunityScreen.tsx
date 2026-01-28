@@ -13,6 +13,8 @@ interface CommunityScreenProps {
   userId?: number;
   communityId?: number;
   onScoreUpdate?: (newScore: number) => void;
+  onEventJoined?: (event: any, points: number) => void;
+  onEventLeft?: (event: any, points: number) => void;
 }
 
 const LEADERBOARD_DATA = [
@@ -100,7 +102,7 @@ const ShootingStar: React.FC = () => {
   );
 };
 
-const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, hobbies, onSelectHobby, isDarkMode = false, userId, communityId, onScoreUpdate }) => {
+const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, hobbies, onSelectHobby, isDarkMode = false, userId, communityId, onScoreUpdate, onEventJoined, onEventLeft }) => {
   const navigate = useNavigate();
   const traits = Object.keys(scores) as Trait[];
   const topTrait = traits.reduce((a, b) => scores[a] > scores[b] ? a : b);
@@ -110,10 +112,16 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, ho
   const [showEvents, setShowEvents] = useState(false);
 
   const handleEventJoined = (event: any, pointsEarned: number) => {
-    const newScore = userScore + pointsEarned * 100;
-    setUserScore(newScore);
-    if (onScoreUpdate) {
-      onScoreUpdate(newScore);
+    // Call the parent callback to update the global event score
+    if (onEventJoined) {
+      onEventJoined(event, pointsEarned);
+    }
+  };
+
+  const handleEventLeft = (event: any, pointsDeducted: number) => {
+    // Call the parent callback to deduct the event score
+    if (onEventLeft) {
+      onEventLeft(event, pointsDeducted);
     }
   };
 
@@ -186,6 +194,7 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, ho
                 communityId={communityId}
                 isDarkMode={isDarkMode}
                 onEventJoined={handleEventJoined}
+                onEventLeft={handleEventLeft}
               />
             </div>
           )}

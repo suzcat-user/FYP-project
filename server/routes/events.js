@@ -75,11 +75,15 @@ module.exports = (db) => {
   // Join an event
   router.post('/join', async (req, res) => {
     try {
-      const { user_id, event_id } = req.body;
+      let { user_id, event_id } = req.body;
+
+      // Convert to integers if they're strings
+      user_id = parseInt(user_id, 10);
+      event_id = parseInt(event_id, 10);
 
       // Validate inputs
-      if (!user_id || !event_id) {
-        return res.status(400).json({ error: 'user_id and event_id are required' });
+      if (!user_id || isNaN(user_id) || !event_id || isNaN(event_id)) {
+        return res.status(400).json({ error: 'user_id and event_id must be valid integers' });
       }
 
       // Check if event exists and get points reward
@@ -90,21 +94,35 @@ module.exports = (db) => {
 
       const pointsReward = event[0].points_reward;
 
-      // Check if user already joined
+      // Check if user already joined with status 'joined'
       const [existing] = await db.query(
-        'SELECT participation_id FROM user_event_participation WHERE user_id = ? AND event_id = ?',
-        [user_id, event_id]
+        'SELECT participation_id FROM user_event_participation WHERE user_id = ? AND event_id = ? AND status = ?',
+        [user_id, event_id, 'joined']
       );
 
       if (existing.length > 0) {
         return res.status(400).json({ error: 'User already joined this event' });
       }
 
-      // Add user to event
-      await db.query(
-        'INSERT INTO user_event_participation (user_id, event_id) VALUES (?, ?)',
-        [user_id, event_id]
+      // Check if user has a cancelled record and update it, or insert new one
+      const [cancelled] = await db.query(
+        'SELECT participation_id FROM user_event_participation WHERE user_id = ? AND event_id = ? AND status = ?',
+        [user_id, event_id, 'cancelled']
       );
+
+      if (cancelled.length > 0) {
+        // Update cancelled record to joined
+        await db.query(
+          'UPDATE user_event_participation SET status = ? WHERE user_id = ? AND event_id = ?',
+          ['joined', user_id, event_id]
+        );
+      } else {
+        // Create new participation record
+        await db.query(
+          'INSERT INTO user_event_participation (user_id, event_id, status) VALUES (?, ?, ?)',
+          [user_id, event_id, 'joined']
+        );
+      }
 
       // Update user score
       await db.query(
@@ -126,10 +144,14 @@ module.exports = (db) => {
   // Leave an event
   router.post('/leave', async (req, res) => {
     try {
-      const { user_id, event_id } = req.body;
+      let { user_id, event_id } = req.body;
 
-      if (!user_id || !event_id) {
-        return res.status(400).json({ error: 'user_id and event_id are required' });
+      // Convert to integers if they're strings
+      user_id = parseInt(user_id, 10);
+      event_id = parseInt(event_id, 10);
+
+      if (!user_id || isNaN(user_id) || !event_id || isNaN(event_id)) {
+        return res.status(400).json({ error: 'user_id and event_id must be valid integers' });
       }
 
       // Get points reward to reverse it

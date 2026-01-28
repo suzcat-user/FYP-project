@@ -159,9 +159,17 @@ const AppContent: React.FC = () => {
         <div className="absolute inset-0 border-[4px] border-white/5 pointer-events-none z-50 rounded-2xl"></div>
 
         {/* HUD Top Bar */}
-        <div className={`text-white flex items-center justify-between gap-2 sm:gap-3 lg:gap-6 font-press-start text-[9px] xs:text-[10px] sm:text-[11px] md:text-[1.3vmin] lg:text-[1.6vmin] z-50 relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 min-h-14 md:min-h-16 lg:min-h-20 border-b-8 shadow-2xl transition-colors duration-500 ${isDarkMode ? 'bg-[#1e1b4b] border-indigo-500/30' : 'bg-sky-950 border-sky-400/30'}`}>
+        <div className={`text-white flex items-center justify-center gap-2 sm:gap-3 lg:gap-6 font-press-start text-[9px] xs:text-[10px] sm:text-[11px] md:text-[1.3vmin] lg:text-[1.6vmin] z-50 relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 min-h-14 md:min-h-16 lg:min-h-20 border-b-8 shadow-2xl transition-colors duration-500 ${isDarkMode ? 'bg-[#1e1b4b] border-indigo-500/30' : 'bg-sky-950 border-sky-400/30'}`}>
+             {/* Center - HOBBY ARCADE Logo */}
+             <div className="flex flex-col items-center">
+                <div className="text-yellow-400 chromatic tracking-wide lg:tracking-widest uppercase mb-1 text-[11px] sm:text-[13px] md:text-[2vmin]">HOBBY ARCADE</div>
+                <div className="h-0.5 sm:h-1 w-24 sm:w-32 bg-sky-500/20 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 h-full w-1/2 bg-sky-400 animate-[marquee_2s_linear_infinite]"></div>
+                </div>
+             </div>
+
              {/* Left Section - Logo, User ID, Score */}
-             <div className="flex gap-2 sm:gap-3 lg:gap-6 items-center flex-shrink-0 min-w-fit">
+             <div className="absolute left-3 sm:left-4 lg:left-6 flex gap-2 sm:gap-3 lg:gap-6 items-center flex-shrink-0">
                  {/* Logo - Clickable Home Button (disabled on Auth screen) */}
                  <button
                     onClick={() => !isAuthPage && navigate('/home')}
@@ -187,16 +195,8 @@ const AppContent: React.FC = () => {
                  </div>
              </div>
 
-             {/* Center - HOBBY ARCADE Logo */}
-             <div className="flex flex-col items-center flex-1 mx-4">
-                <div className="text-yellow-400 chromatic tracking-wide lg:tracking-widest uppercase mb-1 text-[11px] sm:text-[13px] md:text-[2vmin]">HOBBY ARCADE</div>
-                <div className="h-0.5 sm:h-1 w-24 sm:w-32 bg-sky-500/20 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 h-full w-1/2 bg-sky-400 animate-[marquee_2s_linear_infinite]"></div>
-                </div>
-             </div>
-
              {/* Right Section - Buttons */}
-             <div className="flex gap-2 sm:gap-3 lg:gap-8 items-center flex-shrink-0 min-w-fit">
+             <div className="absolute right-3 sm:right-4 lg:right-6 flex gap-2 sm:gap-3 lg:gap-8 items-center flex-shrink-0">
                  {/* See All Communities Button - Hidden on Auth screen */}
                  {!isAuthPage && (
                    <button 

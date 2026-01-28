@@ -65,9 +65,13 @@ const GameContainer: React.FC<GameContainerProps> = ({
       </div>
 
       {/* Game Content Area */}
-      <div className="shrink-0 w-full h-[65vh] flex flex-col justify-center relative z-0 p-4 md:p-6">
+      <div className="shrink-0 w-full h-[65vh] flex flex-col justify-center relative z-0 p-4 md:p-6">        
+        <div className={`w-full h-full flex flex-col justify-center relative rounded-xl overflow-hidden border-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] transition-colors duration-500 ${isDarkMode ? 'bg-slate-900 border-indigo-900 shadow-indigo-950' : 'bg-white border-sky-900'}`}>
+            {children}
+        </div>
+        
         {/* Progress Bar - Above right side of game box */}
-        <div className={`absolute -top-16 right-4 md:right-6 w-80 shrink-0 px-3 py-2 transition-colors duration-500 ${isDarkMode ? 'bg-slate-900 border-2 border-sky-500' : 'bg-white border-2 border-sky-400'}`}>
+        <div className={`absolute -top-20 right-4 md:right-6 w-80 px-3 py-2 z-50 transition-colors duration-500 ${isDarkMode ? 'bg-slate-900 border-2 border-sky-500' : 'bg-white border-2 border-sky-400'}`}>
             <div className="flex flex-col items-center gap-1">
                 <div className="flex w-full justify-between items-center font-press-start text-[0.7vmin]">
                     <span className={isDarkMode ? 'text-indigo-400' : 'text-sky-800'}>QUEST</span>
@@ -86,10 +90,6 @@ const GameContainer: React.FC<GameContainerProps> = ({
                     ))}
                 </div>
             </div>
-        </div>
-        
-        <div className={`w-full h-full flex flex-col justify-center relative rounded-xl overflow-hidden border-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] transition-colors duration-500 ${isDarkMode ? 'bg-slate-900 border-indigo-900 shadow-indigo-950' : 'bg-white border-sky-900'}`}>
-            {children}
         </div>
       </div>
 

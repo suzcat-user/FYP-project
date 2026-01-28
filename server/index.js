@@ -71,7 +71,7 @@ async function start() {
       res.json({ message: 'Server is running!' });
     });
 
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
     });
   } catch (err) {

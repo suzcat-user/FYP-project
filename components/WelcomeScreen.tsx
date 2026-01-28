@@ -68,6 +68,15 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, isDarkMode = fal
   const [hobbies, setHobbies] = useState<string[]>([]);
   const fullText = '"Find the spark that starts the flame." Discover your ultimate hobby through three precision-tuned arcade tests.';
 
+
+
+  
+  // Load chatbot scripts only on home page
+  useEffect(() => {
+    const cleanup = loadChatbotScripts();
+    return cleanup;
+  }, []);
+  
   // Fetch hobbies from database on component mount
   useEffect(() => {
     const fetchHobbies = async () => {

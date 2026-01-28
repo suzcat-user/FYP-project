@@ -73,9 +73,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, isDarkMode = fal
   
   // Load chatbot scripts only on home page
   useEffect(() => {
-    // Temporarily disabled chatbot to prevent crashes
-    // const cleanup = loadChatbotScripts();
-    // return cleanup;
+    const cleanup = loadChatbotScripts();
+    return cleanup;
   }, []);
   
   // Fetch hobbies from database on component mount

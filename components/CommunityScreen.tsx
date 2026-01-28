@@ -230,35 +230,48 @@ const CommunityScreen: React.FC<CommunityScreenProps> = ({ onRestart, scores, ho
                     </div>
                   ) : leaderboard && leaderboard.length > 0 ? (
                     <>
-                      {leaderboard.slice(3, 10).map((player) => (
-                        <div key={player.rank} className="flex items-center p-4 hover:bg-white/10 transition-colors group">
-                          <div className={`w-[15%] text-center font-press-start text-[2vmin]`}>
-                            {player.emblem}
+                      {leaderboard.slice(3, 10).map((player, idx) => {
+                        const actualRank = idx + 4;
+                        return (
+                          <div key={player.rank} className="flex items-center p-4 hover:bg-white/10 transition-colors group">
+                            <div className={`w-[15%] text-center font-press-start text-[2vmin]`}>
+                              {actualRank}
+                            </div>
+                            <div className="w-[40%] flex items-center gap-4">
+                              <span className="opacity-40">[USER]</span>
+                              <span className="group-hover:text-pink-400 transition-colors uppercase tracking-wider">{player.username}</span>
+                            </div>
+                            <div className={`w-[20%] text-center font-press-start text-[1vmin] opacity-70`}>
+                              PLAYER_{player.rank}
+                            </div>
+                            <div className="w-[25%] text-right font-press-start text-[1.5vmin] text-cyan-400">
+                              <AnimatedScore finalValue={player.score} />
+                            </div>
                           </div>
-                          <div className="w-[40%] flex items-center gap-4">
-                            <span className="opacity-40">[USER]</span>
-                            <span className="group-hover:text-pink-400 transition-colors uppercase tracking-wider">{player.username}</span>
-                          </div>
-                          <div className={`w-[20%] text-center font-press-start text-[1vmin] opacity-70`}>
-                            PLAYER_{player.rank}
-                          </div>
-                          <div className="w-[25%] text-right font-press-start text-[1.5vmin] text-cyan-400">
-                            <AnimatedScore finalValue={player.score} />
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
 
-                      <div className="flex items-center p-4 bg-pink-600/20 animate-pulse border-y-4 border-pink-500/50">
-                        <div className="w-[15%] text-center font-press-start text-[2vmin]">👤</div>
-                        <div className="w-[40%] flex items-center gap-4">
-                          <span className="opacity-40">[LOC]</span>
-                          <span className="text-yellow-400 font-bold uppercase tracking-wider">YOU (P1)</span>
-                        </div>
-                        <div className="w-[20%] text-center font-press-start text-[1vmin]">PLAYER_1</div>
-                        <div className="w-[25%] text-right font-press-start text-[1.5vmin] text-white">
-                          <AnimatedScore finalValue={userScore} />
-                        </div>
-                      </div>
+                      {(() => {
+                        const userIndex = leaderboard.findIndex(player => player.userId === userId);
+                        if (userIndex >= 0 && userIndex < 10) {
+                          // Determine the displayed rank for the user
+                          let displayedRank = userIndex + 1;
+                          return (
+                            <div className="flex items-center p-4 bg-pink-600/20 animate-pulse border-y-4 border-pink-500/50">
+                              <div className="w-[15%] text-center font-press-start text-[2vmin]">{displayedRank}</div>
+                              <div className="w-[40%] flex items-center gap-4">
+                                <span className="opacity-40">[LOC]</span>
+                                <span className="text-yellow-400 font-bold uppercase tracking-wider">YOU (P1)</span>
+                              </div>
+                              <div className="w-[20%] text-center font-press-start text-[1vmin]">PLAYER_{displayedRank}</div>
+                              <div className="w-[25%] text-right font-press-start text-[1.5vmin] text-white">
+                                <AnimatedScore finalValue={userScore} />
+                              </div>
+                            </div>
+                          );
+                        }
+                        return null;
+                      })()}
                     </>
                   ) : (
                     <div className="flex items-center justify-center h-full">

@@ -65,13 +65,13 @@ const BubbleTarget: React.FC<{
   return (
     <button
       onClick={onClick}
-      className={`absolute w-[clamp(70px,16vmin,160px)] h-[clamp(70px,16vmin,160px)] rounded-full flex flex-col items-center justify-center p-2 text-center group z-30 transition-all active:scale-95 focus:outline-none 
+      className={`absolute w-[16vmin] h-[16vmin] rounded-full flex flex-col items-center justify-center p-2 text-center group z-30 transition-all active:scale-95 focus:outline-none 
         ${isPopped ? 'scale-150 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}`}
     >
       {/* Tooltip always above */}
-      <div className={`absolute ${tooltipBelow ? 'top-[115%] origin-top' : 'bottom-[115%] origin-bottom'} left-1/2 -translate-x-1/2 w-[min(52vw,360px)] p-3 border-4 shadow-[12px_12px_0px_rgba(0,0,0,0.3)] z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100 rounded-none backdrop-blur-xl ${isDarkMode ? 'bg-slate-950 border-white text-white' : 'bg-white border-sky-900 text-sky-900'}`}>
-        <p className="font-press-start text-[clamp(10px,1.4vmin,14px)] mb-2 border-b-2 border-current pb-1 uppercase tracking-tighter">{text}</p>
-        <p className={`font-vt323 text-[clamp(14px,2.2vmin,22px)] leading-tight ${isDarkMode ? 'text-indigo-100' : 'text-gray-700'}`}>{description}</p>
+      <div className={`absolute ${tooltipBelow ? 'top-[115%] origin-top' : 'bottom-[115%] origin-bottom'} left-1/2 -translate-x-1/2 w-[35vmin] p-3 border-4 shadow-[12px_12px_0px_rgba(0,0,0,0.3)] z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100 rounded-none backdrop-blur-xl ${isDarkMode ? 'bg-slate-950 border-white text-white' : 'bg-white border-sky-900 text-sky-900'}`}>
+        <p className="font-press-start text-[1.4vmin] mb-2 border-b-2 border-current pb-1 uppercase tracking-tighter">{text}</p>
+        <p className={`font-vt323 text-[2.2vmin] leading-tight ${isDarkMode ? 'text-indigo-100' : 'text-gray-700'}`}>{description}</p>
         <div className={`absolute ${tooltipBelow ? 'bottom-full rotate-180' : 'top-full'} left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[10px] ${isDarkMode ? 'border-t-white' : 'border-t-sky-900'}`}></div>
       </div>
 
@@ -80,7 +80,7 @@ const BubbleTarget: React.FC<{
         <div className="absolute -inset-2 bg-[radial-gradient(circle,white_0%,transparent_70%)] opacity-20 group-hover:animate-pulse"></div>
       </div>
 
-      <div className="relative z-10 text-[clamp(28px,6vmin,72px)] drop-shadow-[0_0_10px_rgba(255,255,255,0.5)] group-hover:scale-125 transition-transform duration-300">
+      <div className="relative z-10 text-[6vmin] drop-shadow-[0_0_10px_rgba(255,255,255,0.5)] group-hover:scale-125 transition-transform duration-300">
         {description || TRAIT_ICONS[trait]}
       </div>
     </button>
@@ -209,7 +209,7 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
       )}
       <div 
         onMouseMove={handleMouseMove}
-        className={`flex-1 w-full min-h-[60vh] sm:min-h-0 flex flex-col relative overflow-hidden cursor-none transition-colors duration-500 ${isDarkMode ? 'bg-slate-950' : 'bg-slate-900'}`}
+        className={`flex-1 w-full h-full flex flex-col relative overflow-hidden cursor-none transition-colors duration-500 ${isDarkMode ? 'bg-slate-950' : 'bg-slate-900'}`}
       >
         {/* Cyber Grid Background */}
         <div className="absolute inset-0 opacity-20 pointer-events-none" 
@@ -223,9 +223,9 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
         {/* Mouse Follow Crosshair */}
         <div 
           className="absolute z-50 pointer-events-none transition-transform duration-75 ease-out"
-          style={{ transform: `translate(${mousePos.x - 32}px, ${mousePos.y - 32}px)` }}
+          style={{ transform: `translate(${mousePos.x - 40}px, ${mousePos.y - 40}px)` }}
         >
-            <div className="w-16 h-16 sm:w-20 sm:h-20 relative flex items-center justify-center">
+            <div className="w-20 h-20 relative flex items-center justify-center">
                 <div className="absolute inset-0 border-2 border-green-500 rounded-full opacity-30 animate-pulse"></div>
                 <div className="w-1 h-6 bg-green-500 absolute top-0"></div>
                 <div className="w-1 h-6 bg-green-500 absolute bottom-0"></div>
@@ -269,28 +269,28 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
             })}
         </div>
 
-        <div className="absolute top-3 left-3 sm:top-4 sm:left-4 font-press-start text-[clamp(10px,1vmin,12px)] text-green-500 flex flex-col gap-1 z-40 pointer-events-none">
+        <div className="absolute top-4 left-4 font-press-start text-[1vmin] text-green-500 flex flex-col gap-1 z-40 pointer-events-none">
             <div className="flex items-center gap-2">
                 <span className="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
                 <span>RADAR_ACTIVE</span>
             </div>
         </div>
 
-        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 font-press-start text-[clamp(10px,1.2vmin,14px)] text-yellow-400 z-40 pointer-events-none text-right">
+        <div className="absolute top-4 right-4 font-press-start text-[1.2vmin] text-yellow-400 z-40 pointer-events-none text-right">
             ROUND: {round + 1}/5
         </div>
 
         <div className={`absolute inset-0 pointer-events-none z-[100] transition-opacity duration-150 ${isShot ? 'opacity-30 bg-white' : 'opacity-0'}`}></div>
       </div>
       
-        <div className={`mt-2 flex flex-col sm:flex-row items-center justify-between gap-2 px-4 sm:px-6 py-2 transition-colors duration-500 bg-slate-900 border-t-4 border-slate-800`}>
+      <div className={`mt-2 flex items-center justify-between px-6 py-2 transition-colors duration-500 bg-slate-900 border-t-4 border-slate-800`}>
            <div className="flex gap-2">
                {[...Array(5)].map((_, i) => (
-               <div key={i} className={`w-6 sm:w-8 h-2 border transition-all ${i <= round ? 'bg-green-500 border-green-300 shadow-[0_0_5px_#22c55e]' : 'bg-transparent border-gray-700'}`}></div>
+                   <div key={i} className={`w-8 h-2 border transition-all ${i <= round ? 'bg-green-500 border-green-300 shadow-[0_0_5px_#22c55e]' : 'bg-transparent border-gray-700'}`}></div>
                ))}
            </div>
-           <p className="text-[clamp(10px,1.5vmin,16px)] animate-blink font-press-start text-green-400 tracking-tighter uppercase">Scroll for manual</p>
-           <div className="font-press-start text-[clamp(10px,1vmin,12px)] text-white/40 uppercase">Sensors: Active</div>
+           <p className="text-[1.5vmin] animate-blink font-press-start text-green-400 tracking-tighter uppercase">Scroll for manual</p>
+           <div className="font-press-start text-[1vmin] text-white/40 uppercase">Sensors: Active</div>
       </div>
       <style>{`
         @keyframes bubble-float-0 { 0% { transform: translate(0px, 0px); } 50% { transform: translate(38px, -30px); } 100% { transform: translate(-32px, 26px); } }

@@ -9,6 +9,42 @@ interface PostPageProps {
   userId?: number;
 }
 
+
+const DEFAULT_EMOJIS = [
+  '😀','😃','😄','😁','😆','😅','😂','🤣','😊','😇','🙂','😉',
+  '😍','😘','😜','🤪','😎','🥳','🤩','😴','🤔','🫡','😤','😭',
+  '😮','😱','😬','😷','🤒','🤕','🥶','🥵','🤗','🙃','😵‍💫',
+  '🙌','👏','🫶','🙏','🤝','👍','👎','💪','✌️','🤘','👌','🤙',
+  '🔥','✨','💥','💫','🌟','🌈','⚡','☀️','🌙','🌧️','❄️','🌊',
+  '❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💖','💘','💯',
+  '🎉','🎊','🎈','🎁','🎂','🎯','🏆','🏅','🎮','🎨','🎵','🎬',
+  '📌','📣','📢','📷','📸','🧠','💡','📚','✏️','📝','🧩','🛠️',
+  '🚀','🛸','🏝️','🗺️','🍀','🌸','🌻','🍕','🍔','🍟','🍣','☕',
+  '🍩','🍪','🍰','🍫','🍿','🥤','🧋','🍹','🍺','🥂','🍎','🍉',
+  '🍓','🍒','🍇','🍍','🥑','🥦','🥕','🌽','🍔','🌮','🌯','🥗',
+  '🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐸',
+  '🐵','🐥','🐧','🐦','🦄','🐢','🐠','🐬','🦋','🐝','🌼','🌺',
+  '🏀','⚽','🏈','⚾','🎾','🏐','🏓','🎳','🛼','🚴','🏃','🧘',
+  '⌛','⏰','📍','🧭','🧳','🎒','🛍️','🎧','📱','💻','🖥️','🖱️',
+  '🔮','🧿','💎','🪄','🧸','🪅','🪩','🎀','🧵','🧶','🧷','🪡',
+  '✅','❌','⚠️','❗','❓','➕','➖','➗','✖️','🔔','🔒','🔑'
+];
+
+const PIXEL_GIFS = [
+  "https://media1.tenor.com/m/ULDjjjbmgt4AAAAd/yeyeskies-cynthia-erivo.gif",
+  "https://media1.tenor.com/m/pwgQhX123s4AAAAC/cynthia-erivo-shocked.gif",
+  "https://media1.tenor.com/m/uxC9pNjuaAIAAAAd/ariana-grande-hair-flip.gif",
+  "https://media1.tenor.com/m/Wt1mxxqzC1gAAAAC/phatearl.gif",
+  "https://media1.tenor.com/m/dhwxCmcCKAUAAAAd/stan-twitter-nurse-britney.gif",
+  "https://media1.tenor.com/m/-t4PlsIvMjkAAAAC/kill-me-shoot-me.gif",
+  "https://media1.tenor.com/m/t-Imk589wNcAAAAC/stan-twitter.gif",
+  "https://media1.tenor.com/m/T5xyQ6PNiEcAAAAd/stan-twitter.gif",
+  "https://media1.tenor.com/m/6COMq6z3l5oAAAAC/bosnov-67.gif",
+  "https://media1.tenor.com/m/O-MmXat9u54AAAAC/benson-boone-coachella.gif",
+  "https://media1.tenor.com/m/MuL00oOUHpAAAAAC/wicked-glinda-wicked-for-good.gif",
+  "https://media1.tenor.com/m/rxjtdE-oKtMAAAAC/little-mermaid-laughing.gif"
+];
+
 const AttachmentCarousel: React.FC<{ urls: string[]; className?: string }> = ({ urls, className }) => {
   const [index, setIndex] = useState(0);
   const [isFading, setIsFading] = useState(false);
@@ -77,8 +113,23 @@ const AttachmentCarousel: React.FC<{ urls: string[]; className?: string }> = ({ 
   );
 };
 
-const CommentInput: React.FC<{ onAdd: (content: string) => void; isDarkMode: boolean }> = ({ onAdd, isDarkMode }) => {
+const CommentInput: React.FC<{ onAdd: (content: string, gifs?: string[]) => void; isDarkMode: boolean }> = ({ onAdd, isDarkMode }) => {
   const [text, setText] = useState('');
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showGifs, setShowGifs] = useState(false);
+  const [selectedGifs, setSelectedGifs] = useState<string[]>([]);
+
+  const handleAddEmoji = (emoji: string) => {
+    setText(prev => `${prev}${emoji}`);
+  };
+
+  const toggleGif = (gif: string) => {
+    setSelectedGifs(prev =>
+      prev.includes(gif)
+        ? prev.filter(g => g !== gif)
+        : [...prev, gif]
+    );
+  };
 
   return (
     <div className="flex flex-col gap-2">
@@ -89,12 +140,62 @@ const CommentInput: React.FC<{ onAdd: (content: string) => void; isDarkMode: boo
         rows={3}
         placeholder="Write a comment..."
       />
-      <div className="flex justify-end">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="relative inline-block">
+            <button
+              onClick={() => setShowGifs(!showGifs)}
+              className={`font-press-start text-[1vmin] px-3 py-2 border-2 ${isDarkMode ? 'bg-indigo-950 border-indigo-800 text-indigo-100' : 'bg-gray-100 border-gray-300 text-gray-800'}`}
+            >
+              GIF ({selectedGifs.length})
+            </button>
+            {showGifs && (
+              <div className={`absolute z-20 mt-3 p-3 border-2 w-72 max-h-52 overflow-y-auto shadow-lg ${isDarkMode ? 'bg-[#0f111a] border-indigo-900' : 'bg-white border-gray-300'}`}>
+                <div className="grid grid-cols-2 gap-2">
+                  {PIXEL_GIFS.map((gif) => (
+                    <button
+                      key={gif}
+                      onClick={() => toggleGif(gif)}
+                      className={`border-2 ${selectedGifs.includes(gif) ? 'border-green-400' : 'border-transparent'} rounded`}
+                    >
+                      <img src={gif} alt="gif" className="w-full h-20 object-cover" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="relative inline-block">
+            <button
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              className={`font-press-start text-[1vmin] px-3 py-2 border-2 ${isDarkMode ? 'bg-indigo-950 border-indigo-800 text-indigo-100' : 'bg-gray-100 border-gray-300 text-gray-800'}`}
+            >
+              EMOJI
+            </button>
+            {showEmojiPicker && (
+              <div className={`absolute z-20 mt-3 p-3 border-2 grid grid-cols-5 gap-2 w-64 max-h-48 overflow-y-auto shadow-lg ${isDarkMode ? 'bg-[#0f111a] border-indigo-900' : 'bg-white border-gray-300'}`}>
+                {DEFAULT_EMOJIS.map((emoji) => (
+                  <button
+                    key={emoji}
+                    onClick={() => handleAddEmoji(emoji)}
+                    className="text-2xl hover:scale-110 transition"
+                    aria-label={`Insert ${emoji}`}
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
         <button
           onClick={() => {
             if (text.trim()) {
-              onAdd(text.trim());
+              onAdd(text.trim(), selectedGifs);
               setText('');
+              setShowEmojiPicker(false);
+              setShowGifs(false);
+              setSelectedGifs([]);
             }
           }}
           className={`px-4 py-2 border-2 ${isDarkMode ? 'bg-green-600 border-green-900 text-white' : 'bg-green-400 border-green-700'}`}
@@ -116,6 +217,11 @@ const PostPage: React.FC<PostPageProps> = ({ isDarkMode = false, currentUser = '
   const [resolvedUsername, setResolvedUsername] = useState<string>(currentUser || 'USER_1');
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingCommentText, setEditingCommentText] = useState('');
+  const [editingCommentGifs, setEditingCommentGifs] = useState<string[]>([]);
+  const [showEditGifs, setShowEditGifs] = useState(false);
+  const [editingPost, setEditingPost] = useState(false);
+  const [editingPostTitle, setEditingPostTitle] = useState('');
+  const [editingPostContent, setEditingPostContent] = useState('');
 
   useEffect(() => {
     if (userId) {
@@ -198,6 +304,17 @@ const PostPage: React.FC<PostPageProps> = ({ isDarkMode = false, currentUser = '
             id: c.comment_id.toString(),
             author: c.username || 'Anonymous',
             content: c.content,
+            gifs: Array.isArray(c.gifs)
+              ? c.gifs
+              : typeof c.gifs === 'string'
+                ? (() => {
+                    try {
+                      return JSON.parse(c.gifs);
+                    } catch (err) {
+                      return [];
+                    }
+                  })()
+                : [],
             timestamp: new Date(c.created_at).toLocaleDateString(),
             upvotes: 0
           }));
@@ -211,7 +328,7 @@ const PostPage: React.FC<PostPageProps> = ({ isDarkMode = false, currentUser = '
     loadComments();
   }, [postId]);
 
-  const handleAddComment = async (content: string) => {
+  const handleAddComment = async (content: string, gifs?: string[]) => {
     if (!resolvedUserId || !postId) return;
 
     try {
@@ -221,7 +338,8 @@ const PostPage: React.FC<PostPageProps> = ({ isDarkMode = false, currentUser = '
         body: JSON.stringify({
           user_id: resolvedUserId,
           post_id: postId,
-          content
+          content,
+          gifs
         })
       });
 
@@ -232,6 +350,7 @@ const PostPage: React.FC<PostPageProps> = ({ isDarkMode = false, currentUser = '
             id: data.comment_id.toString(),
             author: resolvedUsername,
             content,
+            gifs,
             timestamp: 'Just now',
             upvotes: 0
           },
@@ -243,35 +362,36 @@ const PostPage: React.FC<PostPageProps> = ({ isDarkMode = false, currentUser = '
     }
   };
 
-  const handleStartEditComment = (commentId: string, content: string) => {
+  const handleStartEditComment = (commentId: string, content: string, gifs?: string[]) => {
     setEditingCommentId(commentId);
     setEditingCommentText(content);
+    setEditingCommentGifs(gifs || []);
+    setShowEditGifs(false);
   };
 
   const handleCancelEditComment = () => {
     setEditingCommentId(null);
     setEditingCommentText('');
+    setEditingCommentGifs([]);
+    setShowEditGifs(false);
   };
 
   const handleSaveComment = async (commentId: string) => {
     if (!resolvedUserId) return;
 
     try {
-      const response = await fetch(`http://localhost:3001/api/comments/${commentId}`);
-      if (!response.ok) {
-        return;
-      }
       const updateResponse = await fetch(`http://localhost:3001/api/comments/${commentId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           user_id: resolvedUserId,
-          content: editingCommentText
+          content: editingCommentText,
+          gifs: editingCommentGifs
         })
       });
       const data = await updateResponse.json();
       if (data.success) {
-        setComments(prev => prev.map(c => c.id === commentId ? { ...c, content: editingCommentText } : c));
+        setComments(prev => prev.map(c => c.id === commentId ? { ...c, content: editingCommentText, gifs: editingCommentGifs } : c));
         handleCancelEditComment();
       }
     } catch (err) {
@@ -301,6 +421,47 @@ const PostPage: React.FC<PostPageProps> = ({ isDarkMode = false, currentUser = '
   };
 
   const canEditComment = (comment: Comment) => comment.author === resolvedUsername || comment.author === currentUser;
+  const canEditPost = post && (post.author === resolvedUsername || post.author === currentUser);
+
+  const handleStartEditPost = () => {
+    if (!post) return;
+    setEditingPost(true);
+    setEditingPostTitle(post.title);
+    setEditingPostContent(post.content);
+  };
+
+  const handleCancelEditPost = () => {
+    setEditingPost(false);
+    setEditingPostTitle('');
+    setEditingPostContent('');
+  };
+
+  const handleSavePost = async () => {
+    if (!resolvedUserId || !postId) return;
+    if (!editingPostTitle.trim() || !editingPostContent.trim()) return;
+
+    try {
+      const response = await fetch(`http://localhost:3001/api/posts/${postId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: resolvedUserId,
+          title: editingPostTitle.trim(),
+          content: editingPostContent.trim()
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setPost(prev => prev ? { ...prev, title: editingPostTitle.trim(), content: editingPostContent.trim() } : prev);
+        handleCancelEditPost();
+      } else {
+        setError(data.error || 'Failed to update post');
+      }
+    } catch (err) {
+      setError('Failed to update post');
+    }
+  };
 
   const commentCount = useMemo(() => comments.length, [comments]);
 
@@ -326,12 +487,6 @@ const PostPage: React.FC<PostPageProps> = ({ isDarkMode = false, currentUser = '
               r/community
             </div>
           </div>
-          <button
-            onClick={() => navigate(-1)}
-            className={`font-press-start text-[1.1vmin] px-3 py-2 border-2 ${isDarkMode ? 'border-pink-500 text-pink-500' : 'border-gray-300 text-gray-700'}`}
-          >
-            BACK
-          </button>
         </div>
       </div>
 
@@ -347,9 +502,50 @@ const PostPage: React.FC<PostPageProps> = ({ isDarkMode = false, currentUser = '
             <div className={`p-4 ${isDarkMode ? 'text-sky-100' : 'text-gray-900'}`}>
               <div className="flex items-center gap-2 text-sm mb-2">
                 <span className={`font-press-start text-[1.2vmin] ${post.author === currentUser ? 'text-yellow-400' : 'text-gray-500'}`}>u/{post.author}</span>
+                {canEditPost && !editingPost && (
+                  <button
+                    onClick={handleStartEditPost}
+                    className="ml-2 text-yellow-400 hover:opacity-80"
+                    title="Edit post"
+                  >
+                    ✏️
+                  </button>
+                )}
               </div>
-              <h2 className="font-press-start text-[3.2vmin] md:text-[2.6vmin] mb-3">{post.title}</h2>
-              <p className="font-vt323 text-2xl mb-5">{post.content}</p>
+              {editingPost ? (
+                <div className="flex flex-col gap-3">
+                  <input
+                    value={editingPostTitle}
+                    onChange={(e) => setEditingPostTitle(e.target.value)}
+                    className={`p-3 font-press-start text-[2vmin] border-2 ${isDarkMode ? 'bg-slate-900 border-indigo-900 text-white' : 'bg-gray-50 border-gray-300'}`}
+                  />
+                  <textarea
+                    rows={4}
+                    value={editingPostContent}
+                    onChange={(e) => setEditingPostContent(e.target.value)}
+                    className={`p-3 font-vt323 text-2xl border-2 ${isDarkMode ? 'bg-slate-900 border-indigo-900 text-white' : 'bg-gray-50 border-gray-300'}`}
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleSavePost}
+                      className={`px-3 py-1 border-2 ${isDarkMode ? 'bg-green-600 border-green-900 text-white' : 'bg-green-400 border-green-700'}`}
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={handleCancelEditPost}
+                      className={`px-3 py-1 border-2 ${isDarkMode ? 'bg-gray-600 border-gray-900 text-white' : 'bg-gray-300 border-gray-500'}`}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <h2 className="font-press-start text-[3.2vmin] md:text-[2.6vmin] mb-3">{post.title}</h2>
+                  <p className="font-vt323 text-2xl mb-5">{post.content}</p>
+                </>
+              )}
               {post.attachments && post.attachments.length > 0 && (
                 <AttachmentCarousel urls={post.attachments} className="mb-6" />
               )}
@@ -369,7 +565,7 @@ const PostPage: React.FC<PostPageProps> = ({ isDarkMode = false, currentUser = '
                       <span>{c.timestamp}</span>
                       {canEditComment(c) && (
                         <button
-                          onClick={() => handleStartEditComment(c.id, c.content)}
+                          onClick={() => handleStartEditComment(c.id, c.content, c.gifs)}
                           className="ml-2 text-yellow-400 hover:opacity-80"
                           title="Edit comment"
                         >
@@ -393,6 +589,29 @@ const PostPage: React.FC<PostPageProps> = ({ isDarkMode = false, currentUser = '
                           onChange={(e) => setEditingCommentText(e.target.value)}
                           className={`p-2 font-vt323 text-xl border-2 ${isDarkMode ? 'bg-slate-900 border-indigo-900 text-white' : 'bg-gray-50 border-gray-300'}`}
                         />
+                        <div className="relative inline-block">
+                          <button
+                            onClick={() => setShowEditGifs(!showEditGifs)}
+                            className={`font-press-start text-[1vmin] px-3 py-2 border-2 ${isDarkMode ? 'bg-indigo-950 border-indigo-800 text-indigo-100' : 'bg-gray-100 border-gray-300 text-gray-800'}`}
+                          >
+                            GIF ({editingCommentGifs.length})
+                          </button>
+                          {showEditGifs && (
+                            <div className={`absolute z-20 mt-3 p-3 border-2 w-72 max-h-52 overflow-y-auto shadow-lg ${isDarkMode ? 'bg-[#0f111a] border-indigo-900' : 'bg-white border-gray-300'}`}>
+                              <div className="grid grid-cols-2 gap-2">
+                                {PIXEL_GIFS.map((gif) => (
+                                  <button
+                                    key={gif}
+                                    onClick={() => setEditingCommentGifs(prev => prev.includes(gif) ? prev.filter(g => g !== gif) : [...prev, gif])}
+                                    className={`border-2 ${editingCommentGifs.includes(gif) ? 'border-green-400' : 'border-transparent'} rounded`}
+                                  >
+                                    <img src={gif} alt="gif" className="w-full h-20 object-cover" />
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleSaveComment(c.id)}
@@ -409,7 +628,21 @@ const PostPage: React.FC<PostPageProps> = ({ isDarkMode = false, currentUser = '
                         </div>
                       </div>
                     ) : (
-                      <p className="font-vt323 text-xl">{c.content}</p>
+                      <div className="flex flex-col gap-2">
+                        <p className="font-vt323 text-xl">{c.content}</p>
+                        {c.gifs && c.gifs.length > 0 && (
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                            {c.gifs.map((gif, index) => (
+                              <img
+                                key={`${gif}-${index}`}
+                                src={gif}
+                                alt="comment gif"
+                                className="w-full h-28 object-cover border-2 border-current"
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>

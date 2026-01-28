@@ -24,6 +24,11 @@ async function start() {
       queueLimit: 0,
     });
 
+    db.on('connection', (connection) => {
+      connection.query('SET time_zone = "+08:00"');
+    });
+
+    await db.query('SET time_zone = "+08:00"');
     await db.query('SELECT 1');
     console.log('✅ Connected to MySQL database: fypdatabase');
 

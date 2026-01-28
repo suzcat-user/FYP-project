@@ -27,7 +27,8 @@ db.connect((err) => {
       email VARCHAR(255),
       password_hash VARCHAR(255),
       score INT DEFAULT 0,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     )
   `;
 
@@ -89,6 +90,7 @@ db.connect((err) => {
       post_id INT NOT NULL,
       user_id INT NOT NULL,
       content TEXT NOT NULL,
+      gifs JSON NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
       FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE

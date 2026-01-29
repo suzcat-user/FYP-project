@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { GameStep, Trait, Scores, Hobby, PersonalityCode, PersonalityScores } from './types';
 import { getHobbyRecommendations } from './services/hobbyRecommendations';
@@ -18,7 +18,6 @@ import EventsJoinedScreen from './components/EventsJoinedScreen';
 const AppContent: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const API_BASE_URL = 'http://localhost:3001';
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [selectedHobby, setSelectedHobby] = useState<Hobby | null>(null);
   const [userName, setUserName] = useState<string>('Guest_Player');
@@ -33,8 +32,6 @@ const AppContent: React.FC = () => {
     EXPLORER: 0
   });
   const [eventScore, setEventScore] = useState(0);
-  const lastSubmittedGameScore = useRef<number | null>(null);
-  const [finalGameScore, setFinalGameScore] = useState<number | null>(null);
 
   const [personalityScores, setPersonalityScores] = useState<PersonalityScores>({
     [PersonalityCode.F]: 0,
@@ -105,28 +102,6 @@ const AppContent: React.FC = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (location.pathname !== '/results') return;
-    const userId = userData?.user_id;
-    if (!userId) return;
-
-    const scoreToSubmit = finalGameScore ?? (Math.floor(Math.random() * 201) + 100);
-    if (finalGameScore == null) {
-      setFinalGameScore(scoreToSubmit);
-    }
-    if (lastSubmittedGameScore.current === scoreToSubmit) return;
-
-    lastSubmittedGameScore.current = scoreToSubmit;
-    fetch(`${API_BASE_URL}/api/users/${userId}/score`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ score: scoreToSubmit })
-    }).catch((err) => {
-      console.warn('Failed to update user score:', err);
-      lastSubmittedGameScore.current = null;
-    });
-  }, [API_BASE_URL, location.pathname, finalGameScore, userData?.user_id]);
-
   const handleGoToHobbyCommunity = (hobby: Hobby) => {
     setSelectedHobby(hobby);
     navigate(`/community/${hobby.name.toLowerCase().replace(/\s+/g, '-')}`);
@@ -149,17 +124,14 @@ const AppContent: React.FC = () => {
       [PersonalityCode.S]: 0,
       [PersonalityCode.L]: 0
     });
-    lastSubmittedGameScore.current = null;
-    setFinalGameScore(null);
     // Navigate back to home
     navigate('/home');
   }, [navigate]);
 
   const totalScore = useMemo(() => {
-    const computedGameScore = Object.values(scores).reduce((sum, value) => sum + value, 0) * 100;
-    const gameScore = finalGameScore ?? computedGameScore;
-    return gameScore + eventScore;
-  }, [scores, eventScore, finalGameScore]);
+    // Score comes ONLY from joining events, not from games
+    return eventScore;
+  }, [eventScore]);
 
   const communityHobbies = useMemo(() => {
     return getHobbyRecommendations(personalityScores);

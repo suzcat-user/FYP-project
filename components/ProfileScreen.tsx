@@ -122,9 +122,10 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ scores, userName, userEma
               🎮 MY EVENTS
             </button>
             <button 
-                className={`font-press-start text-xs md:text-sm px-6 py-3 border-b-8 border-r-8 opacity-50 cursor-not-allowed ${isDarkMode ? 'bg-slate-700 border-slate-900' : 'bg-sky-600 border-sky-800 text-white'}`}
+              onClick={() => navigate('/communities-joined')}
+              className={`font-press-start text-xs md:text-sm px-6 py-3 border-b-8 border-r-8 transition-all ${isDarkMode ? 'bg-emerald-600 border-emerald-800 text-emerald-100 hover:bg-emerald-700' : 'bg-emerald-500 border-emerald-700 text-white hover:bg-emerald-600'}`}
             >
-                SAVE DATA [PRO]
+              🏘️ MY COMMUNITIES
             </button>
         </div>
 

@@ -55,6 +55,8 @@ async function start() {
     console.log('✓ Uploads routes imported');
     const hobbiesRoutes = require('./routes/hobbies');
     console.log('✓ Hobbies routes imported');
+    const communitiesRoutes = require('./routes/communities');
+    console.log('✓ Communities routes imported');
     const eventsRoutes = require('./routes/events');
     console.log('✓ Events routes imported');
 
@@ -68,6 +70,7 @@ async function start() {
     app.use('/api/game-questions', gameQuestionsRoutes(db));
     app.use('/api/uploads', uploadsRoutes(db));
     app.use('/api/hobbies', hobbiesRoutes(db));
+    app.use('/api/communities', communitiesRoutes(db));
     app.use('/api/events', eventsRoutes(db));
     console.log('✓ All routes mounted');
 

@@ -14,6 +14,7 @@ import AuthScreen from './components/AuthScreen';
 import ProfileScreen from './components/ProfileScreen';
 import PostPage from './components/PostPage';
 import EventsJoinedScreen from './components/EventsJoinedScreen';
+import CommunitiesJoinedScreen from './components/CommunitiesJoinedScreen';
 
 const AppContent: React.FC = () => {
   const navigate = useNavigate();
@@ -294,6 +295,7 @@ const AppContent: React.FC = () => {
              <Route path="/posts/:postId" element={<PostPage isDarkMode={isDarkMode} currentUser={userData?.username || "GUEST"} userId={userData?.user_id} />} />
              <Route path="/profile" element={<ProfileScreen scores={scores} userName={userName} userEmail={userEmail} onBack={() => navigate('/home')} isDarkMode={isDarkMode} />} />
              <Route path="/events-joined" element={<EventsJoinedScreen userId={userData?.user_id} isDarkMode={isDarkMode} onBack={() => navigate('/community')} />} />
+             <Route path="/communities-joined" element={<CommunitiesJoinedScreen userId={userData?.user_id} isDarkMode={isDarkMode} onBack={() => navigate('/profile')} />} />
            </Routes>
         </div>
       </div>

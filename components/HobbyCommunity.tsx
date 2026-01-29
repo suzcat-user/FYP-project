@@ -139,6 +139,107 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const handleJoinCommunity = async () => {
+    let userIdToUse = resolvedUserId || userId;
+    
+    if (!userIdToUse && !userId) {
+      const cached = localStorage.getItem('hobbyArcadeUser');
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          userIdToUse = parsed?.user_id;
+        } catch (err) {
+          console.warn('Failed to parse cached user', err);
+        }
+      }
+    }
+    
+    if (!userIdToUse || !resolvedHobby) return;
+
+    console.log('Attempting to join community with:', {
+      user_id: userIdToUse,
+      community_id: resolvedHobby.communityId,
+      hobby: resolvedHobby
+    });
+
+    try {
+      const response = await fetch('http://localhost:3001/api/communities/join', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userIdToUse,
+          community_id: resolvedHobby.communityId
+        })
+      });
+
+      const data = await response.json();
+      console.log('Join response:', { status: response.status, data });
+
+      if (!response.ok) {
+        throw new Error(data?.error || 'Failed to join community');
+      }
+
+      setJoined(true);
+    } catch (error) {
+      console.error('Error joining community:', error);
+      alert('Failed to join community');
+    }
+  };
+
+  const handleLeaveCommunity = async () => {
+    let userIdToUse = resolvedUserId || userId;
+    
+    if (!userIdToUse && !userId) {
+      const cached = localStorage.getItem('hobbyArcadeUser');
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          userIdToUse = parsed?.user_id;
+        } catch (err) {
+          console.warn('Failed to parse cached user', err);
+        }
+      }
+    }
+    
+    if (!userIdToUse || !resolvedHobby) return;
+
+    console.log('Attempting to leave community with:', {
+      user_id: userIdToUse,
+      community_id: resolvedHobby.communityId
+    });
+
+    try {
+      const response = await fetch('http://localhost:3001/api/communities/leave', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userIdToUse,
+          community_id: resolvedHobby.communityId
+        })
+      });
+
+      const data = await response.json();
+      console.log('Leave response:', { status: response.status, data });
+
+      if (!response.ok) {
+        throw new Error(data?.error || 'Failed to leave community');
+      }
+
+      setJoined(false);
+    } catch (error) {
+      console.error('Error leaving community:', error);
+      alert('Failed to leave community');
+    }
+  };
+
+  const handleToggleJoin = () => {
+    if (joined) {
+      handleLeaveCommunity();
+    } else {
+      handleJoinCommunity();
+    }
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
@@ -217,6 +318,63 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
   const resolvedHobby = hobby || (hobbySlug ? getHobbyByName(hobbySlug.replace(/-/g, ' ')) : undefined);
   const communityId = resolvedHobby?.communityId;
   const displayHobbyName = resolvedHobby?.name || (hobbySlug ? hobbySlug.replace(/-/g, ' ') : 'HOBBY');
+
+  console.log('HobbyCommunity render:', {
+    hobby,
+    hobbySlug,
+    resolvedHobby,
+    communityId,
+    displayHobbyName,
+    resolvedUserId
+  });
+
+  // Check if user is a member of this community
+  useEffect(() => {
+    const checkMembership = async () => {
+      // Get the resolved user ID - from state or localStorage
+      let userIdToCheck = resolvedUserId;
+      if (!userIdToCheck && !userId) {
+        const cached = localStorage.getItem('hobbyArcadeUser');
+        if (cached) {
+          try {
+            const parsed = JSON.parse(cached);
+            userIdToCheck = parsed?.user_id;
+          } catch (err) {
+            console.warn('Failed to parse cached user for membership check', err);
+          }
+        }
+      }
+
+      console.log('Membership check - values:', { userIdToCheck, communityId, resolvedHobby });
+      
+      if (!userIdToCheck || !communityId) {
+        console.log('Skipping membership check - missing required values', { userIdToCheck, communityId });
+        return;
+      }
+
+      try {
+        const url = `http://localhost:3001/api/communities/${communityId}/member/${userIdToCheck}`;
+        console.log(`Checking membership at: ${url}`);
+        const response = await fetch(url);
+
+        console.log('Membership check response status:', response.status);
+        
+        if (!response.ok) {
+          console.error('Membership check failed with status:', response.status);
+          return;
+        }
+
+        const data = await response.json();
+        console.log('Membership check result:', data);
+        setJoined(data.isMember);
+        console.log('Set joined to:', data.isMember);
+      } catch (error) {
+        console.error('Error checking membership:', error);
+      }
+    };
+
+    checkMembership();
+  }, [resolvedUserId, communityId, userId]);
 
   // Load posts from database on mount or when hobby changes
   useEffect(() => {
@@ -461,7 +619,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
                   </p>
               </div>
               <button 
-                onClick={() => setJoined(!joined)}
+                onClick={handleToggleJoin}
                 className={`font-press-start text-[1.2vmin] px-6 py-2 border-b-4 border-r-4 ${joined ? 'bg-gray-400' : isDarkMode ? 'bg-pink-600' : 'bg-sky-600'} text-white`}
               >
                 {joined ? 'JOINED' : 'JOIN'}

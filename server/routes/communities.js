@@ -99,5 +99,90 @@ router.get('/user/:user_id/recommended', async (req, res) => {
   }
 });
 
+  // Join a community
+  router.post('/join', async (req, res) => {
+    try {
+      const { user_id, community_id } = req.body;
+
+      if (!user_id || !community_id) {
+        return res.status(400).json({ error: 'user_id and community_id are required' });
+      }
+
+      console.log(`[Communities] User ${user_id} joining community ${community_id}`);
+
+      // Insert into user_communities with INSERT IGNORE to handle duplicates
+      const [result] = await db.execute(
+        `INSERT INTO user_communities (user_id, community_id, joined_at)
+         VALUES (?, ?, NOW())
+         ON DUPLICATE KEY UPDATE joined_at = NOW()`,
+        [user_id, community_id]
+      );
+
+      console.log(`[Communities] Join result:`, result);
+
+      res.json({ 
+        success: true, 
+        message: 'Successfully joined community',
+        result 
+      });
+    } catch (error) {
+      console.error('[Communities] Error joining community:', error);
+      res.status(500).json({ error: 'Failed to join community' });
+    }
+  });
+
+  // Check if user is a member of a community
+  router.get('/:community_id/member/:user_id', async (req, res) => {
+    try {
+      const { community_id, user_id } = req.params;
+
+      console.log(`[Communities] Checking membership for user ${user_id} in community ${community_id}`);
+
+      const [rows] = await db.execute(
+        `SELECT membership_id FROM user_communities 
+         WHERE user_id = ? AND community_id = ?`,
+        [user_id, community_id]
+      );
+
+      const isMember = rows.length > 0;
+      console.log(`[Communities] Membership result:`, { isMember, rows });
+
+      res.json({ isMember });
+    } catch (error) {
+      console.error('[Communities] Error checking membership:', error);
+      res.status(500).json({ error: 'Failed to check membership' });
+    }
+  });
+
+  // Leave a community
+  router.post('/leave', async (req, res) => {
+    try {
+      const { user_id, community_id } = req.body;
+
+      if (!user_id || !community_id) {
+        return res.status(400).json({ error: 'user_id and community_id are required' });
+      }
+
+      console.log(`[Communities] User ${user_id} leaving community ${community_id}`);
+
+      const [result] = await db.execute(
+        `DELETE FROM user_communities 
+         WHERE user_id = ? AND community_id = ?`,
+        [user_id, community_id]
+      );
+
+      console.log(`[Communities] Leave result:`, result);
+
+      res.json({ 
+        success: true, 
+        message: 'Successfully left community',
+        result 
+      });
+    } catch (error) {
+      console.error('[Communities] Error leaving community:', error);
+      res.status(500).json({ error: 'Failed to leave community' });
+    }
+  });
+
   return router;
 };

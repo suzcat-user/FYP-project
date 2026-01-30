@@ -7,6 +7,7 @@ import GameContainer from './ui/GameContainer';
 interface AllHobbiesScreenProps {
   onSelectHobby: (hobby: Hobby) => void;
   isDarkMode?: boolean;
+  hasPlayedGames?: boolean;
 }
 
 const PERSONALITY_COLORS: Record<string, { bg: string; border: string; text: string; accent: string }> = {
@@ -17,7 +18,7 @@ const PERSONALITY_COLORS: Record<string, { bg: string; border: string; text: str
   'L': { bg: 'bg-purple-500', border: 'border-purple-700', text: 'text-purple-100', accent: 'hover:shadow-[0_0_20px_rgba(168,85,247,0.5)]' }
 };
 
-const AllHobbiesScreen: React.FC<AllHobbiesScreenProps> = ({ onSelectHobby, isDarkMode = false }) => {
+const AllHobbiesScreen: React.FC<AllHobbiesScreenProps> = ({ onSelectHobby, isDarkMode = false, hasPlayedGames = false }) => {
   const navigate = useNavigate();
   const { hobbies: personalityData, loading, error } = useHobbies();
 
@@ -41,7 +42,7 @@ const AllHobbiesScreen: React.FC<AllHobbiesScreenProps> = ({ onSelectHobby, isDa
             Failed to load hobbies
           </div>
           <button
-            onClick={() => navigate('/results')}
+            onClick={() => navigate(hasPlayedGames ? '/results' : '/home')}
             className={`font-press-start text-[1.5vmin] px-[3vmin] py-[1.5vmin] border-4 ${isDarkMode ? 'bg-indigo-700 border-indigo-900 text-indigo-100' : 'bg-sky-500 border-sky-700 text-white'}`}
           >
             ← BACK TO RESULTS
@@ -59,7 +60,7 @@ const AllHobbiesScreen: React.FC<AllHobbiesScreenProps> = ({ onSelectHobby, isDa
         
         {/* Back Button */}
         <button
-          onClick={() => navigate('/results')}
+          onClick={() => navigate(hasPlayedGames ? '/results' : '/home')}
           className={`mb-[3vmin] font-press-start text-[1.5vmin] px-[3vmin] py-[1.5vmin] border-4 border-b-8 active:border-b-4 active:translate-y-1 transition-all ${isDarkMode ? 'bg-indigo-700 border-indigo-900 text-indigo-100 hover:bg-indigo-600' : 'bg-sky-500 border-sky-700 text-white hover:bg-sky-400'}`}
         >
           ← BACK TO RESULTS

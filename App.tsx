@@ -70,6 +70,11 @@ const AppContent: React.FC = () => {
     }
   }, []);
 
+  // Check if user has taken the game survey by checking if any scores are non-zero
+  const hasPlayedGames = useMemo(() => {
+    return Object.values(scores).some(score => score > 0);
+  }, [scores]);
+
   const handleNextGame = useCallback(() => {
     const currentPath = location.pathname;
     if (currentPath === '/auth') navigate('/home');
@@ -261,12 +266,12 @@ const AppContent: React.FC = () => {
              <Route path="/games/ring-toss" element={<RingToss onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} userId={userData?.user_id} />} />
              <Route path="/games/shooting-gallery" element={<ShootingGallery onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} userId={userData?.user_id} />} />
              <Route path="/results" element={<ResultsScreen scores={scores} personalityScores={personalityScores} onNext={handleNextGame} onSelectHobby={handleGoToHobbyCommunity} onReset={handleResetGame} isDarkMode={isDarkMode} />} />
-             <Route path="/all-hobbies" element={<AllHobbiesScreen onSelectHobby={handleGoToHobbyCommunity} isDarkMode={isDarkMode} />} />
+             <Route path="/all-hobbies" element={<AllHobbiesScreen onSelectHobby={handleGoToHobbyCommunity} isDarkMode={isDarkMode} hasPlayedGames={hasPlayedGames} />} />
              <Route path="/community" element={<CommunityScreen onRestart={handleNextGame} scores={scores} hobbies={communityHobbies} onSelectHobby={handleGoToHobbyCommunity} isDarkMode={isDarkMode} userId={userData?.user_id} eventScore={eventScore} onEventJoined={(event, points) => setEventScore(prev => prev + points)} onEventLeft={(event, points) => setEventScore(prev => Math.max(0, prev - points))} />} />
-             <Route path="/community/:hobbyName" element={<HobbyCommunity hobby={selectedHobby} onBack={() => navigate('/results')} isDarkMode={isDarkMode} currentUser={userData?.username || "GUEST"} userId={userData?.user_id} onEventJoined={(event, points) => setEventScore(prev => prev + points)} onEventLeft={(event, points) => setEventScore(prev => Math.max(0, prev - points))} />} />
+             <Route path="/community/:hobbyName" element={<HobbyCommunity hobby={selectedHobby} onBack={() => navigate(hasPlayedGames ? '/results' : '/community')} isDarkMode={isDarkMode} currentUser={userData?.username || "GUEST"} userId={userData?.user_id} onEventJoined={(event, points) => setEventScore(prev => prev + points)} onEventLeft={(event, points) => setEventScore(prev => Math.max(0, prev - points))} />} />
              <Route path="/posts/:postId" element={<PostPage isDarkMode={isDarkMode} currentUser={userData?.username || "GUEST"} userId={userData?.user_id} />} />
              <Route path="/profile" element={<ProfileScreen scores={scores} userName={userName} userEmail={userEmail} onBack={() => navigate('/home')} isDarkMode={isDarkMode} />} />
-             <Route path="/events-joined" element={<EventsJoinedScreen userId={userData?.user_id} isDarkMode={isDarkMode} onBack={() => navigate('/community')} />} />
+             <Route path="/events-joined" element={<EventsJoinedScreen userId={userData?.user_id} isDarkMode={isDarkMode} onBack={() => navigate('/profile')} />} />
              <Route path="/communities-joined" element={<CommunitiesJoinedScreen userId={userData?.user_id} isDarkMode={isDarkMode} onBack={() => navigate('/profile')} />} />
            </Routes>
         </div>

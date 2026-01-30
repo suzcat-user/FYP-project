@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Hobby } from '../types';
+import ArcadeButton from './ui/ArcadeButton';
 
 interface CommunitiesJoinedScreenProps {
   userId?: number;
@@ -253,35 +254,10 @@ const CommunitiesJoinedScreen: React.FC<CommunitiesJoinedScreenProps> = ({ userI
         )}
 
         {/* Back Button */}
-        <div style={{
-          marginTop: '30px',
-          textAlign: 'center'
-        }}>
-          <button
-            onClick={onBack}
-            style={{
-              padding: '12px 30px',
-              backgroundColor: isDarkMode ? '#1e3a8a' : '#0284c7',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontFamily: "'Arcade', monospace",
-              fontSize: '1rem',
-              fontWeight: 'bold',
-              transition: 'all 0.2s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = isDarkMode ? '#1e40af' : '#0369a1';
-              e.currentTarget.style.transform = 'scale(1.05)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = isDarkMode ? '#1e3a8a' : '#0284c7';
-              e.currentTarget.style.transform = 'scale(1)';
-            }}
-          >
-            BACK
-          </button>
+        <div style={{ marginTop: '30px', textAlign: 'center' }}>
+          <ArcadeButton onClick={onBack}>
+            Back
+          </ArcadeButton>
         </div>
       </div>
     </div>

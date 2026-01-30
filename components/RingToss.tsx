@@ -153,7 +153,7 @@ type RingTossQuestion = {
   answers: RingTossAnswer[];
 };
 
-const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDarkMode = false, progress }) => {
+const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDarkMode = false, progress, userId }) => {
   const [round, setRound] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -216,6 +216,42 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
 
   const currentQuestion = questions[currentQuestionIndex];
 
+  const saveAnswer = async (answer: RingTossAnswer, questionId: number) => {
+    if (userId) {
+      try {
+        const personalityCode = answer.personalityCodes && answer.personalityCodes.length > 0 
+          ? answer.personalityCodes[0] 
+          : null;
+        
+        const payload = {
+          user_id: userId,
+          game_type: 'RING_TOSS',
+          question_id: questionId,
+          answer_choice: answer.text,
+          personality_code: personalityCode
+        };
+        
+        console.log('Saving Ring Toss answer:', payload);
+        
+        const response = await fetch(`${API_BASE_URL}/api/answers`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        
+        if (!response.ok) {
+          console.error('Failed to save answer:', response.status, response.statusText);
+        } else {
+          console.log('Answer saved successfully');
+        }
+      } catch (err) {
+        console.error('Error saving answer:', err);
+      }
+    } else {
+      console.warn('No userId provided, skipping answer save');
+    }
+  };
+
   const handleSkip = () => {
     if (isThrown) return;
     if (round < TOTAL_ROUNDS - 1 && questions.length) {
@@ -238,6 +274,15 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
     setSelectedAnswer(index);
     setIsThrown(true);
     onAnswer([derivedTrait], answer.personalityCodes as PersonalityCode[] | undefined);
+    
+    // Save answer to database
+    console.log('Current question before save:', currentQuestion);
+    if (currentQuestion) {
+      console.log('Calling saveAnswer with questionId:', currentQuestion.id);
+      saveAnswer(answer, currentQuestion.id);
+    } else {
+      console.warn('No current question available');
+    }
     
     setTimeout(() => {
       if (round < TOTAL_ROUNDS - 1 && questions.length) {

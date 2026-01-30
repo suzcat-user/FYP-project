@@ -166,11 +166,41 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
     });
   }, [currentQuestionIndex, questions.length]);
 
+  const saveAnswer = async (answer: ShootingGalleryAnswer, questionId: number) => {
+    if (userId) {
+      try {
+        const personalityCode = answer.personalityCodes && answer.personalityCodes.length > 0 
+          ? answer.personalityCodes[0] 
+          : null;
+        
+        await fetch(`${API_BASE_URL}/api/answers`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: userId,
+            game_type: 'SHOOTING_GALLERY',
+            question_id: questionId,
+            answer_choice: answer.text,
+            personality_code: personalityCode
+          })
+        });
+      } catch (err) {
+        console.error('Error saving answer:', err);
+      }
+    }
+  };
+
   const handleShot = (trait: Trait, personalityCodes: PersonalityCode[] | undefined, index: number) => {
     if (isShot) return;
     setIsShot(true);
     setPoppedId(index);
     onAnswer([trait as Trait], personalityCodes as PersonalityCode[] | undefined);
+    
+    // Save answer to database
+    const currentQuestion = questions[currentQuestionIndex];
+    if (currentQuestion && currentQuestion.answers[index]) {
+      saveAnswer(currentQuestion.answers[index], currentQuestion.id);
+    }
     
     setTimeout(() => {
       if (round < TOTAL_ROUNDS - 1) {

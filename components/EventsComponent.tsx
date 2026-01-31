@@ -278,63 +278,62 @@ const EventsComponent: React.FC<EventsComponentProps> = ({
           }}
         >
           <div 
-            className={`w-full max-w-md border-8 p-8 flex flex-col gap-6 text-center ${isDarkMode ? 'bg-[#1a1c27] border-pink-600' : 'bg-white border-sky-800'}`}
+            className={`w-full max-w-sm border-6 p-5 flex flex-col gap-3 text-center ${isDarkMode ? 'bg-[#1a1c27] border-pink-600' : 'bg-white border-sky-800'}`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Celebration */}
-            <div className="text-6xl">
+            <div className="text-4xl">
               🎉✨🎊
             </div>
 
             {/* Title */}
-            <h2 className={`font-press-start text-2xl ${isDarkMode ? 'text-pink-400' : 'text-sky-700'}`}>
+            <h2 className={`font-press-start text-xl ${isDarkMode ? 'text-pink-400' : 'text-sky-700'}`}>
               EVENT JOINED!
             </h2>
 
             {/* Event Name */}
-            <div className={`p-4 border-4 ${isDarkMode ? 'bg-slate-900 border-pink-600' : 'bg-blue-50 border-sky-400'}`}>
-              <h3 className={`font-press-start text-lg ${isDarkMode ? 'text-pink-300' : 'text-sky-800'}`}>
+            <div className={`p-2 border-4 ${isDarkMode ? 'bg-slate-900 border-pink-600' : 'bg-blue-50 border-sky-400'}`}>
+              <h3 className={`font-press-start text-sm ${isDarkMode ? 'text-pink-300' : 'text-sky-800'}`}>
                 {joinedEvent.title}
               </h3>
             </div>
 
             {/* Event Details */}
-            <div className={`space-y-3 font-vt323 text-lg ${isDarkMode ? 'text-indigo-200' : 'text-sky-700'}`}>
+            <div className={`space-y-2 font-vt323 text-sm ${isDarkMode ? 'text-indigo-200' : 'text-sky-700'}`}>
               {joinedEvent.event_date && (
-                <div className="flex items-center justify-center gap-2">
-                  <span className="text-2xl">📅</span>
+                <div className="flex items-center justify-center gap-1">
+                  <span className="text-lg">📅</span>
                   <span>
                     {new Date(joinedEvent.event_date).toLocaleDateString('en-US', { 
-                      weekday: 'long', 
-                      month: 'long', 
-                      day: 'numeric',
-                      year: 'numeric'
+                      weekday: 'short', 
+                      month: 'short', 
+                      day: 'numeric'
                     })}
                   </span>
                 </div>
               )}
               {joinedEvent.event_time && (
-                <div className="flex items-center justify-center gap-2">
-                  <span className="text-2xl">⏰</span>
+                <div className="flex items-center justify-center gap-1">
+                  <span className="text-lg">⏰</span>
                   <span>{joinedEvent.event_time}</span>
                 </div>
               )}
               {joinedEvent.location && (
-                <div className="flex items-center justify-center gap-2">
-                  <span className="text-2xl">📍</span>
+                <div className="flex items-center justify-center gap-1">
+                  <span className="text-lg">📍</span>
                   <span>{joinedEvent.location}</span>
                 </div>
               )}
             </div>
 
             {/* Points Reward */}
-            <div className={`p-3 border-4 font-press-start text-xl ${isDarkMode ? 'bg-yellow-900 border-yellow-600 text-yellow-300' : 'bg-yellow-100 border-yellow-600 text-yellow-800'}`}>
+            <div className={`p-2 border-4 font-press-start text-base ${isDarkMode ? 'bg-yellow-900 border-yellow-600 text-yellow-300' : 'bg-yellow-100 border-yellow-600 text-yellow-800'}`}>
               +{joinedEvent.points_reward} POINTS EARNED! 🏆
             </div>
 
             {/* Message */}
-            <div className={`p-4 border-4 ${isDarkMode ? 'bg-purple-900/50 border-purple-600' : 'bg-purple-100 border-purple-400'}`}>
-              <p className={`font-vt323 text-lg font-bold ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}>
+            <div className={`p-2 border-4 ${isDarkMode ? 'bg-purple-900/50 border-purple-600' : 'bg-purple-100 border-purple-400'}`}>
+              <p className={`font-vt323 text-sm font-bold ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}>
                 See you there! 🚀
               </p>
             </div>
@@ -345,7 +344,7 @@ const EventsComponent: React.FC<EventsComponentProps> = ({
                 setJoinedEvent(null);
                 setJoinMessage(null);
               }}
-              className={`font-press-start text-sm px-6 py-2 border-4 border-b-8 active:border-b-4 active:translate-y-1 transition-all cursor-pointer ${isDarkMode ? 'bg-pink-600 border-pink-800 text-white hover:bg-pink-700' : 'bg-pink-500 border-pink-700 text-white hover:bg-pink-600'}`}
+              className={`font-press-start text-xs px-4 py-1 border-4 border-b-8 active:border-b-4 active:translate-y-1 transition-all cursor-pointer ${isDarkMode ? 'bg-pink-600 border-pink-800 text-white hover:bg-pink-700' : 'bg-pink-500 border-pink-700 text-white hover:bg-pink-600'}`}
             >
               AWESOME!
             </button>

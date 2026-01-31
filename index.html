@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hobby Finder Arcade game</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Botpress Chatbot Scripts -->
+    <script src="https://cdn.botpress.cloud/webchat/v3.5/inject.js"></script>
+    <script src="https://files.bpcontent.cloud/2026/01/27/08/20260127082808-R5CGNPDZ.js" defer></script>
+
     <script>
       window.onerror = function(msg, url, line, col, error) {
         if (msg === 'Script error.' || !url) {
@@ -32,20 +37,6 @@
       }
       
       .font-press-start { font-family: 'Press Start 2P', cursive; }
-
-      /* HIDE CHATBOT BY DEFAULT - ONLY SHOW ON HOME PAGE */
-      #bp-web-widget-container,
-      [id^="bp-web-widget"],
-      .bp-widget-web,
-      .bpWidget,
-      div[style*="position: fixed"][style*="bottom"],
-      iframe[src*="botpress"] {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
-        z-index: -9999 !important;
-      }
 
       /* Neon Pulse */
       @keyframes neon-pulse {

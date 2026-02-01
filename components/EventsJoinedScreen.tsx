@@ -7,9 +7,10 @@ interface EventsJoinedScreenProps {
   userId?: number;
   isDarkMode?: boolean;
   onBack: () => void;
+  onScoreUpdate?: (newScore: number) => void;
 }
 
-const EventsJoinedScreen: React.FC<EventsJoinedScreenProps> = ({ userId, isDarkMode = false, onBack }) => {
+const EventsJoinedScreen: React.FC<EventsJoinedScreenProps> = ({ userId, isDarkMode = false, onBack, onScoreUpdate }) => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -32,6 +33,7 @@ const EventsJoinedScreen: React.FC<EventsJoinedScreenProps> = ({ userId, isDarkM
         // Calculate total points from joined events
         const total = userEvents.reduce((sum, event) => sum + (event.points_reward || 0), 0);
         setTotalPoints(total);
+        if (onScoreUpdate) onScoreUpdate(total);
       } catch (err) {
         console.error('Failed to fetch user events:', err);
         setError('Failed to load your events');
@@ -54,6 +56,7 @@ const EventsJoinedScreen: React.FC<EventsJoinedScreenProps> = ({ userId, isDarkM
       const updatedEvents = events.filter(e => e.event_id !== eventId);
       const total = updatedEvents.reduce((sum, event) => sum + (event.points_reward || 0), 0);
       setTotalPoints(total);
+      if (onScoreUpdate) onScoreUpdate(total);
     } catch (err) {
       console.error('Failed to leave event:', err);
       alert('Failed to leave event');

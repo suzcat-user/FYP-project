@@ -115,37 +115,6 @@ module.exports = (db) => {
     }
   });
 
-  // Get user by ID
-  router.get('/:userId', async (req, res) => {
-    try {
-      const { userId } = req.params;
-      const [results] = await db.execute('SELECT user_id, username, email, score, created_at FROM users WHERE user_id = ?', [userId]);
-
-      if (results.length === 0) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-
-      res.json(results[0]);
-    } catch (err) {
-      console.error('Database error:', err);
-      return res.status(500).json({ error: 'Database error' });
-    }
-  });
-
-  // Update user score
-  router.put('/:userId/score', async (req, res) => {
-    try {
-      const { userId } = req.params;
-      const { score } = req.body;
-
-      await db.execute('UPDATE users SET score = score + ? WHERE user_id = ?', [score, userId]);
-      res.json({ success: true, message: 'Score updated' });
-    } catch (err) {
-      console.error('Database error:', err);
-      return res.status(500).json({ error: 'Database error' });
-    }
-  });
-
   // Get leaderboard - top users ranked by score
   router.get('/leaderboard/top', async (req, res) => {
     try {
@@ -174,6 +143,37 @@ module.exports = (db) => {
     } catch (err) {
       console.error('❌ Leaderboard endpoint error:', err);
       return res.status(500).json({ error: 'Failed to fetch leaderboard' });
+    }
+  });
+
+  // Get user by ID
+  router.get('/:userId', async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const [results] = await db.execute('SELECT user_id, username, email, score, created_at FROM users WHERE user_id = ?', [userId]);
+
+      if (results.length === 0) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      res.json(results[0]);
+    } catch (err) {
+      console.error('Database error:', err);
+      return res.status(500).json({ error: 'Database error' });
+    }
+  });
+
+  // Update user score
+  router.put('/:userId/score', async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const { score } = req.body;
+
+      await db.execute('UPDATE users SET score = score + ? WHERE user_id = ?', [score, userId]);
+      res.json({ success: true, message: 'Score updated' });
+    } catch (err) {
+      console.error('Database error:', err);
+      return res.status(500).json({ error: 'Database error' });
     }
   });
 

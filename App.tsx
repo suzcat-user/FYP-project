@@ -23,7 +23,7 @@ const AppContent: React.FC = () => {
   const [selectedHobby, setSelectedHobby] = useState<Hobby | null>(null);
   const [userName, setUserName] = useState<string>('Guest_Player');
   const [userEmail, setUserEmail] = useState<string>('');
-  const [userData, setUserData] = useState<{ user_id?: number; username?: string; score?: number; eventScore?: number } | null>(null);
+  const [userData, setUserData] = useState<{ user_id?: number; username?: string; email?: string; score?: number; eventScore?: number } | null>(null);
   const [scores, setScores] = useState<Scores>({
     CREATIVE: 0,
     ACTIVE: 0,
@@ -41,6 +41,30 @@ const AppContent: React.FC = () => {
     [PersonalityCode.S]: 0,
     [PersonalityCode.L]: 0
   });
+
+  const refreshUserScore = useCallback(async (userId?: number) => {
+    if (!userId) return;
+    try {
+      const response = await fetch(`http://localhost:3001/api/users/${userId}`);
+      if (!response.ok) return;
+      const data = await response.json();
+      const nextScore = Number(data?.score) || 0;
+      setEventScore(nextScore);
+      setUserData(prev => {
+        const updated = {
+          user_id: userId,
+          username: prev?.username || userName,
+          email: prev?.email || userEmail,
+          score: nextScore,
+          eventScore: nextScore
+        };
+        localStorage.setItem('hobbyArcadeUser', JSON.stringify(updated));
+        return updated;
+      });
+    } catch (err) {
+      console.error('Failed to refresh user score:', err);
+    }
+  }, [userName, userEmail]);
 
   const handleLogin = useCallback((username: string, email: string, user_id: number, score: number = 0) => {
     const payload = { user_id, username, score: score, email, eventScore: score };
@@ -62,13 +86,21 @@ const AppContent: React.FC = () => {
           setUserName(parsed.username);
           setUserEmail(parsed.email || '');
           setEventScore(parsed.score || 0);
+          refreshUserScore(parsed.user_id);
         }
       } catch (err) {
         console.warn('Failed to restore cached user', err);
         localStorage.removeItem('hobbyArcadeUser');
       }
     }
-  }, []);
+  }, [refreshUserScore]);
+
+  useEffect(() => {
+    if (!userData?.user_id) return;
+    const updated = { ...userData, score: eventScore, eventScore };
+    setUserData(updated);
+    localStorage.setItem('hobbyArcadeUser', JSON.stringify(updated));
+  }, [eventScore, userData]);
 
   // Check if user has taken the game survey by checking if any scores are non-zero
   const hasPlayedGames = useMemo(() => {
@@ -267,11 +299,11 @@ const AppContent: React.FC = () => {
              <Route path="/games/shooting-gallery" element={<ShootingGallery onAnswer={handleAnswer} onGameEnd={handleNextGame} onSkip={handleNextGame} isDarkMode={isDarkMode} progress={gameProgress} userId={userData?.user_id} />} />
              <Route path="/results" element={<ResultsScreen scores={scores} personalityScores={personalityScores} onNext={handleNextGame} onSelectHobby={handleGoToHobbyCommunity} onReset={handleResetGame} isDarkMode={isDarkMode} />} />
              <Route path="/all-hobbies" element={<AllHobbiesScreen onSelectHobby={handleGoToHobbyCommunity} isDarkMode={isDarkMode} hasPlayedGames={hasPlayedGames} />} />
-             <Route path="/community" element={<CommunityScreen onRestart={handleNextGame} scores={scores} hobbies={communityHobbies} onSelectHobby={handleGoToHobbyCommunity} isDarkMode={isDarkMode} userId={userData?.user_id} eventScore={eventScore} onEventJoined={(event, points) => setEventScore(prev => prev + points)} onEventLeft={(event, points) => setEventScore(prev => Math.max(0, prev - points))} />} />
-             <Route path="/community/:hobbyName" element={<HobbyCommunity hobby={selectedHobby} onBack={() => navigate(hasPlayedGames ? '/results' : '/community')} isDarkMode={isDarkMode} currentUser={userData?.username || "GUEST"} userId={userData?.user_id} onEventJoined={(event, points) => setEventScore(prev => prev + points)} onEventLeft={(event, points) => setEventScore(prev => Math.max(0, prev - points))} />} />
+             <Route path="/community" element={<CommunityScreen onRestart={handleNextGame} scores={scores} hobbies={communityHobbies} onSelectHobby={handleGoToHobbyCommunity} isDarkMode={isDarkMode} userId={userData?.user_id} eventScore={eventScore} onEventJoined={(event, points) => { setEventScore(prev => prev + points); refreshUserScore(userData?.user_id); }} onEventLeft={(event, points) => { setEventScore(prev => Math.max(0, prev - points)); refreshUserScore(userData?.user_id); }} />} />
+             <Route path="/community/:hobbyName" element={<HobbyCommunity hobby={selectedHobby} onBack={() => navigate(hasPlayedGames ? '/results' : '/community')} isDarkMode={isDarkMode} currentUser={userData?.username || "GUEST"} userId={userData?.user_id} onEventJoined={(event, points) => { setEventScore(prev => prev + points); refreshUserScore(userData?.user_id); }} onEventLeft={(event, points) => { setEventScore(prev => Math.max(0, prev - points)); refreshUserScore(userData?.user_id); }} />} />
              <Route path="/posts/:postId" element={<PostPage isDarkMode={isDarkMode} currentUser={userData?.username || "GUEST"} userId={userData?.user_id} />} />
              <Route path="/profile" element={<ProfileScreen scores={scores} userName={userName} userEmail={userEmail} onBack={() => navigate('/home')} isDarkMode={isDarkMode} />} />
-             <Route path="/events-joined" element={<EventsJoinedScreen userId={userData?.user_id} isDarkMode={isDarkMode} onBack={() => navigate('/profile')} />} />
+             <Route path="/events-joined" element={<EventsJoinedScreen userId={userData?.user_id} isDarkMode={isDarkMode} onBack={() => navigate('/profile')} onScoreUpdate={(newScore) => { setEventScore(newScore); refreshUserScore(userData?.user_id); }} />} />
              <Route path="/communities-joined" element={<CommunitiesJoinedScreen userId={userData?.user_id} isDarkMode={isDarkMode} onBack={() => navigate('/profile')} />} />
            </Routes>
         </div>

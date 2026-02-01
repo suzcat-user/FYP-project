@@ -96,11 +96,14 @@ const AppContent: React.FC = () => {
   }, [refreshUserScore]);
 
   useEffect(() => {
-    if (!userData?.user_id) return;
-    const updated = { ...userData, score: eventScore, eventScore };
-    setUserData(updated);
-    localStorage.setItem('hobbyArcadeUser', JSON.stringify(updated));
-  }, [eventScore, userData]);
+    setUserData(prev => {
+      if (!prev?.user_id) return prev;
+      if (prev.score === eventScore && prev.eventScore === eventScore) return prev;
+      const updated = { ...prev, score: eventScore, eventScore };
+      localStorage.setItem('hobbyArcadeUser', JSON.stringify(updated));
+      return updated;
+    });
+  }, [eventScore]);
 
   // Check if user has taken the game survey by checking if any scores are non-zero
   const hasPlayedGames = useMemo(() => {

@@ -90,6 +90,7 @@ export interface Post {
   attachments?: string[];
   upvotes: number;
   comments: Comment[];
+  commentCount?: number;
   timestamp: string;
   createdAt?: string;
 }

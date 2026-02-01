@@ -409,6 +409,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
             timestamp: '',
             createdAt: p.created_at,
             attachments: parsedAttachments,
+            commentCount: Number.isFinite(Number(p.comment_count)) ? Number(p.comment_count) : 0,
             comments: []
           };
           });
@@ -494,6 +495,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
           timestamp: '',
           createdAt: new Date().toISOString(),
           attachments: imageUrls.length > 0 ? imageUrls : undefined,
+          commentCount: 0,
           comments: []
         };
         setPosts([newPost, ...posts]);
@@ -650,7 +652,7 @@ const HobbyCommunity: React.FC<HobbyCommunityProps> = ({ hobby, onBack, isDarkMo
                               <AttachmentCarousel urls={post.attachments} className="mb-4" />
                             )}
                             <div className="flex gap-4 font-press-start text-[1vmin] opacity-70 items-center">
-                              <span className="cursor-pointer hover:opacity-100" onClick={() => navigate(`/posts/${post.id}`)}>💬 {post.comments.length} Comments</span>
+                              <span className="cursor-pointer hover:opacity-100" onClick={() => navigate(`/posts/${post.id}`)}>💬 {post.commentCount ?? post.comments.length} Comments</span>
                               {post.author === currentUser && (
                                   <>
                                     <button 

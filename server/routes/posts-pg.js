@@ -42,14 +42,25 @@ router.get('/', async (req, res) => {
     const { community_id } = req.query;
     if (community_id) {
       const result = await pool.query(
-        'SELECT p.*, u.username FROM posts p JOIN users u ON p.user_id = u.user_id WHERE p.community_id = $1 ORDER BY p.created_at DESC LIMIT 100',
+        `SELECT p.*, u.username,
+          (SELECT COUNT(*) FROM comments c WHERE c.post_id = p.post_id) AS comment_count
+        FROM posts p
+        JOIN users u ON p.user_id = u.user_id
+        WHERE p.community_id = $1
+        ORDER BY p.created_at DESC
+        LIMIT 100`,
         [community_id]
       );
       return res.json(result.rows);
     }
 
     const result = await pool.query(
-      'SELECT p.*, u.username FROM posts p JOIN users u ON p.user_id = u.user_id ORDER BY p.created_at DESC LIMIT 100'
+      `SELECT p.*, u.username,
+        (SELECT COUNT(*) FROM comments c WHERE c.post_id = p.post_id) AS comment_count
+      FROM posts p
+      JOIN users u ON p.user_id = u.user_id
+      ORDER BY p.created_at DESC
+      LIMIT 100`
     );
     res.json(result.rows);
   } catch (err) {

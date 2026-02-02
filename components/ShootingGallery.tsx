@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Trait, PersonalityCode } from '../types';
 import GameContainer from './ui/GameContainer';
 
@@ -96,6 +96,7 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
   const [questions, setQuestions] = useState<ShootingGalleryQuestion[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const skipLock = useRef(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -131,6 +132,8 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
   const TOTAL_ROUNDS = 5;
 
   const handleSkip = () => {
+    if (isShot || skipLock.current) return;
+    skipLock.current = true;
     if (round < TOTAL_ROUNDS - 1) {
       setRound(prev => prev + 1);
       if (questions.length) {
@@ -141,6 +144,9 @@ const ShootingGallery: React.FC<ShootingGalleryProps> = ({ onAnswer, onGameEnd, 
     } else {
       onGameEnd();
     }
+    setTimeout(() => {
+      skipLock.current = false;
+    }, 200);
   };
 
   const bubbleConfigs = useMemo(() => {

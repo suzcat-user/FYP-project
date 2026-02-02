@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Trait, PersonalityCode } from '../types';
 import GameContainer from './ui/GameContainer';
 
@@ -161,6 +161,7 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
   const [questions, setQuestions] = useState<RingTossQuestion[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const skipLock = useRef(false);
 
   const grassPositions = useMemo(() => Array.from({ length: 100 }).map(() => ({
       top: `${-10 + Math.random() * 110}%`,
@@ -253,7 +254,8 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
   };
 
   const handleSkip = () => {
-    if (isThrown) return;
+    if (isThrown || skipLock.current) return;
+    skipLock.current = true;
     if (round < TOTAL_ROUNDS - 1 && questions.length) {
       setRound(prev => prev + 1);
       setCurrentQuestionIndex(prev => (prev + 1) % questions.length);
@@ -262,6 +264,9 @@ const RingToss: React.FC<RingTossProps> = ({ onAnswer, onGameEnd, onSkip, isDark
     } else {
       onGameEnd();
     }
+    setTimeout(() => {
+      skipLock.current = false;
+    }, 200);
   };
 
   const handleThrow = (answer: RingTossAnswer, index: number) => {

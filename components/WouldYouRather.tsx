@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Trait, PersonalityCode } from '../types';
 import GameContainer from './ui/GameContainer';
 
@@ -42,6 +42,7 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
   const [questions, setQuestions] = useState<WouldYouRatherQuestion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const skipLock = useRef(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -144,12 +145,17 @@ const WouldYouRather: React.FC<WouldYouRatherProps> = ({ onAnswer, onGameEnd, on
   };
 
   const handleSkip = () => {
+    if (animating || skipLock.current) return;
+    skipLock.current = true;
     if (round < totalRounds - 1) {
       setRound(prev => prev + 1);
       setCurrentQuestionIndex(prev => (prev + 1) % questions.length);
     } else {
       onGameEnd();
     }
+    setTimeout(() => {
+      skipLock.current = false;
+    }, 200);
   };
 
   const handleChoice = (index: number) => {
